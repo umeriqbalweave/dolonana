@@ -31,13 +31,13 @@ export default function GroupsPage() {
   const [swipeOffsets, setSwipeOffsets] = useState<Record<string, number>>({});
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [showWelcome, setShowWelcome] = useState(false);
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
 
   function toggleTheme() {
     setTheme((previous) => {
-      const next = previous === "dark" ? "light" : "dark";
+      const next = previous === "dark" ? "light" : previous === "light" ? "warm" : "dark";
       if (typeof window !== "undefined") {
         window.localStorage.setItem("theme", next);
       }
@@ -385,20 +385,24 @@ export default function GroupsPage() {
   }
 
   const isDark = theme === "dark";
+  const isWarm = theme === "warm";
+
+  // Theme-based classes
+  const bgClass = isDark 
+    ? "relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 overflow-hidden"
+    : isWarm
+    ? "relative min-h-screen bg-[#FDF8F3] text-stone-800 overflow-hidden"
+    : "relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 overflow-hidden";
 
   return (
-    <div
-      className={
-        isDark
-          ? "relative min-h-screen bg-gradient-to-br from-violet-950 via-slate-900 to-emerald-900 text-slate-50 overflow-hidden"
-          : "relative min-h-screen bg-gradient-to-br from-violet-100 via-slate-100 to-emerald-100 text-slate-900 overflow-hidden"
-      }
-    >
+    <div className={bgClass}>
       <FloatingEmojis count={6} />
       <header
         className={
           isDark
             ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4 md:px-8"
+            : isWarm
+            ? "flex items-center justify-between gap-4 border-b border-stone-200 bg-[#FAF5EF] px-4 py-4 md:px-8"
             : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 text-slate-900 shadow-sm md:px-8"
         }
       >

@@ -49,10 +49,13 @@ function OnboardingContent() {
     if (!name.trim() || !userId) return;
 
     setSaving(true);
-    await supabase.from("profiles").upsert(
+    const { error } = await supabase.from("profiles").upsert(
       { id: userId, display_name: name.trim() },
       { onConflict: "id" }
     );
+    if (error) {
+      console.error("Error saving name:", error);
+    }
     setSaving(false);
     setStep(2);
   }

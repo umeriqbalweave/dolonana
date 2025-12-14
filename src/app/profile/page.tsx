@@ -30,7 +30,7 @@ function ProfileContent() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSavedToast, setShowSavedToast] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [answeredQuestions, setAnsweredQuestions] = useState<AnsweredQuestion[]>([]);
   const [deleting, setDeleting] = useState(false);
   const [editingName, setEditingName] = useState(false);
@@ -68,7 +68,7 @@ function ProfileContent() {
       // Load theme from localStorage
       if (typeof window !== "undefined") {
         const stored = window.localStorage.getItem("theme");
-        if (stored === "light" || stored === "dark") {
+        if (stored === "light" || stored === "dark" || stored === "warm") {
           setTheme(stored);
         }
       }
@@ -168,7 +168,7 @@ function ProfileContent() {
 
   function toggleTheme() {
     setTheme((prev) => {
-      const next = prev === "dark" ? "light" : "dark";
+      const next = prev === "dark" ? "light" : prev === "light" ? "warm" : "dark";
       if (typeof window !== "undefined") {
         window.localStorage.setItem("theme", next);
       }
@@ -398,12 +398,18 @@ function ProfileContent() {
           <button
             type="button"
             onClick={withHaptics(toggleTheme)}
-            className={isDark ? "flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 p-4 hover:border-slate-700" : "flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white p-4 hover:border-slate-300 shadow-sm"}
+            className={
+              theme === "dark" 
+                ? "flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 p-4 hover:border-slate-700" 
+                : theme === "warm"
+                ? "flex w-full items-center justify-between rounded-xl border border-stone-300 bg-stone-50 p-4 hover:border-stone-400"
+                : "flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white p-4 hover:border-slate-300 shadow-sm"
+            }
           >
             <div className="flex items-center gap-3">
-              <span className="text-lg">{theme === "dark" ? "🌙" : "☀️"}</span>
-              <span className={isDark ? "text-sm text-slate-200" : "text-sm text-slate-700"}>
-                {theme === "dark" ? "Dark mode" : "Light mode"}
+              <span className="text-lg">{theme === "dark" ? "🌙" : theme === "warm" ? "🪷" : "☀️"}</span>
+              <span className={theme === "dark" ? "text-sm text-slate-200" : "text-sm text-stone-700"}>
+                {theme === "dark" ? "Dark mode" : theme === "warm" ? "Warm mode" : "Light mode"}
               </span>
             </div>
             <span className="text-xs text-slate-500">Tap to switch</span>
