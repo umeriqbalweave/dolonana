@@ -106,14 +106,40 @@ export default function CheckInPage() {
 
     setSending(true);
 
-    // TODO: Insert check-in to database
-    // For now, just simulate success
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // Insert check-in
+      const { data: checkin, error: checkinError } = await supabase
+        .from("checkins")
+        .insert({
+          user_id: userId,
+          number: selectedNumber,
+          message: message.trim() || null,
+        })
+        .select()
+        .single();
 
-    setSent(true);
-    setTimeout(() => {
-      router.push("/groups");
-    }, 2000);
+      if (checkinError) throw checkinError;
+
+      // Link check-in to selected groups
+      const checkinGroups = Array.from(selectedGroups).map((groupId) => ({
+        checkin_id: checkin.id,
+        group_id: groupId,
+      }));
+
+      const { error: linkError } = await supabase
+        .from("checkin_groups")
+        .insert(checkinGroups);
+
+      if (linkError) throw linkError;
+
+      setSent(true);
+      setTimeout(() => {
+        router.push("/groups");
+      }, 2000);
+    } catch (err) {
+      console.error("Error sharing check-in:", err);
+      setSending(false);
+    }
   }
 
   // Get color based on number

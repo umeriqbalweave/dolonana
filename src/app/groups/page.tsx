@@ -452,16 +452,15 @@ export default function GroupsPage() {
           }}
         >
           <motion.div
-            initial={{ scale: 0.5, opacity: 0, rotate: 0 }}
-            animate={{ scale: 1, opacity: 1, rotate: 360 }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             transition={{
-              scale: { duration: 0.5, ease: "easeOut" },
-              opacity: { duration: 0.5 },
-              rotate: { duration: 2, ease: "linear", repeat: Infinity },
+              scale: { duration: 0.8, ease: "easeOut" },
+              opacity: { duration: 0.8 },
             }}
             className="mb-6 text-8xl md:text-9xl"
           >
-            🦦
+            🪷
           </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -485,17 +484,17 @@ export default function GroupsPage() {
         >
           {groupsLoading && (
             <div className="relative flex flex-col items-center justify-center min-h-[60vh]">
-              <div className="absolute top-10 left-10 text-4xl opacity-20 animate-bounce">✨</div>
-              <div className="absolute bottom-10 right-10 text-4xl opacity-20 animate-pulse">🎉</div>
-              <div className="animate-spin text-6xl mb-4">✨</div>
-              <p className={isDark ? "text-lg text-slate-400" : "text-lg text-slate-600"}>Loading your groups...</p>
+              <div className="absolute top-10 left-10 text-4xl opacity-20 animate-pulse">🪷</div>
+              <div className="absolute bottom-10 right-10 text-4xl opacity-20 animate-pulse">✨</div>
+              <div className="animate-pulse text-6xl mb-4">🪷</div>
+              <p className={isDark ? "text-lg text-slate-400" : "text-lg text-slate-600"}>Loading your circles...</p>
             </div>
           )}
           {!groupsLoading && groups.length === 0 && (
             <div className="py-8 text-center">
-              <div className="text-6xl mb-4">✨</div>
-              <p className={isDark ? "text-lg text-slate-400 mb-2" : "text-lg text-slate-600 mb-2"}>No groups yet!</p>
-              <p className={isDark ? "text-sm text-slate-500" : "text-sm text-slate-500"}>Tap "+ New" to start your first adventure with friends</p>
+              <div className="text-6xl mb-4">🪷</div>
+              <p className={isDark ? "text-lg text-slate-400 mb-2" : "text-lg text-slate-600 mb-2"}>No circles yet</p>
+              <p className={isDark ? "text-sm text-slate-500" : "text-sm text-slate-500"}>Create a group to start checking in with friends</p>
             </div>
           )}
 
