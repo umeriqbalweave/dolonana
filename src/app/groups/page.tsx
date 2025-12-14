@@ -404,13 +404,13 @@ export default function GroupsPage() {
       >
         <div>
           <h1
-            className="cursor-pointer text-2xl font-bold tracking-tight md:text-3xl bg-gradient-to-r from-violet-400 via-emerald-400 to-violet-400 bg-clip-text text-transparent"
+            className="cursor-pointer text-2xl font-bold tracking-tight md:text-3xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent"
             onClick={withHaptics(() => setShowWelcome(true))}
           >
-            QWF
+            Dolo
           </h1>
           <p className={isDark ? "text-xs text-slate-400 md:text-sm" : "text-xs text-slate-500 md:text-sm"}>
-            Answer first. Then see theirs.
+            Check in with your people.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -469,7 +469,7 @@ export default function GroupsPage() {
             transition={{ delay: 0.3, duration: 0.4 }}
             className="text-center text-xl font-medium text-slate-100 md:text-2xl"
           >
-            I&apos;m glad you&apos;re here 💫
+            Take a breath. You&apos;re okay 💜
           </motion.p>
         </div>
       )}
@@ -720,6 +720,22 @@ export default function GroupsPage() {
               })}
             </div>
           )}
+        </div>
+
+        {/* Prominent Check-in Button */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30">
+          <motion.button
+            type="button"
+            onClick={withHaptics(() => router.push("/checkin"))}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-rose-500 via-amber-500 to-rose-500 text-4xl shadow-2xl shadow-rose-500/40 ring-4 ring-white/20"
+          >
+            <span className="animate-pulse">💜</span>
+          </motion.button>
+          <p className={isDark ? "mt-2 text-center text-xs font-medium text-slate-400" : "mt-2 text-center text-xs font-medium text-slate-500"}>
+            Check in
+          </p>
         </div>
       </main>
     </div>
