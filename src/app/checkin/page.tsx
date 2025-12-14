@@ -22,14 +22,15 @@ export default function CheckInPage() {
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
 
   const isDark = theme === "dark";
+  const isWarm = theme === "warm";
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedTheme = window.localStorage.getItem("theme");
-      if (savedTheme === "light" || savedTheme === "dark") {
+      if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "warm") {
         setTheme(savedTheme);
       }
     }
@@ -158,22 +159,23 @@ export default function CheckInPage() {
     return "🤩";
   }
 
+  // Theme classes
+  const bgClass = isDark
+    ? "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50"
+    : isWarm
+    ? "relative flex min-h-screen flex-col bg-[#FDF8F3] text-stone-800"
+    : "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900";
+
+  const headerClass = isDark
+    ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4"
+    : isWarm
+    ? "flex items-center justify-between gap-4 border-b border-stone-200 bg-[#FAF5EF] px-4 py-4"
+    : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 shadow-sm";
+
   return (
-    <div
-      className={
-        isDark
-          ? "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50"
-          : "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900"
-      }
-    >
+    <div className={bgClass}>
       {/* Header */}
-      <header
-        className={
-          isDark
-            ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4"
-            : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 shadow-sm"
-        }
-      >
+      <header className={headerClass}>
         <button
           type="button"
           onClick={withHaptics(() => router.back())}
