@@ -8,12 +8,12 @@ import { uploadImage } from "@/lib/uploadImage";
 import { withHaptics } from "@/lib/haptics";
 import FloatingEmojis from "@/components/FloatingEmojis";
 
-type AnsweredQuestion = {
+type MyCheckin = {
   id: string;
-  question_text: string;
-  answer_text: string;
-  group_name: string;
-  answered_at: string;
+  number: number;
+  message: string | null;
+  is_private: boolean;
+  created_at: string;
 };
 
 function ProfileContent() {
@@ -31,7 +31,7 @@ function ProfileContent() {
   const [error, setError] = useState<string | null>(null);
   const [showSavedToast, setShowSavedToast] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
-  const [answeredQuestions, setAnsweredQuestions] = useState<AnsweredQuestion[]>([]);
+  const [myCheckins, setMyCheckins] = useState<MyCheckin[]>([]);
   const [deleting, setDeleting] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [notificationsMuted, setNotificationsMuted] = useState(false);
@@ -73,41 +73,16 @@ function ProfileContent() {
         }
       }
 
-      // Load answered questions across all groups
-      const { data: answers } = await supabase
-        .from("answers")
-        .select(`
-          id,
-          answer_text,
-          created_at,
-          daily_questions!inner(question_text, group_id)
-        `)
+      // Load user's check-ins (all of them, including private)
+      const { data: checkins } = await supabase
+        .from("checkins")
+        .select("id, number, message, is_private, created_at")
         .eq("user_id", currentUserId)
         .order("created_at", { ascending: false })
-        .limit(20);
+        .limit(30);
 
-      if (answers && answers.length > 0) {
-        // Get group names
-        const groupIds = [...new Set(answers.map((a: any) => a.daily_questions?.group_id).filter(Boolean))];
-        const { data: groups } = await supabase
-          .from("groups")
-          .select("id, name")
-          .in("id", groupIds);
-
-        const groupMap: Record<string, string> = {};
-        for (const g of groups || []) {
-          groupMap[g.id] = g.name;
-        }
-
-        const formatted: AnsweredQuestion[] = answers.map((a: any) => ({
-          id: a.id,
-          question_text: a.daily_questions?.question_text || "",
-          answer_text: a.answer_text,
-          group_name: groupMap[a.daily_questions?.group_id] || "Unknown",
-          answered_at: a.created_at,
-        }));
-
-        setAnsweredQuestions(formatted);
+      if (checkins) {
+        setMyCheckins(checkins);
       }
 
       setLoading(false);
@@ -235,6 +210,7 @@ function ProfileContent() {
   }
 
   const isDark = theme === "dark";
+  const isWarm = theme === "warm";
 
   if (loading) {
     return (
@@ -455,21 +431,26 @@ function ProfileContent() {
           </button>
         </div>
 
-        {/* Answered Questions History */}
-        {answeredQuestions.length > 0 && (
+        {/* My Check-ins History */}
+        {myCheckins.length > 0 && (
           <div className="mb-6">
-            <h2 className="mb-3 text-sm font-medium text-slate-300">Your answers</h2>
-            <div className="space-y-3">
-              {answeredQuestions.map((q) => (
+            <h2 className={`mb-3 text-lg font-semibold ${isDark ? "text-slate-300" : isWarm ? "text-stone-600" : "text-slate-700"}`}>
+              📔 My Check-ins
+            </h2>
+            <div className="space-y-2">
+              {myCheckins.map((c) => (
                 <div
-                  key={q.id}
-                  className="rounded-xl border border-slate-800 bg-slate-900/60 p-3"
+                  key={c.id}
+                  className={isDark ? "rounded-xl border border-slate-800 bg-slate-900/60 p-3" : isWarm ? "rounded-xl border border-orange-200 bg-white p-3 shadow-sm" : "rounded-xl border border-slate-200 bg-white p-3 shadow-sm"}
                 >
-                  <p className="mb-1 text-xs text-emerald-400">{q.group_name}</p>
-                  <p className="mb-2 text-sm text-slate-300">{q.question_text}</p>
-                  <p className="text-sm text-slate-100">{q.answer_text}</p>
-                  <p className="mt-2 text-xs text-slate-600">
-                    {new Date(q.answered_at).toLocaleDateString()}
+                  <div className="flex items-center gap-2 mb-1">
+                    {c.is_private && <span className="text-xs px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-400">Private</span>}
+                    <span className={`text-xs ${isDark ? "text-slate-500" : "text-stone-400"}`}>
+                      {new Date(c.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className={`text-lg ${isDark ? "text-slate-100" : "text-stone-800"}`}>
+                    I&apos;m at a {c.number}.{c.message ? ` ${c.message}` : ""}
                   </p>
                 </div>
               ))}
