@@ -408,12 +408,12 @@ export default function GroupsPage() {
       >
         <div>
           <h1
-            className="cursor-pointer text-2xl font-bold tracking-tight md:text-3xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent"
+            className="cursor-pointer text-3xl font-bold tracking-tight md:text-4xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent"
             onClick={withHaptics(() => setShowWelcome(true))}
           >
             Dolo
           </h1>
-          <p className={isDark ? "text-xs text-slate-400 md:text-sm" : "text-xs text-slate-500 md:text-sm"}>
+          <p className={isDark ? "text-base text-slate-400 md:text-lg" : "text-base text-stone-500 md:text-lg"}>
             Check in with your people.
           </p>
         </div>
@@ -421,14 +421,14 @@ export default function GroupsPage() {
           <button
             type="button"
             onClick={withHaptics(() => router.push("/groups/new"))}
-            className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-medium text-slate-950 shadow-sm transition hover:bg-emerald-300"
+            className="rounded-full bg-amber-500 px-6 py-3 text-lg font-bold text-white shadow-sm transition hover:bg-amber-400"
           >
             + New
           </button>
           <button
             type="button"
             onClick={withHaptics(() => router.push("/profile"))}
-            className={isDark ? "flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-950/80 text-xs font-semibold text-slate-200 hover:border-emerald-400" : "flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-white text-xs font-semibold text-slate-700 hover:border-emerald-500 shadow-sm"}
+            className={isDark ? "flex h-14 w-14 items-center justify-center rounded-full border-2 border-slate-700 bg-slate-950/80 text-base font-semibold text-slate-200 hover:border-amber-400" : "flex h-14 w-14 items-center justify-center rounded-full border-2 border-stone-300 bg-white text-base font-semibold text-stone-700 hover:border-amber-500 shadow-sm"}
           >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -726,17 +726,17 @@ export default function GroupsPage() {
         </div>
 
         {/* Prominent Check-in Button */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
           <motion.button
             type="button"
             onClick={withHaptics(() => router.push("/checkin"))}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-rose-500 via-amber-500 to-rose-500 text-4xl shadow-2xl shadow-rose-500/40 ring-4 ring-white/20"
+            className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-rose-500 via-amber-500 to-rose-500 text-5xl shadow-2xl shadow-rose-500/40 ring-4 ring-white/20"
           >
-            <span className="animate-pulse">💜</span>
+            <span className="animate-pulse">🪷</span>
           </motion.button>
-          <p className={isDark ? "mt-2 text-center text-xs font-medium text-slate-400" : "mt-2 text-center text-xs font-medium text-slate-500"}>
+          <p className={isDark ? "mt-3 text-center text-lg font-medium text-slate-400" : "mt-3 text-center text-lg font-medium text-stone-500"}>
             Check in
           </p>
         </div>
