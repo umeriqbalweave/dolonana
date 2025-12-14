@@ -28,7 +28,7 @@ export default function GroupsPage() {
   const [swipeOffsets, setSwipeOffsets] = useState<Record<string, number>>({});
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
   const [showWelcome, setShowWelcome] = useState(false);
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
 
@@ -357,7 +357,7 @@ export default function GroupsPage() {
 
   // Theme-based classes
   const bgClass = isDark 
-    ? "relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 overflow-hidden"
+    ? "relative min-h-screen bg-black text-slate-50 overflow-hidden"
     : isWarm
     ? "relative min-h-screen bg-[#FCEADE] text-stone-800 overflow-hidden"
     : "relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 overflow-hidden";
@@ -376,7 +376,7 @@ export default function GroupsPage() {
       >
         <div>
           <h1
-            className="cursor-pointer text-3xl font-bold tracking-tight md:text-4xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent"
+            className="cursor-pointer text-5xl font-bold tracking-tight md:text-6xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent"
             onClick={withHaptics(() => setShowWelcome(true))}
           >
             Dolo

@@ -30,7 +30,7 @@ function ProfileContent() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSavedToast, setShowSavedToast] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
   const [myCheckins, setMyCheckins] = useState<MyCheckin[]>([]);
   const [deleting, setDeleting] = useState(false);
   const [editingName, setEditingName] = useState(false);
@@ -224,7 +224,7 @@ function ProfileContent() {
   }
 
   const bgClass = isDark 
-    ? "relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 overflow-hidden"
+    ? "relative min-h-screen bg-black text-slate-50 overflow-hidden"
     : theme === "warm"
     ? "relative min-h-screen bg-[#FCEADE] text-stone-800 overflow-hidden"
     : "relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 overflow-hidden";
@@ -234,14 +234,16 @@ function ProfileContent() {
       <FloatingEmojis count={5} />
       <div className="relative z-10 mx-auto max-w-md px-4 py-6">
         {/* Header */}
-        <header className="mb-6 flex items-center justify-between">
+        <header className="mb-8 flex items-center justify-between">
           <button
             type="button"
             onClick={withHaptics(() => router.push("/groups"))}
-            className={isDark ? "rounded-full border border-slate-700 bg-slate-950/80 px-3 py-1 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300" : "rounded-full border border-slate-300 bg-white px-3 py-1 text-xs text-slate-600 hover:border-emerald-500 hover:text-emerald-600 shadow-sm"}
+            className={isDark ? "rounded-full border-2 border-slate-700 bg-slate-900 px-6 py-3 text-xl text-slate-300 hover:border-emerald-400 hover:text-emerald-300" : "rounded-full border-2 border-slate-300 bg-white px-6 py-3 text-xl text-slate-600 hover:border-emerald-500 hover:text-emerald-600 shadow-sm"}
           >
             ← Back
           </button>
+          <h1 className="text-3xl font-bold">Profile</h1>
+          <div className="w-24" />
         </header>
 
         {/* Profile Photo - Clickable to update */}
@@ -276,7 +278,7 @@ function ProfileContent() {
               const input = document.getElementById("avatar-file-input") as HTMLInputElement | null;
               input?.click();
             })}
-            className={isDark ? "group relative h-28 w-28 overflow-hidden rounded-full border-2 border-slate-700 bg-slate-900 hover:border-emerald-400" : "group relative h-28 w-28 overflow-hidden rounded-full border-2 border-slate-300 bg-white hover:border-emerald-500 shadow-lg"}
+            className={isDark ? "group relative h-40 w-40 overflow-hidden rounded-full border-4 border-slate-700 bg-slate-900 hover:border-emerald-400 ring-4 ring-emerald-500/30" : "group relative h-40 w-40 overflow-hidden rounded-full border-4 border-slate-300 bg-white hover:border-emerald-500 shadow-xl ring-4 ring-emerald-500/20"}
           >
             {avatarPreview || avatarUrl ? (
               <>
@@ -287,42 +289,42 @@ function ProfileContent() {
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition group-hover:opacity-100">
-                  <span className="text-xs text-white">Change</span>
+                  <span className="text-xl text-white">Change</span>
                 </div>
               </>
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-3xl text-slate-500">
+              <div className="flex h-full w-full items-center justify-center text-5xl text-slate-500">
                 +
               </div>
             )}
           </button>
-          <p className={isDark ? "mt-2 text-xs text-slate-500" : "mt-2 text-xs text-slate-500"}>Tap to change photo</p>
+          <p className={isDark ? "mt-3 text-lg text-slate-400" : "mt-3 text-lg text-slate-500"}>Tap to change photo</p>
         </div>
 
         {/* Name */}
-        <div className={isDark ? "mb-4 rounded-xl border border-slate-800 bg-slate-900/60 p-4" : "mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"}>
+        <div className={isDark ? "mb-6 rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6" : "mb-6 rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm"}>
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <p className={isDark ? "text-xs text-slate-500" : "text-xs text-slate-500"}>Name</p>
+              <p className={isDark ? "text-lg text-slate-400 mb-1" : "text-lg text-slate-500 mb-1"}>Name</p>
               {editingName ? (
-                <form onSubmit={handleSave} className="mt-1 flex gap-2">
+                <form onSubmit={handleSave} className="mt-2 flex gap-3">
                   <input
                     type="text"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className={isDark ? "flex-1 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-slate-50 outline-none focus:border-emerald-400" : "flex-1 rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm text-slate-800 outline-none focus:border-emerald-500"}
+                    className={isDark ? "flex-1 rounded-xl border-2 border-slate-700 bg-slate-800 px-4 py-3 text-2xl text-slate-50 outline-none focus:border-emerald-400" : "flex-1 rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-2xl text-slate-800 outline-none focus:border-emerald-500"}
                     autoFocus
                   />
                   <button
                     type="submit"
                     disabled={saving}
-                    className="rounded-lg bg-emerald-400 px-3 py-1 text-xs font-medium text-slate-950"
+                    className="rounded-xl bg-emerald-500 px-6 py-3 text-xl font-bold text-white"
                   >
                     {saving ? "..." : "Save"}
                   </button>
                 </form>
               ) : (
-                <p className={isDark ? "text-base font-medium text-slate-100" : "text-base font-medium text-slate-800"}>
+                <p className={isDark ? "text-2xl font-semibold text-slate-100" : "text-2xl font-semibold text-slate-800"}>
                   {displayName || "Add your name"}
                 </p>
               )}
@@ -331,7 +333,7 @@ function ProfileContent() {
               <button
                 type="button"
                 onClick={withHaptics(() => setEditingName(true))}
-                className="text-xs text-emerald-400 hover:text-emerald-300"
+                className="text-xl text-emerald-400 hover:text-emerald-300 px-4 py-2"
               >
                 Edit
               </button>
@@ -340,22 +342,22 @@ function ProfileContent() {
         </div>
 
         {/* Phone */}
-        <div className={isDark ? "mb-6 rounded-xl border border-slate-800 bg-slate-900/60 p-4" : "mb-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"}>
-          <p className={isDark ? "text-xs text-slate-500" : "text-xs text-slate-500"}>Phone</p>
-          <p className={isDark ? "text-base text-slate-300" : "text-base text-slate-700"}>{phone || "Not set"}</p>
+        <div className={isDark ? "mb-8 rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6" : "mb-8 rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm"}>
+          <p className={isDark ? "text-lg text-slate-400 mb-1" : "text-lg text-slate-500 mb-1"}>Phone</p>
+          <p className={isDark ? "text-2xl text-slate-300" : "text-2xl text-slate-700"}>{phone || "Not set"}</p>
         </div>
 
         {/* Settings */}
-        <div className="mb-6 space-y-2">
+        <div className="mb-8 space-y-4">
           {/* Master Notifications Toggle */}
-          <div className={isDark ? "flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 p-4" : "flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm"}>
-            <div className="flex items-center gap-3">
-              <span className="text-lg">{notificationsMuted ? "🔕" : "🔔"}</span>
+          <div className={isDark ? "flex w-full items-center justify-between rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6" : "flex w-full items-center justify-between rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm"}>
+            <div className="flex items-center gap-4">
+              <span className="text-3xl">{notificationsMuted ? "🔕" : "🔔"}</span>
               <div>
-                <span className={isDark ? "text-sm text-slate-200" : "text-sm text-slate-700"}>
+                <span className={isDark ? "text-xl text-slate-200" : "text-xl text-slate-700"}>
                   {notificationsMuted ? "Notifications muted" : "Notifications on"}
                 </span>
-                <p className="text-xs text-slate-500">
+                <p className="text-lg text-slate-500">
                   {notificationsMuted ? "You won't receive any SMS" : "For all groups"}
                 </p>
               </div>
@@ -364,13 +366,14 @@ function ProfileContent() {
               type="button"
               onClick={withHaptics(handleToggleMuteNotifications)}
               disabled={savingNotifications}
-              className={`relative h-7 w-12 rounded-full transition ${
+              className={`relative h-10 w-18 rounded-full transition ${
                 !notificationsMuted ? "bg-emerald-500" : "bg-slate-700"
               }`}
+              style={{width: '72px'}}
             >
               <span
-                className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${
-                  !notificationsMuted ? "left-6" : "left-1"
+                className={`absolute top-1.5 h-7 w-7 rounded-full bg-white shadow transition ${
+                  !notificationsMuted ? "left-9" : "left-1.5"
                 }`}
               />
             </button>
@@ -382,39 +385,39 @@ function ProfileContent() {
             onClick={withHaptics(toggleTheme)}
             className={
               theme === "dark" 
-                ? "flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/60 p-4 hover:border-slate-700" 
+                ? "flex w-full items-center justify-between rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700" 
                 : theme === "warm"
-                ? "flex w-full items-center justify-between rounded-xl border border-stone-300 bg-stone-50 p-4 hover:border-stone-400"
-                : "flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white p-4 hover:border-slate-300 shadow-sm"
+                ? "flex w-full items-center justify-between rounded-2xl border-2 border-stone-300 bg-stone-50 p-6 hover:border-stone-400"
+                : "flex w-full items-center justify-between rounded-2xl border-2 border-slate-200 bg-white p-6 hover:border-slate-300 shadow-sm"
             }
           >
-            <div className="flex items-center gap-3">
-              <span className="text-lg">{theme === "dark" ? "🌙" : theme === "warm" ? "🪷" : "☀️"}</span>
-              <span className={theme === "dark" ? "text-sm text-slate-200" : "text-sm text-stone-700"}>
+            <div className="flex items-center gap-4">
+              <span className="text-3xl">{theme === "dark" ? "🌙" : theme === "warm" ? "🪷" : "☀️"}</span>
+              <span className={theme === "dark" ? "text-xl text-slate-200" : "text-xl text-stone-700"}>
                 {theme === "dark" ? "Dark mode" : theme === "warm" ? "Warm mode" : "Light mode"}
               </span>
             </div>
-            <span className="text-xs text-slate-500">Tap to switch</span>
+            <span className="text-lg text-slate-500">Tap to switch</span>
           </button>
 
           {/* Send Feedback */}
           <button
             type="button"
             onClick={withHaptics(() => setShowFeedbackModal(true))}
-            className={isDark ? "flex w-full items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 p-4 hover:border-slate-700" : "flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 hover:border-slate-300 shadow-sm"}
+            className={isDark ? "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700" : "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 bg-white p-6 hover:border-slate-300 shadow-sm"}
           >
-            <span className="text-lg">💬</span>
-            <span className={isDark ? "text-sm text-slate-200" : "text-sm text-slate-700"}>Send feedback or report bugs</span>
+            <span className="text-3xl">💬</span>
+            <span className={isDark ? "text-xl text-slate-200" : "text-xl text-slate-700"}>Send feedback or report bugs</span>
           </button>
 
           {/* Logout */}
           <button
             type="button"
             onClick={withHaptics(handleLogout)}
-            className={isDark ? "flex w-full items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 p-4 hover:border-slate-700" : "flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 hover:border-slate-300 shadow-sm"}
+            className={isDark ? "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700" : "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 bg-white p-6 hover:border-slate-300 shadow-sm"}
           >
-            <span className="text-lg">👋</span>
-            <span className={isDark ? "text-sm text-slate-200" : "text-sm text-slate-700"}>Log out</span>
+            <span className="text-3xl">👋</span>
+            <span className={isDark ? "text-xl text-slate-200" : "text-xl text-slate-700"}>Log out</span>
           </button>
 
           {/* Delete Profile */}
@@ -422,10 +425,10 @@ function ProfileContent() {
             type="button"
             disabled={deleting}
             onClick={withHaptics(handleDeleteProfile)}
-            className="flex w-full items-center gap-3 rounded-xl border border-rose-900/50 bg-slate-900/60 p-4 hover:border-rose-700 disabled:opacity-50"
+            className="flex w-full items-center gap-4 rounded-2xl border-2 border-rose-900/50 bg-slate-900/60 p-6 hover:border-rose-700 disabled:opacity-50"
           >
-            <span className="text-lg">🗑️</span>
-            <span className="text-sm text-rose-400">
+            <span className="text-3xl">🗑️</span>
+            <span className="text-xl text-rose-400">
               {deleting ? "Deleting..." : "Delete profile"}
             </span>
           </button>
@@ -433,23 +436,23 @@ function ProfileContent() {
 
         {/* My Check-ins History */}
         {myCheckins.length > 0 && (
-          <div className="mb-6">
-            <h2 className={`mb-3 text-lg font-semibold ${isDark ? "text-slate-300" : isWarm ? "text-stone-600" : "text-slate-700"}`}>
+          <div className="mb-8">
+            <h2 className={`mb-4 text-2xl font-bold ${isDark ? "text-slate-300" : isWarm ? "text-stone-600" : "text-slate-700"}`}>
               📔 My Check-ins
             </h2>
-            <div className="space-y-2">
+            <div className="space-y-4">
               {myCheckins.map((c) => (
                 <div
                   key={c.id}
-                  className={isDark ? "rounded-xl border border-slate-800 bg-slate-900/60 p-3" : isWarm ? "rounded-xl border border-orange-200 bg-white p-3 shadow-sm" : "rounded-xl border border-slate-200 bg-white p-3 shadow-sm"}
+                  className={isDark ? "rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-5" : isWarm ? "rounded-2xl border-2 border-orange-200 bg-white p-5 shadow-sm" : "rounded-2xl border-2 border-slate-200 bg-white p-5 shadow-sm"}
                 >
-                  <div className="flex items-center gap-2 mb-1">
-                    {c.is_private && <span className="text-xs px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-400">Private</span>}
-                    <span className={`text-xs ${isDark ? "text-slate-500" : "text-stone-400"}`}>
+                  <div className="flex items-center gap-3 mb-2">
+                    {c.is_private && <span className="text-base px-3 py-1 rounded-full bg-violet-500/20 text-violet-400">Private</span>}
+                    <span className={`text-lg ${isDark ? "text-slate-500" : "text-stone-400"}`}>
                       {new Date(c.created_at).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className={`text-lg ${isDark ? "text-slate-100" : "text-stone-800"}`}>
+                  <p className={`text-2xl ${isDark ? "text-slate-100" : "text-stone-800"}`}>
                     I&apos;m at a {c.number}.{c.message ? ` ${c.message}` : ""}
                   </p>
                 </div>

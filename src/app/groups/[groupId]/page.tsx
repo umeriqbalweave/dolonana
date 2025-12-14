@@ -54,7 +54,7 @@ export default function GroupDetailPage() {
   const [loading, setLoading] = useState(true);
   const [newMessageText, setNewMessageText] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
   const [profilesById, setProfilesById] = useState<Record<string, { avatar_url: string | null; display_name: string | null }>>({});
   const [showFullImage, setShowFullImage] = useState(false);
 
@@ -314,7 +314,7 @@ export default function GroupDetailPage() {
 
   // Theme classes
   const bgClass = isDark
-    ? "flex flex-col min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50"
+    ? "flex flex-col min-h-screen bg-black text-slate-50"
     : isWarm
     ? "flex flex-col min-h-screen bg-[#FCEADE] text-stone-800"
     : "flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900";

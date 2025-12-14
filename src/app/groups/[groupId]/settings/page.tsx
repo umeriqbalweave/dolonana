@@ -30,7 +30,7 @@ export default function GroupSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [leaving, setLeaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
   const [members, setMembers] = useState<Member[]>([]);
   const [editName, setEditName] = useState("");
   const [editImageUrl, setEditImageUrl] = useState<string | null>(null);

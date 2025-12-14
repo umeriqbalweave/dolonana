@@ -23,7 +23,7 @@ export default function CheckInPage() {
   const [saveToPrivateDiary, setSaveToPrivateDiary] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
 
   const isDark = theme === "dark";
   const isWarm = theme === "warm";
