@@ -57,6 +57,8 @@ export default function GroupDetailPage() {
   const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
   const [profilesById, setProfilesById] = useState<Record<string, { avatar_url: string | null; display_name: string | null }>>({});
   const [showFullImage, setShowFullImage] = useState(false);
+  const [reactionPickerCheckinId, setReactionPickerCheckinId] = useState<string | null>(null);
+  const [lastTapTime, setLastTapTime] = useState<Record<string, number>>({});
 
   const isDark = theme === "dark";
   const isWarm = theme === "warm";
@@ -248,8 +250,25 @@ export default function GroupDetailPage() {
     setSendingMessage(false);
   }
 
+  function handleDoubleTap(checkinId: string) {
+    const now = Date.now();
+    const lastTap = lastTapTime[checkinId] || 0;
+    if (now - lastTap < 300) {
+      // Double tap detected - show reaction picker
+      setReactionPickerCheckinId(checkinId);
+      setLastTapTime(prev => ({ ...prev, [checkinId]: 0 }));
+    } else {
+      setLastTapTime(prev => ({ ...prev, [checkinId]: now }));
+    }
+  }
+
+  function handleCloseReactionPicker() {
+    setReactionPickerCheckinId(null);
+  }
+
   async function handleReaction(checkinId: string, emoji: string) {
     if (!userId) return;
+    setReactionPickerCheckinId(null); // Close picker after reaction
 
     // Check if user already reacted with this emoji
     const existing = checkins.find(c => c.id === checkinId)?.reactions?.find(
@@ -410,8 +429,30 @@ export default function GroupDetailPage() {
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.18, delay: index * 0.015 }}
-                    className="flex items-start gap-3 px-1 py-2"
+                    className="relative flex items-start gap-3 px-1 py-2 cursor-pointer"
+                    onClick={() => handleDoubleTap(checkin.id)}
                   >
+                    {/* Reaction picker - appears on double-tap */}
+                    {reactionPickerCheckinId === checkin.id && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-10" 
+                          onClick={(e) => { e.stopPropagation(); handleCloseReactionPicker(); }}
+                        />
+                        <div className="absolute -top-10 left-12 z-20 flex gap-1 rounded-full border border-slate-700 bg-slate-900 px-2 py-1 shadow-lg">
+                          {REACTION_EMOJIS.map((emoji) => (
+                            <button
+                              key={emoji}
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); withHaptics(() => handleReaction(checkin.id, emoji))(); }}
+                              className="p-1 text-lg hover:scale-125 transition"
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
                     <div className={`mt-1 flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold ${isDark ? "bg-slate-700 text-slate-100" : "bg-stone-200 text-stone-700"}`}>
                       {avatarUrl ? (
                         <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
@@ -426,31 +467,37 @@ export default function GroupDetailPage() {
                       <p className={isDark ? "whitespace-pre-wrap text-xl text-slate-50" : "whitespace-pre-wrap text-xl text-stone-800"}>
                         I&apos;m at a {checkin.number}.{checkin.message ? ` ${checkin.message}` : ""}
                       </p>
-                      {/* Reactions */}
-                      <div className="flex items-center gap-1 flex-wrap mt-1">
-                        {REACTION_EMOJIS.map((emoji) => {
-                          const count = checkin.reactions?.filter(r => r.emoji === emoji).length || 0;
-                          const hasReacted = checkin.reactions?.some(r => r.emoji === emoji && r.user_id === userId);
-                          return (
-                            <button
-                              key={emoji}
-                              type="button"
-                              onClick={withHaptics(() => handleReaction(checkin.id, emoji))}
-                              className={`px-2 py-0.5 rounded-full text-sm transition ${
-                                hasReacted
-                                  ? isDark
-                                    ? "bg-amber-500/30 border border-amber-500"
-                                    : "bg-orange-100 border border-orange-400"
-                                  : isDark
-                                  ? "bg-slate-800 hover:bg-slate-700"
-                                  : "bg-stone-100 hover:bg-stone-200"
-                              }`}
-                            >
-                              {emoji} {count > 0 && count}
-                            </button>
-                          );
-                        })}
-                      </div>
+                      {/* Show existing reactions only */}
+                      {checkin.reactions && checkin.reactions.length > 0 && (
+                        <div className="flex items-center gap-1 flex-wrap mt-1">
+                          {Object.entries(
+                            checkin.reactions.reduce((acc, r) => {
+                              acc[r.emoji] = (acc[r.emoji] || 0) + 1;
+                              return acc;
+                            }, {} as Record<string, number>)
+                          ).map(([emoji, count]) => {
+                            const hasReacted = checkin.reactions?.some(r => r.emoji === emoji && r.user_id === userId);
+                            return (
+                              <button
+                                key={emoji}
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); withHaptics(() => handleReaction(checkin.id, emoji))(); }}
+                                className={`px-2 py-0.5 rounded-full text-sm transition ${
+                                  hasReacted
+                                    ? isDark
+                                      ? "bg-amber-500/30 border border-amber-500"
+                                      : "bg-orange-100 border border-orange-400"
+                                    : isDark
+                                    ? "bg-slate-800 hover:bg-slate-700"
+                                    : "bg-stone-100 hover:bg-stone-200"
+                                }`}
+                              >
+                                {emoji} {count}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
                       <p className={isDark ? "mt-0.5 text-xs text-slate-500" : "mt-0.5 text-xs text-stone-400"}>
                         {formatTime(checkin.created_at)}
                       </p>
