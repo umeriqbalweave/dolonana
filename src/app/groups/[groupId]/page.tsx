@@ -460,53 +460,39 @@ export default function GroupDetailPage() {
           </div>
         )}
 
-        {/* Messages Section - Free-form chat */}
+        {/* Messages Section - QWF style list format */}
         {messages.length > 0 && (
           <div className="mb-4">
-            <h2 className={`text-lg font-semibold mb-3 ${isDark ? "text-slate-300" : "text-stone-600"}`}>
-              Group Chat
-            </h2>
-            <div className="space-y-3">
-              {messages.map((msg) => {
-                const isOwn = msg.user_id === userId;
+            <div className="space-y-1">
+              {messages.map((msg, index) => {
+                const isMe = msg.user_id === userId;
+                const displayName = isMe ? "You" : (msg.profile?.display_name || "Friend");
+                const initials = displayName.split(" ").map(w => w[0]).join("");
+                const avatarUrl = msg.profile?.avatar_url;
+
                 return (
                   <motion.div
                     key={msg.id}
-                    initial={{ opacity: 0, y: 5 }}
+                    initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+                    transition={{ duration: 0.18, delay: index * 0.015 }}
+                    className="flex items-start gap-3 px-1 py-2"
                   >
-                    <div className={`max-w-[80%] ${isOwn ? "order-2" : ""}`}>
-                      {!isOwn && (
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className={`h-6 w-6 rounded-full overflow-hidden ${isDark ? "bg-slate-700" : "bg-stone-100"}`}>
-                            {msg.profile?.avatar_url ? (
-                              <img src={msg.profile.avatar_url} alt="" className="h-full w-full object-cover" />
-                            ) : (
-                              <div className="h-full w-full flex items-center justify-center text-xs font-bold">
-                                {msg.profile?.display_name?.[0]?.toUpperCase() || "?"}
-                              </div>
-                            )}
-                          </div>
-                          <span className={`text-sm font-medium ${isDark ? "text-slate-400" : "text-stone-500"}`}>
-                            {msg.profile?.display_name || "Someone"}
-                          </span>
-                        </div>
+                    <div className={`mt-1 flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold ${isDark ? "bg-slate-700 text-slate-100" : "bg-stone-200 text-stone-700"}`}>
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
+                      ) : (
+                        initials
                       )}
-                      <div
-                        className={`rounded-2xl px-4 py-2 ${
-                          isOwn
-                            ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white"
-                            : isDark
-                            ? "bg-slate-800 text-slate-100"
-                            : isWarm
-                            ? "bg-white border border-orange-200 text-stone-800"
-                            : "bg-white border border-slate-200 text-slate-800"
-                        }`}
-                      >
-                        <p className="text-base">{msg.text}</p>
-                      </div>
-                      <p className={`text-xs mt-1 ${isOwn ? "text-right" : ""} ${isDark ? "text-slate-500" : "text-stone-400"}`}>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className={isDark ? "text-sm font-medium text-slate-300" : "text-sm font-medium text-stone-600"}>
+                        {displayName}
+                      </p>
+                      <p className={isDark ? "whitespace-pre-wrap text-xl text-slate-50" : "whitespace-pre-wrap text-xl text-stone-800"}>
+                        {msg.text}
+                      </p>
+                      <p className={isDark ? "mt-0.5 text-xs text-slate-500" : "mt-0.5 text-xs text-stone-400"}>
                         {formatTime(msg.created_at)}
                       </p>
                     </div>
