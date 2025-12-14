@@ -56,6 +56,7 @@ export default function GroupDetailPage() {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [profilesById, setProfilesById] = useState<Record<string, { avatar_url: string | null; display_name: string | null }>>({});
+  const [showFullImage, setShowFullImage] = useState(false);
 
   const isDark = theme === "dark";
   const isWarm = theme === "warm";
@@ -349,20 +350,43 @@ export default function GroupDetailPage() {
 
   return (
     <div className={bgClass}>
-      {/* Header */}
+      {/* Header - QWF style with group image */}
       <header className={headerClass}>
         <button
           type="button"
           onClick={withHaptics(() => router.push("/groups"))}
-          className={isDark ? "text-slate-400 hover:text-white text-lg" : "text-stone-500 hover:text-stone-800 text-lg"}
+          className={isDark ? "text-slate-400 hover:text-white text-2xl" : "text-stone-500 hover:text-stone-800 text-2xl"}
         >
-          ← Back
+          ←
         </button>
-        <h1 className="text-xl font-bold truncate">{group?.name || "Group"}</h1>
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          {/* Group Image - clickable to view full */}
+          <button
+            type="button"
+            onClick={withHaptics(() => group?.image_url && setShowFullImage(true))}
+            className={`h-14 w-14 rounded-full overflow-hidden flex-shrink-0 ring-2 ${isDark ? "ring-emerald-500 bg-slate-700" : isWarm ? "ring-orange-400 bg-stone-200" : "ring-amber-500 bg-slate-200"}`}
+          >
+            {group?.image_url ? (
+              <img src={group.image_url} alt={group.name} className="h-full w-full object-cover" />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center text-xl font-bold">
+                {group?.name?.[0]?.toUpperCase() || "G"}
+              </div>
+            )}
+          </button>
+          {/* Title - clickable to open settings */}
+          <button
+            type="button"
+            onClick={withHaptics(() => router.push(`/groups/${groupId}/settings`))}
+            className="text-left min-w-0"
+          >
+            <h1 className="text-2xl font-bold truncate">{group?.name || "Group"}</h1>
+          </button>
+        </div>
         <button
           type="button"
           onClick={withHaptics(() => router.push(`/groups/${groupId}/settings`))}
-          className={isDark ? "text-slate-400 hover:text-white text-xl" : "text-stone-500 hover:text-stone-800 text-xl"}
+          className={isDark ? "text-slate-400 hover:text-white text-2xl" : "text-stone-500 hover:text-stone-800 text-2xl"}
         >
           ⚙️
         </button>
@@ -519,10 +543,39 @@ export default function GroupDetailPage() {
         onClick={withHaptics(() => router.push("/checkin"))}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-24 right-4 h-16 w-16 rounded-full bg-gradient-to-br from-rose-500 via-amber-500 to-rose-500 text-3xl shadow-xl flex items-center justify-center z-20"
+        className="fixed bottom-24 right-4 h-20 w-20 rounded-full bg-gradient-to-br from-rose-500 via-amber-500 to-rose-500 text-4xl shadow-xl flex items-center justify-center z-20"
       >
         🪷
       </motion.button>
+
+      {/* Full Image Modal */}
+      <AnimatePresence>
+        {showFullImage && group?.image_url && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+            onClick={() => setShowFullImage(false)}
+          >
+            <motion.img
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              src={group.image_url}
+              alt={group.name}
+              className="max-w-full max-h-full rounded-2xl object-contain"
+            />
+            <button
+              type="button"
+              onClick={() => setShowFullImage(false)}
+              className="absolute top-6 right-6 text-white text-3xl"
+            >
+              ✕
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

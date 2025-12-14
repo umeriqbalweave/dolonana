@@ -385,18 +385,18 @@ export default function GroupsPage() {
             Check in with your people.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={withHaptics(() => router.push("/groups/new"))}
-            className="rounded-full bg-amber-500 px-6 py-3 text-lg font-bold text-white shadow-sm transition hover:bg-amber-400"
+            className="rounded-full bg-amber-500 px-8 py-4 text-xl font-bold text-white shadow-lg transition hover:bg-amber-400"
           >
             + New
           </button>
           <button
             type="button"
             onClick={withHaptics(() => router.push("/profile"))}
-            className={isDark ? "flex h-14 w-14 items-center justify-center rounded-full border-2 border-slate-700 bg-slate-950/80 text-base font-semibold text-slate-200 hover:border-amber-400" : "flex h-14 w-14 items-center justify-center rounded-full border-2 border-stone-300 bg-white text-base font-semibold text-stone-700 hover:border-amber-500 shadow-sm"}
+            className={isDark ? "flex h-16 w-16 items-center justify-center rounded-full border-3 border-slate-700 bg-slate-950/80 text-lg font-semibold text-slate-200 hover:border-amber-400 ring-2 ring-amber-500/50" : "flex h-16 w-16 items-center justify-center rounded-full border-3 border-stone-300 bg-white text-lg font-semibold text-stone-700 hover:border-amber-500 shadow-md ring-2 ring-orange-400/50"}
           >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -637,12 +637,12 @@ export default function GroupsPage() {
                         }
                       })}
                       style={{ transform: `translateX(-${swipeOffset}px)`, transition: swipeStartX.current ? 'none' : 'transform 0.2s ease-out' }}
-                      className={isDark ? "relative cursor-pointer flex items-center gap-4 rounded-2xl bg-white/5 border border-white/10 px-4 py-4 hover:bg-white/10 hover:border-emerald-400/30 transition-colors" : "relative cursor-pointer flex items-center gap-4 rounded-2xl bg-white border border-slate-200 px-4 py-4 hover:bg-slate-50 hover:border-emerald-400 transition-colors shadow-sm"}
+                      className={isDark ? "relative cursor-pointer flex items-center gap-4 rounded-2xl bg-white/5 border border-white/10 px-5 py-5 hover:bg-white/10 hover:border-emerald-400/30 transition-colors" : "relative cursor-pointer flex items-center gap-4 rounded-2xl bg-white border border-slate-200 px-5 py-5 hover:bg-slate-50 hover:border-emerald-400 transition-colors shadow-sm"}
                     >
                       {/* Group Image */}
-                      <div className={isDark ? "h-14 w-14 overflow-hidden rounded-xl bg-white/10 flex-shrink-0 relative" : "h-14 w-14 overflow-hidden rounded-xl bg-slate-100 flex-shrink-0 relative"}>
+                      <div className={isDark ? "h-18 w-18 overflow-hidden rounded-xl bg-white/10 flex-shrink-0 relative ring-2 ring-emerald-500/30" : "h-18 w-18 overflow-hidden rounded-xl bg-slate-100 flex-shrink-0 relative ring-2 ring-orange-400/30"} style={{height: '72px', width: '72px'}}>
                         {/* Always show initials as base layer */}
-                        <div className={isDark ? "absolute inset-0 flex items-center justify-center text-base font-bold text-white/60" : "absolute inset-0 flex items-center justify-center text-base font-bold text-slate-400"}>
+                        <div className={isDark ? "absolute inset-0 flex items-center justify-center text-xl font-bold text-white/60" : "absolute inset-0 flex items-center justify-center text-xl font-bold text-slate-400"}>
                           {group.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
                         </div>
                         {/* Image loads on top when available */}
@@ -657,21 +657,21 @@ export default function GroupsPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className={isDark ? "text-lg font-semibold text-white truncate" : "text-lg font-semibold text-slate-800 truncate"}>{group.name}</p>
+                          <p className={isDark ? "text-xl font-bold text-white truncate" : "text-xl font-bold text-slate-800 truncate"}>{group.name}</p>
                           {unreadCounts[group.id] > 0 && (
-                            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-xs font-bold text-white">
+                            <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-rose-500 px-2 text-sm font-bold text-white">
                               {unreadCounts[group.id] > 99 ? "99+" : unreadCounts[group.id]}
                             </span>
                           )}
                         </div>
-                        <p className={isDark ? "text-sm text-white/50 truncate" : "text-sm text-stone-500 truncate"}>
+                        <p className={isDark ? "text-base text-white/50 truncate" : "text-base text-stone-500 truncate"}>
                           {group.memberCount} {group.memberCount === 1 ? "member" : "members"}
                         </p>
                       </div>
-                      {/* Stacked Avatars (smaller) */}
-                      <div className="flex -space-x-1.5">
+                      {/* Stacked Avatars (bigger) */}
+                      <div className="flex -space-x-2">
                         {group.memberAvatars?.slice(0, 3).map((avatar, i) => (
-                          <div key={i} className={isDark ? "h-8 w-8 rounded-full border border-slate-800 bg-white/10 overflow-hidden" : "h-8 w-8 rounded-full border border-slate-200 bg-slate-100 overflow-hidden"}>
+                          <div key={i} className={isDark ? "h-10 w-10 rounded-full border-2 border-slate-800 bg-white/10 overflow-hidden" : "h-10 w-10 rounded-full border-2 border-white bg-slate-100 overflow-hidden shadow-sm"}>
                             {avatar ? (
                               <img src={avatar} alt="" className="h-full w-full object-cover" />
                             ) : (
