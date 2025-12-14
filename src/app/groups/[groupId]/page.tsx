@@ -52,15 +52,16 @@ export default function GroupDetailPage() {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [expandedCheckin, setExpandedCheckin] = useState<string | null>(null);
 
   const isDark = theme === "dark";
+  const isWarm = theme === "warm";
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedTheme = window.localStorage.getItem("theme");
-      if (savedTheme === "light" || savedTheme === "dark") {
+      if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "warm") {
         setTheme(savedTheme);
       }
     }
@@ -215,39 +216,46 @@ export default function GroupDetailPage() {
     return date.toLocaleDateString();
   }
 
+  // Theme classes
+  const bgClass = isDark
+    ? "flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+    : isWarm
+    ? "flex min-h-screen items-center justify-center bg-[#FDF8F3]"
+    : "flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100";
+
+  const mainBgClass = isDark
+    ? "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50"
+    : isWarm
+    ? "relative flex min-h-screen flex-col bg-[#FDF8F3] text-stone-800"
+    : "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900";
+
+  const headerClass = isDark
+    ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4"
+    : isWarm
+    ? "flex items-center justify-between gap-4 border-b border-stone-200 bg-[#FAF5EF] px-4 py-4"
+    : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 shadow-sm";
+
+  const cardClass = isDark
+    ? "rounded-2xl bg-slate-900/50 border border-slate-800 p-4"
+    : isWarm
+    ? "rounded-2xl bg-[#FAF5EF] border border-stone-200 p-4"
+    : "rounded-2xl bg-white border border-slate-200 p-4 shadow-sm";
+
   if (loading) {
     return (
-      <div
-        className={
-          isDark
-            ? "flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
-            : "flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100"
-        }
-      >
+      <div className={bgClass}>
         <div className="text-center">
           <div className="animate-pulse text-6xl mb-4">🪷</div>
-          <p className={isDark ? "text-slate-400" : "text-slate-600"}>Loading...</p>
+          <p className={isDark ? "text-slate-400" : "text-stone-500"}>Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div
-      className={
-        isDark
-          ? "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50"
-          : "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900"
-      }
-    >
+    <div className={mainBgClass}>
       {/* Header */}
-      <header
-        className={
-          isDark
-            ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4"
-            : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 shadow-sm"
-        }
-      >
+      <header className={headerClass}>
         <button
           type="button"
           onClick={withHaptics(() => router.push("/groups"))}
