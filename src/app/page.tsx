@@ -148,7 +148,7 @@ function HomeContent() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-[#FDF8F3] text-stone-800 overflow-hidden">
+    <div className="relative flex min-h-screen items-center justify-center bg-[#FCEADE] text-stone-800 overflow-hidden">
       <FloatingEmojis count={5} />
       <motion.main
         initial={{ opacity: 0, y: 16, scale: 0.98 }}

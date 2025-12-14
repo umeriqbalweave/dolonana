@@ -171,19 +171,19 @@ export default function NewGroupPage() {
   const bgClass = isDark
     ? "min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50"
     : isWarm
-    ? "min-h-screen bg-[#FDF8F3] text-stone-800"
+    ? "min-h-screen bg-[#FCEADE] text-stone-800"
     : "min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900";
 
   const cardClass = isDark
     ? "rounded-2xl bg-slate-900/50 border border-slate-800 p-6"
     : isWarm
-    ? "rounded-2xl bg-[#FAF5EF] border border-stone-200 p-6"
+    ? "rounded-2xl bg-white border border-orange-200 p-6 shadow-sm"
     : "rounded-2xl bg-white border border-slate-200 p-6 shadow-sm";
 
   const inputClass = isDark
     ? "w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-white placeholder:text-slate-500 outline-none focus:border-amber-400"
     : isWarm
-    ? "w-full rounded-xl bg-white border border-stone-300 px-4 py-3 text-stone-800 placeholder:text-stone-400 outline-none focus:border-amber-500"
+    ? "w-full rounded-xl bg-white border-2 border-orange-200 px-4 py-3 text-stone-800 placeholder:text-stone-400 outline-none focus:border-orange-400"
     : "w-full rounded-xl bg-white border border-slate-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 outline-none focus:border-amber-500";
 
   return (
@@ -194,7 +194,7 @@ export default function NewGroupPage() {
           isDark
             ? "flex items-center justify-between border-b border-slate-800 bg-slate-950/70 px-4 py-4"
             : isWarm
-            ? "flex items-center justify-between border-b border-stone-200 bg-[#FAF5EF] px-4 py-4"
+            ? "flex items-center justify-between border-b border-orange-200 bg-[#FEF3E2] px-4 py-4"
             : "flex items-center justify-between border-b border-slate-200 bg-white/80 px-4 py-4 shadow-sm"
         }
       >

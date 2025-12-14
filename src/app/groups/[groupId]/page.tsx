@@ -220,25 +220,25 @@ export default function GroupDetailPage() {
   const bgClass = isDark
     ? "flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
     : isWarm
-    ? "flex min-h-screen items-center justify-center bg-[#FDF8F3]"
+    ? "flex min-h-screen items-center justify-center bg-[#FCEADE]"
     : "flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100";
 
   const mainBgClass = isDark
     ? "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50"
     : isWarm
-    ? "relative flex min-h-screen flex-col bg-[#FDF8F3] text-stone-800"
+    ? "relative flex min-h-screen flex-col bg-[#FCEADE] text-stone-800"
     : "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900";
 
   const headerClass = isDark
     ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4"
     : isWarm
-    ? "flex items-center justify-between gap-4 border-b border-stone-200 bg-[#FAF5EF] px-4 py-4"
+    ? "flex items-center justify-between gap-4 border-b border-orange-200 bg-[#FEF3E2] px-4 py-4"
     : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 shadow-sm";
 
   const cardClass = isDark
     ? "rounded-2xl bg-slate-900/50 border border-slate-800 p-4"
     : isWarm
-    ? "rounded-2xl bg-[#FAF5EF] border border-stone-200 p-4"
+    ? "rounded-2xl bg-white border border-orange-200 p-4 shadow-sm"
     : "rounded-2xl bg-white border border-slate-200 p-4 shadow-sm";
 
   if (loading) {

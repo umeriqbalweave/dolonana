@@ -359,7 +359,7 @@ export default function GroupsPage() {
   const bgClass = isDark 
     ? "relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 overflow-hidden"
     : isWarm
-    ? "relative min-h-screen bg-[#FDF8F3] text-stone-800 overflow-hidden"
+    ? "relative min-h-screen bg-[#FCEADE] text-stone-800 overflow-hidden"
     : "relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 overflow-hidden";
 
   return (
@@ -370,7 +370,7 @@ export default function GroupsPage() {
           isDark
             ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4 md:px-8"
             : isWarm
-            ? "flex items-center justify-between gap-4 border-b border-stone-200 bg-[#FAF5EF] px-4 py-4 md:px-8"
+            ? "flex items-center justify-between gap-4 border-b border-orange-200 bg-[#FEF3E2] px-4 py-4 md:px-8"
             : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 text-slate-900 shadow-sm md:px-8"
         }
       >

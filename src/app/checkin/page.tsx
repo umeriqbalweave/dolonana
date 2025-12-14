@@ -163,13 +163,13 @@ export default function CheckInPage() {
   const bgClass = isDark
     ? "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50"
     : isWarm
-    ? "relative flex min-h-screen flex-col bg-[#FDF8F3] text-stone-800"
+    ? "relative flex min-h-screen flex-col bg-[#FCEADE] text-stone-800"
     : "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900";
 
   const headerClass = isDark
     ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4"
     : isWarm
-    ? "flex items-center justify-between gap-4 border-b border-stone-200 bg-[#FAF5EF] px-4 py-4"
+    ? "flex items-center justify-between gap-4 border-b border-orange-200 bg-[#FEF3E2] px-4 py-4"
     : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 shadow-sm";
 
   return (
