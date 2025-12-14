@@ -224,14 +224,24 @@ export default function GroupDetailPage() {
 
     setSendingMessage(true);
 
-    const { error } = await supabase.from("messages").insert({
+    const { data, error } = await supabase.from("messages").insert({
       group_id: groupId,
       user_id: userId,
       text: newMessageText.trim(),
-    });
+    }).select();
 
-    if (!error) {
+    console.log("Message insert result:", { data, error });
+
+    if (error) {
+      console.error("Error sending message:", error);
+    } else {
       setNewMessageText("");
+      // Manually add message to state if realtime doesn't work
+      if (data && data[0]) {
+        const newMsg = data[0];
+        const profile = profilesById[userId];
+        setMessages(prev => [...prev, { ...newMsg, profile }]);
+      }
     }
 
     setSendingMessage(false);
