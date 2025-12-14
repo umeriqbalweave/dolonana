@@ -201,15 +201,15 @@ export default function CheckInPage() {
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className={isDark ? "text-2xl font-medium text-slate-200 mb-2" : "text-2xl font-medium text-slate-700 mb-2"}
+                className={isDark ? "text-3xl font-medium text-slate-200 mb-3" : "text-3xl font-medium text-stone-700 mb-3"}
               >
                 How are you feeling?
               </motion.p>
-              <p className={isDark ? "text-sm text-slate-500 mb-8" : "text-sm text-slate-400 mb-8"}>
+              <p className={isDark ? "text-lg text-slate-500 mb-8" : "text-lg text-stone-500 mb-8"}>
                 1 = struggling &nbsp;•&nbsp; 10 = thriving
               </p>
 
-              <div className="grid grid-cols-5 gap-3 mb-8">
+              <div className="grid grid-cols-5 gap-4 mb-8">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                   <motion.button
                     key={num}
@@ -217,7 +217,7 @@ export default function CheckInPage() {
                     onClick={withHaptics(() => handleNumberSelect(num))}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
-                    className={`h-14 w-14 rounded-2xl text-xl font-bold text-white shadow-lg transition-all ${
+                    className={`h-16 w-16 rounded-2xl text-2xl font-bold text-white shadow-lg transition-all ${
                       selectedNumber === num
                         ? `bg-gradient-to-br ${getNumberColor(num)} ring-4 ring-white/30`
                         : isDark
@@ -257,10 +257,10 @@ export default function CheckInPage() {
                 </span>
               </div>
 
-              <p className={isDark ? "text-xl font-medium text-slate-200 mb-2" : "text-xl font-medium text-slate-700 mb-2"}>
+              <p className={isDark ? "text-2xl font-medium text-slate-200 mb-2" : "text-2xl font-medium text-stone-700 mb-2"}>
                 What&apos;s going on?
               </p>
-              <p className={isDark ? "text-sm text-slate-500 mb-6" : "text-sm text-slate-400 mb-6"}>
+              <p className={isDark ? "text-lg text-slate-500 mb-6" : "text-lg text-stone-500 mb-6"}>
                 Optional - share as much or as little as you want
               </p>
 
@@ -270,8 +270,8 @@ export default function CheckInPage() {
                 placeholder="I'm feeling this way because..."
                 className={
                   isDark
-                    ? "w-full min-h-[120px] rounded-2xl bg-slate-800 border border-slate-700 px-4 py-3 text-white placeholder:text-slate-500 outline-none focus:border-rose-400 resize-none"
-                    : "w-full min-h-[120px] rounded-2xl bg-white border border-slate-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 outline-none focus:border-rose-500 resize-none shadow-sm"
+                    ? "w-full min-h-[140px] rounded-2xl bg-slate-800 border-2 border-slate-700 px-5 py-4 text-xl text-white placeholder:text-slate-500 outline-none focus:border-rose-400 resize-none"
+                    : "w-full min-h-[140px] rounded-2xl bg-white border-2 border-stone-200 px-5 py-4 text-xl text-stone-800 placeholder:text-stone-400 outline-none focus:border-amber-500 resize-none shadow-sm"
                 }
               />
 
@@ -279,14 +279,14 @@ export default function CheckInPage() {
                 <button
                   type="button"
                   onClick={withHaptics(() => setStep("number"))}
-                  className={isDark ? "flex-1 rounded-xl bg-slate-800 px-4 py-3 font-medium text-slate-300 hover:bg-slate-700" : "flex-1 rounded-xl bg-slate-100 px-4 py-3 font-medium text-slate-600 hover:bg-slate-200"}
+                  className={isDark ? "flex-1 rounded-2xl bg-slate-800 px-5 py-4 text-xl font-medium text-slate-300 hover:bg-slate-700" : "flex-1 rounded-2xl bg-stone-200 px-5 py-4 text-xl font-medium text-stone-600 hover:bg-stone-300"}
                 >
                   Back
                 </button>
                 <button
                   type="button"
                   onClick={withHaptics(handleMessageNext)}
-                  className="flex-1 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 px-4 py-3 font-bold text-white shadow-lg"
+                  className="flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-amber-500 px-5 py-4 text-xl font-bold text-white shadow-lg"
                 >
                   Next →
                 </button>
@@ -314,7 +314,7 @@ export default function CheckInPage() {
                 )}
               </div>
 
-              <p className={isDark ? "text-xl font-medium text-slate-200 mb-2 text-center" : "text-xl font-medium text-slate-700 mb-2 text-center"}>
+              <p className={isDark ? "text-2xl font-medium text-slate-200 mb-4 text-center" : "text-2xl font-medium text-stone-700 mb-4 text-center"}>
                 Share with...
               </p>
 
@@ -324,14 +324,14 @@ export default function CheckInPage() {
                 onClick={withHaptics(toggleAllGroups)}
                 className={
                   isDark
-                    ? "w-full mb-4 rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-left flex items-center justify-between"
-                    : "w-full mb-4 rounded-xl bg-white border border-slate-200 px-4 py-3 text-left flex items-center justify-between shadow-sm"
+                    ? "w-full mb-4 rounded-2xl bg-slate-800 border-2 border-slate-700 px-5 py-4 text-left flex items-center justify-between"
+                    : "w-full mb-4 rounded-2xl bg-white border-2 border-stone-200 px-5 py-4 text-left flex items-center justify-between shadow-sm"
                 }
               >
-                <span className={isDark ? "font-medium text-slate-200" : "font-medium text-slate-700"}>
+                <span className={isDark ? "text-xl font-medium text-slate-200" : "text-xl font-medium text-stone-700"}>
                   All Groups
                 </span>
-                <span className={selectedGroups.size === groups.length ? "text-rose-500 text-xl" : "text-slate-500 text-xl"}>
+                <span className={selectedGroups.size === groups.length ? "text-rose-500 text-2xl" : "text-slate-500 text-2xl"}>
                   {selectedGroups.size === groups.length ? "✓" : "○"}
                 </span>
               </button>
@@ -345,11 +345,11 @@ export default function CheckInPage() {
                     onClick={withHaptics(() => toggleGroup(group.id))}
                     className={
                       isDark
-                        ? "w-full rounded-xl bg-slate-800/50 border border-slate-700 px-4 py-3 text-left flex items-center gap-3"
-                        : "w-full rounded-xl bg-white border border-slate-200 px-4 py-3 text-left flex items-center gap-3 shadow-sm"
+                        ? "w-full rounded-2xl bg-slate-800/50 border-2 border-slate-700 px-5 py-4 text-left flex items-center gap-4"
+                        : "w-full rounded-2xl bg-white border-2 border-stone-200 px-5 py-4 text-left flex items-center gap-4 shadow-sm"
                     }
                   >
-                    <div className={isDark ? "h-10 w-10 rounded-full bg-slate-700 overflow-hidden flex items-center justify-center" : "h-10 w-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center"}>
+                    <div className={isDark ? "h-14 w-14 rounded-full bg-slate-700 overflow-hidden flex items-center justify-center" : "h-14 w-14 rounded-full bg-stone-100 overflow-hidden flex items-center justify-center"}>
                       {group.image_url ? (
                         <img src={group.image_url} alt="" className="h-full w-full object-cover" />
                       ) : (
@@ -358,10 +358,10 @@ export default function CheckInPage() {
                         </span>
                       )}
                     </div>
-                    <span className={isDark ? "flex-1 font-medium text-slate-200" : "flex-1 font-medium text-slate-700"}>
+                    <span className={isDark ? "flex-1 text-xl font-medium text-slate-200" : "flex-1 text-xl font-medium text-stone-700"}>
                       {group.name}
                     </span>
-                    <span className={selectedGroups.has(group.id) ? "text-rose-500 text-xl" : "text-slate-500 text-xl"}>
+                    <span className={selectedGroups.has(group.id) ? "text-rose-500 text-2xl" : "text-slate-500 text-2xl"}>
                       {selectedGroups.has(group.id) ? "✓" : "○"}
                     </span>
                   </button>
@@ -372,7 +372,7 @@ export default function CheckInPage() {
                 <button
                   type="button"
                   onClick={withHaptics(() => setStep("message"))}
-                  className={isDark ? "flex-1 rounded-xl bg-slate-800 px-4 py-3 font-medium text-slate-300 hover:bg-slate-700" : "flex-1 rounded-xl bg-slate-100 px-4 py-3 font-medium text-slate-600 hover:bg-slate-200"}
+                  className={isDark ? "flex-1 rounded-2xl bg-slate-800 px-5 py-4 text-xl font-medium text-slate-300 hover:bg-slate-700" : "flex-1 rounded-2xl bg-stone-200 px-5 py-4 text-xl font-medium text-stone-600 hover:bg-stone-300"}
                 >
                   Back
                 </button>
@@ -380,7 +380,7 @@ export default function CheckInPage() {
                   type="button"
                   onClick={withHaptics(handleShare)}
                   disabled={selectedGroups.size === 0 || sending}
-                  className="flex-1 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 px-4 py-3 font-bold text-white shadow-lg disabled:opacity-50"
+                  className="flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-amber-500 px-5 py-4 text-xl font-bold text-white shadow-lg disabled:opacity-50"
                 >
                   {sending ? "Sharing..." : `Share 💜`}
                 </button>

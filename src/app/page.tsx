@@ -160,7 +160,7 @@ function HomeContent() {
         {!inviteGroupId && (
           <>
             <motion.h1
-              className="mb-2 text-center text-4xl font-bold tracking-tight md:text-5xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent"
+              className="mb-3 text-center text-5xl font-bold tracking-tight md:text-6xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
@@ -168,7 +168,7 @@ function HomeContent() {
               Dolo
             </motion.h1>
             <motion.p
-              className="mb-8 text-center text-lg text-slate-300 md:text-xl"
+              className="mb-10 text-center text-xl text-stone-600 md:text-2xl"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.18 }}
@@ -180,7 +180,7 @@ function HomeContent() {
         {step === "phone" && (
           <form onSubmit={handleSendOtp} className="space-y-5">
             <motion.h2
-              className="text-center text-2xl font-bold text-stone-800 md:text-3xl"
+              className="text-center text-3xl font-bold text-stone-800 md:text-4xl"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
@@ -192,7 +192,7 @@ function HomeContent() {
               value={phone}
               onChange={(event) => setPhone(event.target.value)}
               placeholder="+1 555 555 5555"
-              className="w-full rounded-xl border border-stone-300 bg-white px-5 py-4 text-xl text-stone-800 text-center outline-none focus:border-amber-500"
+              className="w-full rounded-2xl border-2 border-stone-300 bg-white px-6 py-5 text-2xl text-stone-800 text-center outline-none focus:border-amber-500"
               required
             />
             {error && (
@@ -202,12 +202,12 @@ function HomeContent() {
               type="submit"
               disabled={loading}
               onClick={withHaptics(() => {})}
-              className="flex w-full items-center justify-center rounded-xl bg-amber-500 px-5 py-4 text-xl font-bold text-white transition hover:bg-amber-400 disabled:opacity-60"
+              className="flex w-full items-center justify-center rounded-2xl bg-amber-500 px-6 py-5 text-2xl font-bold text-white transition hover:bg-amber-400 disabled:opacity-60"
             >
               {loading ? "Sending..." : "Send code"}
             </button>
             {!inviteGroupId && (
-              <p className="text-center text-base text-stone-500">
+              <p className="text-center text-lg text-stone-500">
                 We&apos;ll text you a one-time code.
               </p>
             )}
@@ -216,7 +216,7 @@ function HomeContent() {
         {step === "otp" && (
           <form onSubmit={handleVerifyOtp} className="space-y-5">
             <motion.h2
-              className="text-center text-2xl font-bold text-stone-800 md:text-3xl"
+              className="text-center text-3xl font-bold text-stone-800 md:text-4xl"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
@@ -251,14 +251,14 @@ function HomeContent() {
               type="submit"
               disabled={loading}
               onClick={withHaptics(() => {})}
-              className="flex w-full items-center justify-center rounded-xl bg-amber-500 px-5 py-4 text-xl font-bold text-white transition hover:bg-amber-400 disabled:opacity-60"
+              className="flex w-full items-center justify-center rounded-2xl bg-amber-500 px-6 py-5 text-2xl font-bold text-white transition hover:bg-amber-400 disabled:opacity-60"
             >
               {loading ? "Verifying..." : "Verify"}
             </button>
             <button
               type="button"
               onClick={withHaptics(() => setStep("phone"))}
-              className="w-full text-center text-lg text-stone-500 hover:text-stone-700 py-3"
+              className="w-full text-center text-xl text-stone-500 hover:text-stone-700 py-4"
             >
               ← Different number
             </button>
