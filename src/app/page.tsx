@@ -160,12 +160,12 @@ function HomeContent() {
         {!inviteGroupId && (
           <>
             <motion.h1
-              className="mb-2 text-center text-4xl font-bold tracking-tight md:text-5xl bg-gradient-to-r from-violet-400 via-emerald-400 to-violet-400 bg-clip-text text-transparent"
+              className="mb-2 text-center text-4xl font-bold tracking-tight md:text-5xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
             >
-              QWF
+              Dolo
             </motion.h1>
             <motion.p
               className="mb-8 text-center text-lg text-slate-300 md:text-xl"
@@ -173,7 +173,7 @@ function HomeContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.18 }}
             >
-              Answer first. Then see theirs.
+              Check in with your people.
             </motion.p>
           </>
         )}

@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`;
     const authHeader = Buffer.from(`${twilioSid}:${twilioAuth}`).toString("base64");
 
-    const messageBody = `📬 QWF Feedback from ${userName} (${userPhone}):\n\n"${feedback}"`;
+    const messageBody = `📬 Dolo Feedback from ${userName} (${userPhone}):\n\n"${feedback}"`;
 
     const smsResponse = await fetch(twilioUrl, {
       method: "POST",
