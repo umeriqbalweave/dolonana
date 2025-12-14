@@ -247,8 +247,14 @@ function ProfileContent() {
     );
   }
 
+  const bgClass = isDark 
+    ? "relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 overflow-hidden"
+    : theme === "warm"
+    ? "relative min-h-screen bg-[#FCEADE] text-stone-800 overflow-hidden"
+    : "relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 overflow-hidden";
+
   return (
-    <div className={isDark ? "relative min-h-screen bg-gradient-to-br from-violet-950 via-slate-900 to-emerald-900 text-slate-50 overflow-hidden" : "relative min-h-screen bg-gradient-to-br from-violet-100 via-slate-100 to-emerald-100 text-slate-900 overflow-hidden"}>
+    <div className={bgClass}>
       <FloatingEmojis count={5} />
       <div className="relative z-10 mx-auto max-w-md px-4 py-6">
         {/* Header */}
