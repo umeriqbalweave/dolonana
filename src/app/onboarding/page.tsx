@@ -107,12 +107,12 @@ function OnboardingContent() {
         {step === 1 && (
           <form onSubmit={handleNameSubmit} className="space-y-6">
             <div className="text-center mb-8">
-              <div className="text-6xl mb-4">🪷</div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent">
+              <div className="text-7xl mb-4">🪷</div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent">
                 What should we call you?
               </h1>
-              <p className="text-slate-400 mt-2">This is how your friends will see you</p>
-              <p className="text-xs text-rose-400 mt-1">* Required</p>
+              <p className="text-xl text-slate-400 mt-3">This is how your friends will see you</p>
+              <p className="text-base text-rose-400 mt-2">* Required</p>
             </div>
 
             <input
@@ -121,14 +121,14 @@ function OnboardingContent() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Your name"
               autoFocus
-              className="w-full rounded-2xl bg-white/10 border border-white/20 px-5 py-4 text-xl text-white placeholder:text-white/40 focus:border-amber-400 focus:outline-none text-center"
+              className="w-full rounded-2xl bg-white/10 border-2 border-white/20 px-6 py-5 text-2xl text-white placeholder:text-white/40 focus:border-amber-400 focus:outline-none text-center"
             />
 
             <button
               type="submit"
               disabled={!name.trim() || saving}
               onClick={withHaptics(() => {})}
-              className="w-full rounded-2xl bg-amber-500 px-5 py-4 text-lg font-bold text-black hover:bg-amber-400 transition shadow-lg disabled:opacity-50"
+              className="w-full rounded-2xl bg-amber-500 px-6 py-5 text-2xl font-bold text-white hover:bg-amber-400 transition shadow-lg disabled:opacity-50"
             >
               {saving ? "Saving..." : "Continue →"}
             </button>
@@ -139,11 +139,11 @@ function OnboardingContent() {
         {step === 2 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <div className="text-6xl mb-4">✨</div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent">
+              <div className="text-7xl mb-4">✨</div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent">
                 Add a photo
               </h1>
-              <p className="text-slate-400 mt-2">Optional, but it helps friends recognize you!</p>
+              <p className="text-xl text-slate-400 mt-3">Optional, but it helps friends recognize you!</p>
             </div>
 
             <input
@@ -180,7 +180,7 @@ function OnboardingContent() {
                 type="button"
                 onClick={withHaptics(handlePhotoSubmit)}
                 disabled={saving}
-                className="w-full rounded-2xl bg-amber-500 px-5 py-4 text-lg font-bold text-black hover:bg-amber-400 transition shadow-lg disabled:opacity-50"
+                className="w-full rounded-2xl bg-amber-500 px-6 py-5 text-2xl font-bold text-white hover:bg-amber-400 transition shadow-lg disabled:opacity-50"
               >
                 {saving ? "Saving..." : avatarFile ? "Save & Continue →" : "Continue →"}
               </button>
