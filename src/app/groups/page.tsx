@@ -1,0 +1,727 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+import { withHaptics } from "@/lib/haptics";
+import FloatingEmojis from "@/components/FloatingEmojis";
+
+type Group = {
+  id: string;
+  name: string;
+  question_prompt: string;
+  image_url?: string | null;
+  owner_id?: string;
+  last_activity?: string | null;
+  todayQuestion?: string | null;
+  memberAvatars?: (string | null)[];
+  memberCount?: number;
+  hasNewActivity?: boolean;
+};
+
+export default function GroupsPage() {
+  const router = useRouter();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [groupsLoading, setGroupsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [deletingGroupId, setDeletingGroupId] = useState<string | null>(null);
+  const swipeStartX = useRef<number | null>(null);
+  const [swipeOffsets, setSwipeOffsets] = useState<Record<string, number>>({});
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+
+  function toggleTheme() {
+    setTheme((previous) => {
+      const next = previous === "dark" ? "light" : "dark";
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("theme", next);
+      }
+      return next;
+    });
+  }
+
+  useEffect(() => {
+    async function loadUser() {
+      const { data } = await supabase.auth.getUser();
+      const currentUserId = data.user?.id ?? null;
+      const phone = data.user?.phone ?? null;
+
+      if (!currentUserId) {
+        router.replace("/");
+        return;
+      }
+
+      setUserId(currentUserId);
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("avatar_url, display_name")
+        .eq("id", currentUserId)
+        .maybeSingle();
+
+      // Redirect to onboarding if user doesn't have a name
+      const hasName = profile?.display_name && profile.display_name.trim().length > 0;
+      if (!hasName) {
+        router.replace("/onboarding");
+        return;
+      }
+
+      if (profile?.avatar_url) {
+        setAvatarUrl(profile.avatar_url);
+      }
+
+      void fetchGroups(currentUserId, phone);
+    }
+
+    void loadUser();
+  }, [router]);
+
+  // Real-time subscription for new messages/answers across all groups
+  useEffect(() => {
+    if (groups.length === 0) return;
+
+    const groupIds = groups.map((g) => g.id);
+
+    // Subscribe to new messages in any of the user's groups
+    const messagesChannel = supabase
+      .channel("groups-messages-realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+        },
+        (payload) => {
+          const newMessage = payload.new as { group_id?: string; user_id?: string };
+          if (newMessage.group_id && groupIds.includes(newMessage.group_id)) {
+            // Don't count own messages
+            if (newMessage.user_id !== userId) {
+              setUnreadCounts((prev) => ({
+                ...prev,
+                [newMessage.group_id!]: (prev[newMessage.group_id!] || 0) + 1,
+              }));
+            }
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "answers",
+        },
+        (payload) => {
+          const newAnswer = payload.new as { user_id?: string };
+          // For answers, we need to look up which group - for now just trigger a visual hint
+          if (newAnswer.user_id && newAnswer.user_id !== userId) {
+            // Could enhance this to map question_id -> group_id if needed
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(messagesChannel);
+    };
+  }, [groups, userId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = window.localStorage.getItem("theme");
+    if (stored === "light" || stored === "dark") {
+      setTheme(stored);
+    }
+  }, []);
+
+  function toE164(phone: string): string {
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length === 11 && digits.startsWith("1")) {
+      return `+${digits}`;
+    }
+    if (digits.length === 10) {
+      return `+1${digits}`;
+    }
+    return phone.startsWith("+") ? phone : `+${phone}`;
+  }
+
+  async function fetchGroups(currentUserId: string, phone: string | null) {
+    setGroupsLoading(true);
+    const groupIdSet = new Set<string>();
+
+    // Groups where the user is already a member
+    const { data: memberships, error: membershipError } = await supabase
+      .from("group_memberships")
+      .select("group_id")
+      .eq("user_id", currentUserId);
+
+    if (!membershipError && memberships) {
+      for (const m of memberships) {
+        if (m.group_id) groupIdSet.add(m.group_id as string);
+      }
+    }
+
+    // Groups where the user is invited by phone (pending or accepted)
+    if (phone) {
+      const normalizedPlus = toE164(phone);
+      const { data: invites } = await supabase
+        .from("invites")
+        .select("group_id")
+        .in("invited_phone", [phone, normalizedPlus]);
+
+      if (invites) {
+        for (const invite of invites) {
+          if (invite.group_id) groupIdSet.add(invite.group_id as string);
+        }
+      }
+    }
+
+    const groupIds = Array.from(groupIdSet);
+
+    if (groupIds.length === 0) {
+      setGroups([]);
+      setGroupsLoading(false);
+      return;
+    }
+
+    const { data: groupsData, error: groupsError } = await supabase
+      .from("groups")
+      .select("id, name, question_prompt, image_url, owner_id")
+      .in("id", groupIds);
+
+    if (groupsError) {
+      setError(groupsError.message);
+      setGroups([]);
+      setGroupsLoading(false);
+      return;
+    }
+
+    // Fetch all data in parallel for better performance
+    const today = new Date().toISOString().split("T")[0];
+    
+    // Batch fetch today's questions for all groups
+    const { data: allTodayQuestions } = await supabase
+      .from("daily_questions")
+      .select("group_id, question_text")
+      .in("group_id", groupIds)
+      .eq("date_et", today);
+    
+    // Batch fetch all memberships
+    const { data: allMemberships } = await supabase
+      .from("group_memberships")
+      .select("group_id, user_id")
+      .in("group_id", groupIds);
+    
+    // Get unique member IDs for avatar fetch
+    const allMemberIds = [...new Set(allMemberships?.map(m => m.user_id) || [])];
+    const { data: allProfiles } = await supabase
+      .from("profiles")
+      .select("id, avatar_url")
+      .in("id", allMemberIds.slice(0, 50)); // Limit to avoid too large query
+    
+    const profileMap = new Map(allProfiles?.map(p => [p.id, p.avatar_url]) || []);
+    const questionMap = new Map(allTodayQuestions?.map(q => [q.group_id, q.question_text]) || []);
+    
+    // Group memberships by group_id
+    const membershipsByGroup = new Map<string, string[]>();
+    allMemberships?.forEach(m => {
+      if (!membershipsByGroup.has(m.group_id)) {
+        membershipsByGroup.set(m.group_id, []);
+      }
+      membershipsByGroup.get(m.group_id)!.push(m.user_id);
+    });
+
+    // Build groups with activity data
+    const groupsWithActivity: Group[] = (groupsData ?? []).map(group => {
+      const memberIds = membershipsByGroup.get(group.id) || [];
+      const memberAvatars = memberIds.slice(0, 4).map(id => profileMap.get(id) || null);
+      
+      return {
+        ...group,
+        last_activity: new Date().toISOString(), // Use current time as fallback
+        todayQuestion: questionMap.get(group.id) ?? null,
+        memberAvatars,
+        memberCount: memberIds.length,
+      };
+    });
+
+    // Sort by last activity (most recent first)
+    groupsWithActivity.sort((a, b) => {
+      const aTime = a.last_activity ? new Date(a.last_activity).getTime() : 0;
+      const bTime = b.last_activity ? new Date(b.last_activity).getTime() : 0;
+      return bTime - aTime;
+    });
+
+    setGroups(groupsWithActivity);
+    setGroupsLoading(false);
+
+    // Fetch unread counts based on last visit timestamps stored in localStorage
+    await fetchUnreadCounts(groupIds, currentUserId);
+  }
+
+  async function fetchUnreadCounts(groupIds: string[], currentUserId: string) {
+    if (typeof window === "undefined") return;
+
+    const lastVisitsRaw = window.localStorage.getItem("groupLastVisits");
+    const lastVisits: Record<string, string> = lastVisitsRaw
+      ? JSON.parse(lastVisitsRaw)
+      : {};
+
+    const counts: Record<string, number> = {};
+
+    for (const groupId of groupIds) {
+      const lastVisit = lastVisits[groupId] || new Date(0).toISOString();
+
+      // Count messages since last visit (excluding own messages)
+      const { count, error } = await supabase
+        .from("messages")
+        .select("id", { count: "exact", head: true })
+        .eq("group_id", groupId)
+        .neq("user_id", currentUserId)
+        .gt("created_at", lastVisit);
+
+      if (!error && count && count > 0) {
+        counts[groupId] = count;
+      }
+    }
+
+    setUnreadCounts(counts);
+  }
+
+  async function handleLeaveGroup(groupId: string) {
+    if (!userId) return;
+    
+    const confirmed = window.confirm("Leave this group? Your answers will be deleted.");
+    if (!confirmed) {
+      setSwipeOffsets({});
+      return;
+    }
+
+    setDeletingGroupId(groupId);
+
+    // Delete user's answers for this group
+    const { data: questions } = await supabase
+      .from("daily_questions")
+      .select("id")
+      .eq("group_id", groupId);
+
+    if (questions && questions.length > 0) {
+      const questionIds = questions.map((q) => q.id);
+      await supabase
+        .from("answers")
+        .delete()
+        .eq("user_id", userId)
+        .in("question_id", questionIds);
+    }
+
+    // Delete user's messages
+    await supabase
+      .from("messages")
+      .delete()
+      .eq("user_id", userId)
+      .eq("group_id", groupId);
+
+    // Delete membership
+    await supabase
+      .from("group_memberships")
+      .delete()
+      .eq("user_id", userId)
+      .eq("group_id", groupId);
+
+    // Delete notification settings
+    await supabase
+      .from("group_notification_settings")
+      .delete()
+      .eq("user_id", userId)
+      .eq("group_id", groupId);
+
+    // Remove from local state
+    setGroups(prev => prev.filter(g => g.id !== groupId));
+    setDeletingGroupId(null);
+    setSwipeOffsets({});
+  }
+
+  async function handleDeleteGroup(groupId: string) {
+    const confirmed = window.confirm("Delete this group for everyone? This cannot be undone.");
+    if (!confirmed) {
+      setSwipeOffsets({});
+      return;
+    }
+
+    setDeletingGroupId(groupId);
+    await supabase.from("groups").delete().eq("id", groupId);
+    setGroups(prev => prev.filter(g => g.id !== groupId));
+    setDeletingGroupId(null);
+    setSwipeOffsets({});
+  }
+
+  function handleSwipeStart(e: React.TouchEvent | React.MouseEvent, groupId: string) {
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    swipeStartX.current = clientX;
+  }
+
+  function handleSwipeMove(e: React.TouchEvent | React.MouseEvent, groupId: string) {
+    if (swipeStartX.current === null) return;
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const diff = swipeStartX.current - clientX;
+    // Only allow left swipe (positive diff), cap at 100px
+    const offset = Math.max(0, Math.min(diff, 100));
+    setSwipeOffsets(prev => ({ ...prev, [groupId]: offset }));
+  }
+
+  function handleSwipeEnd(groupId: string) {
+    swipeStartX.current = null;
+    // If swiped more than 50px, keep it open, otherwise close
+    setSwipeOffsets(prev => ({
+      ...prev,
+      [groupId]: (prev[groupId] || 0) > 50 ? 100 : 0
+    }));
+  }
+
+  const isDark = theme === "dark";
+
+  return (
+    <div
+      className={
+        isDark
+          ? "relative min-h-screen bg-gradient-to-br from-violet-950 via-slate-900 to-emerald-900 text-slate-50 overflow-hidden"
+          : "relative min-h-screen bg-gradient-to-br from-violet-100 via-slate-100 to-emerald-100 text-slate-900 overflow-hidden"
+      }
+    >
+      <FloatingEmojis count={6} />
+      <header
+        className={
+          isDark
+            ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4 md:px-8"
+            : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 text-slate-900 shadow-sm md:px-8"
+        }
+      >
+        <div>
+          <h1
+            className="cursor-pointer text-2xl font-bold tracking-tight md:text-3xl bg-gradient-to-r from-violet-400 via-emerald-400 to-violet-400 bg-clip-text text-transparent"
+            onClick={withHaptics(() => setShowWelcome(true))}
+          >
+            QWF
+          </h1>
+          <p className={isDark ? "text-xs text-slate-400 md:text-sm" : "text-xs text-slate-500 md:text-sm"}>
+            Answer first. Then see theirs.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={withHaptics(() => router.push("/groups/new"))}
+            className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-medium text-slate-950 shadow-sm transition hover:bg-emerald-300"
+          >
+            + New
+          </button>
+          <button
+            type="button"
+            onClick={withHaptics(() => router.push("/profile"))}
+            className={isDark ? "flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-950/80 text-xs font-semibold text-slate-200 hover:border-emerald-400" : "flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-white text-xs font-semibold text-slate-700 hover:border-emerald-500 shadow-sm"}
+          >
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={avatarUrl}
+                alt="Profile avatar"
+                className="h-full w-full rounded-full object-cover"
+              />
+            ) : (
+              (userId ?? "?").slice(0, 1).toUpperCase()
+            )}
+          </button>
+        </div>
+      </header>
+
+      {showWelcome && (
+        <div
+          className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-black/70"
+          onClick={withHaptics(() => setShowWelcome(false))}
+          ref={(el) => {
+            if (el) {
+              const timer = setTimeout(() => setShowWelcome(false), 3000);
+              el.dataset.timer = String(timer);
+            }
+          }}
+        >
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0, rotate: 0 }}
+            animate={{ scale: 1, opacity: 1, rotate: 360 }}
+            transition={{
+              scale: { duration: 0.5, ease: "easeOut" },
+              opacity: { duration: 0.5 },
+              rotate: { duration: 2, ease: "linear", repeat: Infinity },
+            }}
+            className="mb-6 text-8xl md:text-9xl"
+          >
+            🦦
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.4 }}
+            className="text-center text-xl font-medium text-slate-100 md:text-2xl"
+          >
+            I&apos;m glad you&apos;re here 💫
+          </motion.p>
+        </div>
+      )}
+
+      
+      <main className="flex h-[calc(100vh-64px)] flex-col px-0 py-0">
+        <div
+          className={
+            isDark
+              ? "flex-1 overflow-y-auto bg-slate-950/80 px-4 pb-6 pt-4 md:px-8"
+              : "flex-1 overflow-y-auto bg-white/80 px-4 pb-6 pt-4 text-slate-900 md:px-8"
+          }
+        >
+          {groupsLoading && (
+            <div className="relative flex flex-col items-center justify-center min-h-[60vh]">
+              <div className="absolute top-10 left-10 text-4xl opacity-20 animate-bounce">✨</div>
+              <div className="absolute bottom-10 right-10 text-4xl opacity-20 animate-pulse">🎉</div>
+              <div className="animate-spin text-6xl mb-4">✨</div>
+              <p className={isDark ? "text-lg text-slate-400" : "text-lg text-slate-600"}>Loading your groups...</p>
+            </div>
+          )}
+          {!groupsLoading && groups.length === 0 && (
+            <div className="py-8 text-center">
+              <div className="text-6xl mb-4">✨</div>
+              <p className={isDark ? "text-lg text-slate-400 mb-2" : "text-lg text-slate-600 mb-2"}>No groups yet!</p>
+              <p className={isDark ? "text-sm text-slate-500" : "text-sm text-slate-500"}>Tap "+ New" to start your first adventure with friends</p>
+            </div>
+          )}
+
+          {/* FEATURED GROUP (first/most active) */}
+          {groups.length > 0 && (() => {
+            const group = groups[0];
+            const isOwner = group.owner_id === userId;
+            const swipeOffset = swipeOffsets[group.id] || 0;
+            
+            return (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="relative overflow-hidden rounded-3xl mb-4"
+              >
+                {/* Delete/Leave button behind - only visible when swiped */}
+                {swipeOffset > 0 && (
+                  <button
+                    type="button"
+                    onClick={withHaptics(() => {
+                      if (isOwner) {
+                        handleDeleteGroup(group.id);
+                      } else {
+                        handleLeaveGroup(group.id);
+                      }
+                    })}
+                    disabled={deletingGroupId === group.id}
+                    className="absolute right-0 top-0 bottom-0 w-24 flex flex-col items-center justify-center gap-1 bg-rose-500 text-white rounded-r-3xl"
+                  >
+                    <span className="text-2xl">{isOwner ? "🗑️" : "👋"}</span>
+                    <span className="text-xs font-semibold">
+                      {deletingGroupId === group.id ? "..." : (isOwner ? "Delete" : "Leave")}
+                    </span>
+                  </button>
+                )}
+                
+                {/* Swipeable content */}
+                <div
+                  onTouchStart={(e) => handleSwipeStart(e, group.id)}
+                  onTouchMove={(e) => handleSwipeMove(e, group.id)}
+                  onTouchEnd={() => handleSwipeEnd(group.id)}
+                  onMouseDown={(e) => handleSwipeStart(e, group.id)}
+                  onMouseMove={(e) => swipeStartX.current !== null && handleSwipeMove(e, group.id)}
+                  onMouseUp={() => handleSwipeEnd(group.id)}
+                  onMouseLeave={() => swipeStartX.current !== null && handleSwipeEnd(group.id)}
+                  onClick={withHaptics(() => {
+                    if (!deletingGroupId && swipeOffset < 10) {
+                      if (typeof window !== "undefined") {
+                        const lastVisitsRaw = window.localStorage.getItem("groupLastVisits");
+                        const lastVisits: Record<string, string> = lastVisitsRaw ? JSON.parse(lastVisitsRaw) : {};
+                        lastVisits[group.id] = new Date().toISOString();
+                        window.localStorage.setItem("groupLastVisits", JSON.stringify(lastVisits));
+                      }
+                      setUnreadCounts((prev) => { const next = { ...prev }; delete next[group.id]; return next; });
+                      router.push(`/groups/${group.id}`);
+                    } else if (swipeOffset >= 10) {
+                      setSwipeOffsets(prev => ({ ...prev, [group.id]: 0 }));
+                    }
+                  })}
+                  style={{ transform: `translateX(-${swipeOffset}px)`, transition: swipeStartX.current ? 'none' : 'transform 0.2s ease-out' }}
+                  className={isDark ? "relative cursor-pointer rounded-3xl bg-gradient-to-br from-violet-600/30 via-emerald-600/20 to-violet-600/30 border border-white/20 p-5 backdrop-blur-sm" : "relative cursor-pointer rounded-3xl bg-gradient-to-br from-violet-100 via-emerald-50 to-violet-100 border border-violet-200 p-5 shadow-lg"}
+                >
+                  <div className="flex items-start gap-4">
+                    {/* Group Image */}
+                    <div className={isDark ? "h-24 w-24 overflow-hidden rounded-2xl bg-white/10 border-2 border-white/20 flex-shrink-0" : "h-24 w-24 overflow-hidden rounded-2xl bg-slate-100 border-2 border-slate-200 flex-shrink-0"}>
+                      {group.image_url ? (
+                        <img src={group.image_url} alt={group.name} className="h-full w-full object-cover" />
+                      ) : (
+                        <div className={isDark ? "h-full w-full flex items-center justify-center text-2xl font-bold text-white/60" : "h-full w-full flex items-center justify-center text-2xl font-bold text-slate-400"}>
+                          {group.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className={isDark ? "text-2xl font-bold text-white truncate" : "text-2xl font-bold text-slate-800 truncate"}>{group.name}</h3>
+                        {unreadCounts[group.id] > 0 && (
+                          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-xs font-bold text-white">
+                            {unreadCounts[group.id] > 99 ? "99+" : unreadCounts[group.id]}
+                          </span>
+                        )}
+                      </div>
+                      {/* Today's Question Preview */}
+                      {group.todayQuestion && (
+                        <p className={isDark ? "text-base text-violet-300 mb-3 line-clamp-2" : "text-base text-violet-600 mb-3 line-clamp-2"}>
+                          📝 {group.todayQuestion}
+                        </p>
+                      )}
+                      {/* Stacked Member Avatars */}
+                      <div className="flex items-center">
+                        <div className="flex -space-x-2">
+                          {group.memberAvatars?.slice(0, 4).map((avatar, i) => (
+                            <div key={i} className={isDark ? "h-10 w-10 rounded-full border-2 border-violet-900 bg-white/10 overflow-hidden" : "h-10 w-10 rounded-full border-2 border-white bg-slate-100 overflow-hidden shadow-sm"}>
+                              {avatar ? (
+                                <img src={avatar} alt="" className="h-full w-full object-cover" />
+                              ) : (
+                                <div className="h-full w-full bg-gradient-to-br from-emerald-400 to-violet-400" />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        {(group.memberCount ?? 0) > 4 && (
+                          <span className={isDark ? "ml-2 text-sm text-white/60" : "ml-2 text-sm text-slate-500"}>+{(group.memberCount ?? 0) - 4} more</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })()}
+
+          {/* OTHER GROUPS LIST */}
+          {groups.length > 1 && (
+            <div className="space-y-2">
+              <p className={isDark ? "text-sm text-white/50 uppercase tracking-wide px-1 mb-3" : "text-sm text-slate-500 uppercase tracking-wide px-1 mb-3"}>Other Groups</p>
+              {groups.slice(1).map((group, index) => {
+                const isOwner = group.owner_id === userId;
+                const swipeOffset = swipeOffsets[group.id] || 0;
+                
+                return (
+                  <motion.div
+                    key={group.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2, delay: index * 0.05 }}
+                    className="relative overflow-hidden rounded-2xl"
+                  >
+                    {/* Delete/Leave button behind - only visible when swiped */}
+                    {swipeOffset > 0 && (
+                      <button
+                        type="button"
+                        onClick={withHaptics(() => {
+                          if (isOwner) {
+                            handleDeleteGroup(group.id);
+                          } else {
+                            handleLeaveGroup(group.id);
+                          }
+                        })}
+                        disabled={deletingGroupId === group.id}
+                        className="absolute right-0 top-0 bottom-0 w-20 flex flex-col items-center justify-center gap-1 bg-rose-500 text-white rounded-r-2xl"
+                      >
+                        <span className="text-xl">{isOwner ? "🗑️" : "👋"}</span>
+                        <span className="text-xs font-semibold">
+                          {deletingGroupId === group.id ? "..." : (isOwner ? "Delete" : "Leave")}
+                        </span>
+                      </button>
+                    )}
+                    
+                    {/* Swipeable content */}
+                    <div
+                      onTouchStart={(e) => handleSwipeStart(e, group.id)}
+                      onTouchMove={(e) => handleSwipeMove(e, group.id)}
+                      onTouchEnd={() => handleSwipeEnd(group.id)}
+                      onMouseDown={(e) => handleSwipeStart(e, group.id)}
+                      onMouseMove={(e) => swipeStartX.current !== null && handleSwipeMove(e, group.id)}
+                      onMouseUp={() => handleSwipeEnd(group.id)}
+                      onMouseLeave={() => swipeStartX.current !== null && handleSwipeEnd(group.id)}
+                      onClick={withHaptics(() => {
+                        if (!deletingGroupId && swipeOffset < 10) {
+                          if (typeof window !== "undefined") {
+                            const lastVisitsRaw = window.localStorage.getItem("groupLastVisits");
+                            const lastVisits: Record<string, string> = lastVisitsRaw ? JSON.parse(lastVisitsRaw) : {};
+                            lastVisits[group.id] = new Date().toISOString();
+                            window.localStorage.setItem("groupLastVisits", JSON.stringify(lastVisits));
+                          }
+                          setUnreadCounts((prev) => { const next = { ...prev }; delete next[group.id]; return next; });
+                          router.push(`/groups/${group.id}`);
+                        } else if (swipeOffset >= 10) {
+                          // Tap to close swipe
+                          setSwipeOffsets(prev => ({ ...prev, [group.id]: 0 }));
+                        }
+                      })}
+                      style={{ transform: `translateX(-${swipeOffset}px)`, transition: swipeStartX.current ? 'none' : 'transform 0.2s ease-out' }}
+                      className={isDark ? "relative cursor-pointer flex items-center gap-4 rounded-2xl bg-white/5 border border-white/10 px-4 py-4 hover:bg-white/10 hover:border-emerald-400/30 transition-colors" : "relative cursor-pointer flex items-center gap-4 rounded-2xl bg-white border border-slate-200 px-4 py-4 hover:bg-slate-50 hover:border-emerald-400 transition-colors shadow-sm"}
+                    >
+                      {/* Group Image */}
+                      <div className={isDark ? "h-14 w-14 overflow-hidden rounded-xl bg-white/10 flex-shrink-0 relative" : "h-14 w-14 overflow-hidden rounded-xl bg-slate-100 flex-shrink-0 relative"}>
+                        {/* Always show initials as base layer */}
+                        <div className={isDark ? "absolute inset-0 flex items-center justify-center text-base font-bold text-white/60" : "absolute inset-0 flex items-center justify-center text-base font-bold text-slate-400"}>
+                          {group.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
+                        </div>
+                        {/* Image loads on top when available */}
+                        {group.image_url && (
+                          <img 
+                            src={group.image_url} 
+                            alt={group.name} 
+                            className="absolute inset-0 h-full w-full object-cover"
+                            loading="lazy"
+                          />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className={isDark ? "text-lg font-semibold text-white truncate" : "text-lg font-semibold text-slate-800 truncate"}>{group.name}</p>
+                          {unreadCounts[group.id] > 0 && (
+                            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-xs font-bold text-white">
+                              {unreadCounts[group.id] > 99 ? "99+" : unreadCounts[group.id]}
+                            </span>
+                          )}
+                        </div>
+                        <p className={isDark ? "text-sm text-white/50 truncate" : "text-sm text-slate-500 truncate"}>
+                          {group.todayQuestion ? `📝 ${group.todayQuestion}` : group.question_prompt}
+                        </p>
+                      </div>
+                      {/* Stacked Avatars (smaller) */}
+                      <div className="flex -space-x-1.5">
+                        {group.memberAvatars?.slice(0, 3).map((avatar, i) => (
+                          <div key={i} className={isDark ? "h-8 w-8 rounded-full border border-slate-800 bg-white/10 overflow-hidden" : "h-8 w-8 rounded-full border border-slate-200 bg-slate-100 overflow-hidden"}>
+                            {avatar ? (
+                              <img src={avatar} alt="" className="h-full w-full object-cover" />
+                            ) : (
+                              <div className="h-full w-full bg-gradient-to-br from-emerald-400 to-violet-400" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
