@@ -20,6 +20,7 @@ export default function CheckInPage() {
   const [message, setMessage] = useState("");
   const [groups, setGroups] = useState<Group[]>([]);
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
+  const [saveToPrivateDiary, setSaveToPrivateDiary] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
@@ -103,35 +104,41 @@ export default function CheckInPage() {
   }
 
   async function handleShare() {
-    if (!userId || selectedNumber === null || selectedGroups.size === 0) return;
+    if (!userId || selectedNumber === null) return;
+    // Must have at least one group selected OR saving to private diary
+    if (selectedGroups.size === 0 && !saveToPrivateDiary) return;
 
     setSending(true);
 
     try {
-      // Insert check-in
+      // Insert check-in (mark as private if only saving to diary)
+      const isPrivate = saveToPrivateDiary && selectedGroups.size === 0;
       const { data: checkin, error: checkinError } = await supabase
         .from("checkins")
         .insert({
           user_id: userId,
           number: selectedNumber,
           message: message.trim() || null,
+          is_private: isPrivate,
         })
         .select()
         .single();
 
       if (checkinError) throw checkinError;
 
-      // Link check-in to selected groups
-      const checkinGroups = Array.from(selectedGroups).map((groupId) => ({
-        checkin_id: checkin.id,
-        group_id: groupId,
-      }));
+      // Link check-in to selected groups (if any)
+      if (selectedGroups.size > 0) {
+        const checkinGroups = Array.from(selectedGroups).map((groupId) => ({
+          checkin_id: checkin.id,
+          group_id: groupId,
+        }));
 
-      const { error: linkError } = await supabase
-        .from("checkin_groups")
-        .insert(checkinGroups);
-
-      if (linkError) throw linkError;
+        const { error: linkError } = await supabase
+          .from("checkin_groups")
+          .insert(checkinGroups);
+        
+        if (linkError) throw linkError;
+      }
 
       setSent(true);
       setTimeout(() => {
@@ -336,8 +343,29 @@ export default function CheckInPage() {
                 </span>
               </button>
 
+              {/* Private Diary Option */}
+              <button
+                type="button"
+                onClick={withHaptics(() => setSaveToPrivateDiary(!saveToPrivateDiary))}
+                className={
+                  isDark
+                    ? "w-full mb-4 rounded-2xl bg-violet-900/30 border-2 border-violet-700 px-5 py-4 text-left flex items-center justify-between"
+                    : "w-full mb-4 rounded-2xl bg-violet-50 border-2 border-violet-200 px-5 py-4 text-left flex items-center justify-between shadow-sm"
+                }
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">📔</span>
+                  <span className={isDark ? "text-xl font-medium text-violet-200" : "text-xl font-medium text-violet-700"}>
+                    My Private Diary
+                  </span>
+                </div>
+                <span className={saveToPrivateDiary ? "text-violet-500 text-2xl" : "text-slate-500 text-2xl"}>
+                  {saveToPrivateDiary ? "✓" : "○"}
+                </span>
+              </button>
+
               {/* Group List */}
-              <div className="space-y-2 max-h-[40vh] overflow-y-auto mb-6">
+              <div className="space-y-2 max-h-[35vh] overflow-y-auto mb-6">
                 {groups.map((group) => (
                   <button
                     key={group.id}
@@ -379,10 +407,10 @@ export default function CheckInPage() {
                 <button
                   type="button"
                   onClick={withHaptics(handleShare)}
-                  disabled={selectedGroups.size === 0 || sending}
+                  disabled={(selectedGroups.size === 0 && !saveToPrivateDiary) || sending}
                   className="flex-1 rounded-2xl bg-gradient-to-r from-rose-500 to-amber-500 px-5 py-4 text-xl font-bold text-white shadow-lg disabled:opacity-50"
                 >
-                  {sending ? "Sharing..." : `Share 💜`}
+                  {sending ? "Saving..." : saveToPrivateDiary && selectedGroups.size === 0 ? "Save to Diary 📔" : "Share 💜"}
                 </button>
               </div>
             </motion.div>

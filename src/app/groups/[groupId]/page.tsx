@@ -370,55 +370,40 @@ export default function GroupDetailPage() {
 
       {/* Main Content - Scrollable */}
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-32">
-        {/* Check-ins Section */}
+        {/* Check-ins Section - Simple text format like messages */}
         {checkins.length > 0 && (
-          <div className="mb-6">
-            <h2 className={`text-lg font-semibold mb-3 ${isDark ? "text-slate-300" : "text-stone-600"}`}>
-              Recent Check-ins
-            </h2>
-            <div className="space-y-3">
-              {checkins.map((checkin) => (
-                <motion.div
-                  key={checkin.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={cardClass}
-                >
-                  <div className="flex items-start gap-3">
-                    {/* Avatar */}
-                    <div className={`h-12 w-12 rounded-full overflow-hidden flex-shrink-0 ${isDark ? "bg-slate-700" : "bg-stone-100"}`}>
-                      {checkin.profile?.avatar_url ? (
-                        <img src={checkin.profile.avatar_url} alt="" className="h-full w-full object-cover" />
+          <div className="mb-4">
+            <div className="space-y-1">
+              {checkins.map((checkin, index) => {
+                const isMe = checkin.user_id === userId;
+                const displayName = isMe ? "You" : (checkin.profile?.display_name || "Friend");
+                const initials = displayName.split(" ").map(w => w[0]).join("");
+                const avatarUrl = checkin.profile?.avatar_url;
+
+                return (
+                  <motion.div
+                    key={checkin.id}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.18, delay: index * 0.015 }}
+                    className="flex items-start gap-3 px-1 py-2"
+                  >
+                    <div className={`mt-1 flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold ${isDark ? "bg-slate-700 text-slate-100" : "bg-stone-200 text-stone-700"}`}>
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                       ) : (
-                        <div className="h-full w-full flex items-center justify-center text-lg font-bold">
-                          {checkin.profile?.display_name?.[0]?.toUpperCase() || "?"}
-                        </div>
+                        initials
                       )}
                     </div>
-
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-semibold">{checkin.profile?.display_name || "Someone"}</span>
-                        <span className={`text-sm ${isDark ? "text-slate-500" : "text-stone-400"}`}>
-                          {formatTime(checkin.created_at)}
-                        </span>
-                      </div>
-
-                      {/* Number badge */}
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className={`inline-flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br ${getNumberColor(checkin.number)} text-white font-bold text-lg`}>
-                          {checkin.number}
-                        </span>
-                        {checkin.message && (
-                          <p className={`text-base ${isDark ? "text-slate-300" : "text-stone-600"}`}>
-                            {checkin.message}
-                          </p>
-                        )}
-                      </div>
-
+                    <div className="min-w-0 flex-1">
+                      <p className={isDark ? "text-sm font-medium text-slate-300" : "text-sm font-medium text-stone-600"}>
+                        {displayName}
+                      </p>
+                      <p className={isDark ? "whitespace-pre-wrap text-xl text-slate-50" : "whitespace-pre-wrap text-xl text-stone-800"}>
+                        I&apos;m at a {checkin.number}.{checkin.message ? ` ${checkin.message}` : ""}
+                      </p>
                       {/* Reactions */}
-                      <div className="flex items-center gap-1 flex-wrap">
+                      <div className="flex items-center gap-1 flex-wrap mt-1">
                         {REACTION_EMOJIS.map((emoji) => {
                           const count = checkin.reactions?.filter(r => r.emoji === emoji).length || 0;
                           const hasReacted = checkin.reactions?.some(r => r.emoji === emoji && r.user_id === userId);
@@ -427,7 +412,7 @@ export default function GroupDetailPage() {
                               key={emoji}
                               type="button"
                               onClick={withHaptics(() => handleReaction(checkin.id, emoji))}
-                              className={`px-2 py-1 rounded-full text-sm transition ${
+                              className={`px-2 py-0.5 rounded-full text-sm transition ${
                                 hasReacted
                                   ? isDark
                                     ? "bg-amber-500/30 border border-amber-500"
@@ -442,10 +427,13 @@ export default function GroupDetailPage() {
                           );
                         })}
                       </div>
+                      <p className={isDark ? "mt-0.5 text-xs text-slate-500" : "mt-0.5 text-xs text-stone-400"}>
+                        {formatTime(checkin.created_at)}
+                      </p>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         )}
