@@ -10,14 +10,11 @@ import FloatingEmojis from "@/components/FloatingEmojis";
 type Group = {
   id: string;
   name: string;
-  question_prompt: string;
   image_url?: string | null;
   owner_id?: string;
-  last_activity?: string | null;
-  todayQuestion?: string | null;
+  created_at?: string;
   memberAvatars?: (string | null)[];
   memberCount?: number;
-  hasNewActivity?: boolean;
 };
 
 export default function GroupsPage() {
@@ -151,38 +148,23 @@ export default function GroupsPage() {
     return phone.startsWith("+") ? phone : `+${phone}`;
   }
 
-  async function fetchGroups(currentUserId: string, phone: string | null) {
+  async function fetchGroups(currentUserId: string, _phone: string | null) {
     setGroupsLoading(true);
-    const groupIdSet = new Set<string>();
 
-    // Groups where the user is already a member
+    // Get groups where user is a member
     const { data: memberships, error: membershipError } = await supabase
       .from("group_memberships")
       .select("group_id")
       .eq("user_id", currentUserId);
 
-    if (!membershipError && memberships) {
-      for (const m of memberships) {
-        if (m.group_id) groupIdSet.add(m.group_id as string);
-      }
+    if (membershipError) {
+      console.error("Error fetching memberships:", membershipError);
+      setGroups([]);
+      setGroupsLoading(false);
+      return;
     }
 
-    // Groups where the user is invited by phone (pending or accepted)
-    if (phone) {
-      const normalizedPlus = toE164(phone);
-      const { data: invites } = await supabase
-        .from("invites")
-        .select("group_id")
-        .in("invited_phone", [phone, normalizedPlus]);
-
-      if (invites) {
-        for (const invite of invites) {
-          if (invite.group_id) groupIdSet.add(invite.group_id as string);
-        }
-      }
-    }
-
-    const groupIds = Array.from(groupIdSet);
+    const groupIds = memberships?.map(m => m.group_id).filter(Boolean) || [];
 
     if (groupIds.length === 0) {
       setGroups([]);
@@ -190,29 +172,21 @@ export default function GroupsPage() {
       return;
     }
 
+    // Fetch groups
     const { data: groupsData, error: groupsError } = await supabase
       .from("groups")
-      .select("id, name, question_prompt, image_url, owner_id")
+      .select("id, name, image_url, owner_id, created_at")
       .in("id", groupIds);
 
     if (groupsError) {
+      console.error("Error fetching groups:", groupsError);
       setError(groupsError.message);
       setGroups([]);
       setGroupsLoading(false);
       return;
     }
 
-    // Fetch all data in parallel for better performance
-    const today = new Date().toISOString().split("T")[0];
-    
-    // Batch fetch today's questions for all groups
-    const { data: allTodayQuestions } = await supabase
-      .from("daily_questions")
-      .select("group_id, question_text")
-      .in("group_id", groupIds)
-      .eq("date_et", today);
-    
-    // Batch fetch all memberships
+    // Fetch all memberships for member counts and avatars
     const { data: allMemberships } = await supabase
       .from("group_memberships")
       .select("group_id, user_id")
@@ -223,10 +197,9 @@ export default function GroupsPage() {
     const { data: allProfiles } = await supabase
       .from("profiles")
       .select("id, avatar_url")
-      .in("id", allMemberIds.slice(0, 50)); // Limit to avoid too large query
+      .in("id", allMemberIds.slice(0, 50));
     
     const profileMap = new Map(allProfiles?.map(p => [p.id, p.avatar_url]) || []);
-    const questionMap = new Map(allTodayQuestions?.map(q => [q.group_id, q.question_text]) || []);
     
     // Group memberships by group_id
     const membershipsByGroup = new Map<string, string[]>();
@@ -237,32 +210,27 @@ export default function GroupsPage() {
       membershipsByGroup.get(m.group_id)!.push(m.user_id);
     });
 
-    // Build groups with activity data
-    const groupsWithActivity: Group[] = (groupsData ?? []).map(group => {
+    // Build groups with member data
+    const groupsWithData: Group[] = (groupsData ?? []).map(group => {
       const memberIds = membershipsByGroup.get(group.id) || [];
       const memberAvatars = memberIds.slice(0, 4).map(id => profileMap.get(id) || null);
       
       return {
         ...group,
-        last_activity: new Date().toISOString(), // Use current time as fallback
-        todayQuestion: questionMap.get(group.id) ?? null,
         memberAvatars,
         memberCount: memberIds.length,
       };
     });
 
-    // Sort by last activity (most recent first)
-    groupsWithActivity.sort((a, b) => {
-      const aTime = a.last_activity ? new Date(a.last_activity).getTime() : 0;
-      const bTime = b.last_activity ? new Date(b.last_activity).getTime() : 0;
+    // Sort by created_at (newest first)
+    groupsWithData.sort((a, b) => {
+      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
       return bTime - aTime;
     });
 
-    setGroups(groupsWithActivity);
+    setGroups(groupsWithData);
     setGroupsLoading(false);
-
-    // Fetch unread counts based on last visit timestamps stored in localStorage
-    await fetchUnreadCounts(groupIds, currentUserId);
   }
 
   async function fetchUnreadCounts(groupIds: string[], currentUserId: string) {
@@ -582,12 +550,7 @@ export default function GroupsPage() {
                           </span>
                         )}
                       </div>
-                      {/* Today's Question Preview */}
-                      {group.todayQuestion && (
-                        <p className={isDark ? "text-base text-violet-300 mb-3 line-clamp-2" : "text-base text-violet-600 mb-3 line-clamp-2"}>
-                          📝 {group.todayQuestion}
-                        </p>
-                      )}
+                      {/* Member count */}
                       {/* Stacked Member Avatars */}
                       <div className="flex items-center">
                         <div className="flex -space-x-2">
@@ -701,8 +664,8 @@ export default function GroupsPage() {
                             </span>
                           )}
                         </div>
-                        <p className={isDark ? "text-sm text-white/50 truncate" : "text-sm text-slate-500 truncate"}>
-                          {group.todayQuestion ? `📝 ${group.todayQuestion}` : group.question_prompt}
+                        <p className={isDark ? "text-sm text-white/50 truncate" : "text-sm text-stone-500 truncate"}>
+                          {group.memberCount} {group.memberCount === 1 ? "member" : "members"}
                         </p>
                       </div>
                       {/* Stacked Avatars (smaller) */}
