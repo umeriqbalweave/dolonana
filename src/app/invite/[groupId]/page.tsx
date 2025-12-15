@@ -191,7 +191,7 @@ export default function GroupInvitePage() {
 
   if (loading) {
     return (
-      <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#FCEADE] overflow-hidden">
+      <div className="relative flex min-h-screen flex-col items-center justify-center bg-black overflow-hidden">
         <FloatingEmojis count={5} />
         <motion.div
           animate={{ scale: [1, 1.2, 1] }}
@@ -206,17 +206,17 @@ export default function GroupInvitePage() {
 
   if (error || !group) {
     return (
-      <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#FCEADE] px-8 overflow-hidden">
+      <div className="relative flex min-h-screen flex-col items-center justify-center bg-black px-8 overflow-hidden">
         <FloatingEmojis count={5} />
         <div className="text-8xl mb-6">😔</div>
-        <p className="text-2xl text-stone-600 text-center">This invite has expired</p>
+        <p className="text-2xl text-slate-400 text-center">This invite has expired</p>
       </div>
     );
   }
 
   if (step === "joining") {
     return (
-      <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#FCEADE] px-8 overflow-hidden">
+      <div className="relative flex min-h-screen flex-col items-center justify-center bg-black px-8 overflow-hidden">
         <FloatingEmojis count={5} />
         <motion.div
           initial={{ scale: 0 }}
@@ -335,7 +335,7 @@ export default function GroupInvitePage() {
     const current = tutorials[tutorialStep - 1];
 
     return (
-      <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#FCEADE] px-8 overflow-hidden">
+      <div className="relative flex min-h-screen flex-col items-center justify-center bg-black px-8 overflow-hidden">
         <FloatingEmojis count={5} />
         <AnimatePresence mode="wait">
           <motion.div
@@ -389,7 +389,7 @@ export default function GroupInvitePage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#FCEADE] px-8 py-12 overflow-hidden">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-black px-8 py-12 overflow-hidden">
       <FloatingEmojis count={5} />
       
       {/* CWF Branding */}
@@ -456,7 +456,7 @@ export default function GroupInvitePage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="text-xl text-stone-600 mb-2 text-center"
+        className="text-xl text-slate-400 mb-2 text-center"
       >
         <span className="text-orange-600 font-semibold">{adminName}</span> invited you to join
       </motion.p>
@@ -466,7 +466,7 @@ export default function GroupInvitePage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="text-3xl font-bold text-stone-800 text-center mb-8"
+        className="text-3xl font-bold text-white text-center mb-8"
       >
         {group.name}
       </motion.h2>

@@ -621,57 +621,75 @@ function CheckInContent() {
                 </>
               ) : (
                 <>
-                  {/* Detailed 1-10 scale - Horizontal slider style */}
+                  {/* Detailed 1-10 scale - Big number + slider */}
                   <div className="w-full max-w-sm mx-auto mb-8">
-                    {/* Emoji feedback based on selection */}
-                    <motion.div 
-                      key={selectedNumber || 0}
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="text-7xl mb-6 text-center"
-                    >
-                      {!selectedNumber ? "🤔" : 
-                       selectedNumber <= 3 ? "😔" : 
-                       selectedNumber <= 5 ? "😐" : 
-                       selectedNumber <= 7 ? "🙂" : "😊"}
-                    </motion.div>
+                    {/* Big editable number display */}
+                    <div className="flex flex-col items-center mb-8">
+                      <input
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={selectedNumber || ""}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value);
+                          if (val >= 1 && val <= 10) {
+                            window.localStorage.setItem("checkin-scale", "detailed");
+                            setSelectedNumber(val);
+                          } else if (e.target.value === "") {
+                            setSelectedNumber(null);
+                          }
+                        }}
+                        placeholder="?"
+                        className={`w-32 h-32 text-7xl font-bold text-center rounded-2xl outline-none ${
+                          isDark 
+                            ? "bg-zinc-900 border-2 border-zinc-700 text-white focus:border-amber-400" 
+                            : "bg-white border-3 border-stone-300 text-stone-800 focus:border-amber-500 shadow-lg"
+                        }`}
+                      />
+                      <p className={`mt-2 text-sm ${isDark ? "text-zinc-500" : "text-stone-500"}`}>
+                        Tap to edit
+                      </p>
+                    </div>
                     
                     {/* Scale labels */}
-                    <div className={`flex justify-between text-sm mb-3 px-1 ${isDark ? "text-zinc-500" : "text-stone-500"}`}>
-                      <span>Struggling</span>
-                      <span>Thriving</span>
+                    <div className={`flex justify-between text-sm mb-2 px-1 ${isDark ? "text-zinc-500" : "text-stone-500"}`}>
+                      <span>1 - Struggling</span>
+                      <span>10 - Thriving</span>
                     </div>
                     
-                    {/* Number buttons in a row */}
-                    <div className="flex gap-1 w-full">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
-                        const bgColor = num <= 3 ? "bg-rose-500" 
-                          : num <= 5 ? "bg-amber-500"
-                          : num <= 7 ? "bg-emerald-500"
-                          : "bg-teal-500";
-                        const isSelected = selectedNumber === num;
-                        return (
-                          <motion.button
-                            key={num}
-                            type="button"
-                            onClick={withHaptics(() => {
-                              window.localStorage.setItem("checkin-scale", "detailed");
-                              handleNumberSelect(num);
-                            })}
-                            whileTap={{ scale: 0.9 }}
-                            className={`flex-1 h-14 rounded-xl text-lg font-bold transition-all ${
-                              isSelected 
-                                ? `${bgColor} text-white shadow-lg scale-110 z-10` 
-                                : isDark 
-                                  ? "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
-                                  : "bg-stone-200 text-stone-600 hover:bg-stone-300"
-                            }`}
-                          >
-                            {num}
-                          </motion.button>
-                        );
-                      })}
-                    </div>
+                    {/* Draggable slider */}
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value={selectedNumber || 5}
+                      onChange={(e) => {
+                        window.localStorage.setItem("checkin-scale", "detailed");
+                        setSelectedNumber(parseInt(e.target.value));
+                      }}
+                      className="w-full h-3 rounded-full appearance-none cursor-pointer accent-amber-500"
+                      style={{
+                        background: isDark 
+                          ? `linear-gradient(to right, #f43f5e 0%, #f59e0b 30%, #10b981 60%, #14b8a6 100%)`
+                          : `linear-gradient(to right, #f43f5e 0%, #f59e0b 30%, #10b981 60%, #14b8a6 100%)`
+                      }}
+                    />
+                    
+                    {/* Continue button */}
+                    {selectedNumber && (
+                      <motion.button
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        type="button"
+                        onClick={withHaptics(() => {
+                          window.localStorage.setItem("checkin-scale", "detailed");
+                          setStep("message");
+                        })}
+                        className="w-full mt-6 rounded-2xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 px-6 py-4 text-xl font-bold text-white shadow-lg"
+                      >
+                        Continue →
+                      </motion.button>
+                    )}
                   </div>
 
                   <button
@@ -699,7 +717,7 @@ function CheckInContent() {
               className="w-full max-w-lg text-center"
             >
               <p className={`text-3xl font-bold ${textPrimary} mb-1`}>
-                <span className={`text-lg font-normal ${isDark ? "text-zinc-500" : "text-stone-400"}`}>(optional)</span> Add a few words
+                Add a few words <span className={isDark ? "text-zinc-500" : "text-stone-400"}>(optional)</span>
               </p>
               <p className={`text-lg ${textSecondary} mb-6`}>
                 Share what&apos;s on your mind

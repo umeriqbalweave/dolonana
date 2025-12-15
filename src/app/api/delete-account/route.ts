@@ -20,32 +20,40 @@ export async function POST(req: NextRequest) {
 
   try {
     // First get all checkin IDs for this user
-    const { data: checkins } = await supabase
+    const { data: checkins, error: checkinsError } = await supabase
       .from("checkins")
       .select("id")
       .eq("user_id", userId);
+    
+    if (checkinsError) console.log("Checkins fetch error (non-fatal):", checkinsError);
     
     const checkinIds = checkins?.map(c => c.id) || [];
 
     // Delete checkin_groups for user's checkins
     if (checkinIds.length > 0) {
-      await supabase.from("checkin_groups").delete().in("checkin_id", checkinIds);
+      const { error: cgError } = await supabase.from("checkin_groups").delete().in("checkin_id", checkinIds);
+      if (cgError) console.log("Checkin_groups delete error (non-fatal):", cgError);
     }
 
     // Delete all user's checkins
-    await supabase.from("checkins").delete().eq("user_id", userId);
+    const { error: delCheckinsErr } = await supabase.from("checkins").delete().eq("user_id", userId);
+    if (delCheckinsErr) console.log("Checkins delete error (non-fatal):", delCheckinsErr);
 
     // Delete all user's answers
-    await supabase.from("answers").delete().eq("user_id", userId);
+    const { error: answersErr } = await supabase.from("answers").delete().eq("user_id", userId);
+    if (answersErr) console.log("Answers delete error (non-fatal):", answersErr);
 
     // Delete all user's messages
-    await supabase.from("messages").delete().eq("user_id", userId);
+    const { error: msgsErr } = await supabase.from("messages").delete().eq("user_id", userId);
+    if (msgsErr) console.log("Messages delete error (non-fatal):", msgsErr);
 
     // Delete memberships
-    await supabase.from("group_memberships").delete().eq("user_id", userId);
+    const { error: membErr } = await supabase.from("group_memberships").delete().eq("user_id", userId);
+    if (membErr) console.log("Memberships delete error (non-fatal):", membErr);
 
     // Delete profile
-    await supabase.from("profiles").delete().eq("id", userId);
+    const { error: profErr } = await supabase.from("profiles").delete().eq("id", userId);
+    if (profErr) console.log("Profile delete error (non-fatal):", profErr);
 
     // Delete the auth user
     const { error: deleteUserError } = await supabase.auth.admin.deleteUser(userId);

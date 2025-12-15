@@ -148,7 +148,7 @@ function HomeContent() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-[#FCEADE] text-stone-800 overflow-hidden">
+    <div className="relative flex min-h-screen items-center justify-center bg-black text-slate-50 overflow-hidden">
       <FloatingEmojis count={5} />
       <motion.main
         initial={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -168,7 +168,7 @@ function HomeContent() {
               CWF
             </motion.h1>
             <motion.p
-              className="mb-10 text-center text-xl text-stone-500 md:text-2xl"
+              className="mb-10 text-center text-xl text-slate-400 md:text-2xl"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.18 }}
@@ -180,7 +180,7 @@ function HomeContent() {
         {step === "phone" && (
           <form onSubmit={handleSendOtp} className="space-y-5">
             <motion.h2
-              className="text-center text-3xl font-bold text-stone-800 md:text-4xl"
+              className="text-center text-3xl font-bold text-white md:text-4xl"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
@@ -192,7 +192,7 @@ function HomeContent() {
               value={phone}
               onChange={(event) => setPhone(event.target.value)}
               placeholder="+1 555 555 5555"
-              className="w-full rounded-2xl border-2 border-orange-200 bg-white px-6 py-5 text-2xl text-stone-800 text-center outline-none focus:border-orange-400"
+              className="w-full rounded-2xl border-2 border-slate-700 bg-slate-900 px-6 py-5 text-2xl text-white text-center outline-none focus:border-amber-400"
               required
             />
             {error && (
@@ -207,7 +207,7 @@ function HomeContent() {
               {loading ? "Sending..." : "Send code"}
             </button>
             {!inviteGroupId && (
-              <p className="text-center text-lg text-stone-500">
+              <p className="text-center text-lg text-slate-500">
                 We&apos;ll text you a one-time code.
               </p>
             )}
@@ -216,7 +216,7 @@ function HomeContent() {
         {step === "otp" && (
           <form onSubmit={handleVerifyOtp} className="space-y-5">
             <motion.h2
-              className="text-center text-3xl font-bold text-stone-800 md:text-4xl"
+              className="text-center text-3xl font-bold text-white md:text-4xl"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
@@ -240,7 +240,7 @@ function HomeContent() {
                 }
               }}
               placeholder="123456"
-              className="w-full rounded-xl border-2 border-orange-200 bg-white px-5 py-4 text-2xl text-stone-800 text-center outline-none focus:border-orange-400 tracking-[0.3em]"
+              className="w-full rounded-xl border-2 border-slate-700 bg-slate-900 px-5 py-4 text-2xl text-white text-center outline-none focus:border-amber-400 tracking-[0.3em]"
               required
               maxLength={6}
             />
@@ -258,7 +258,7 @@ function HomeContent() {
             <button
               type="button"
               onClick={withHaptics(() => setStep("phone"))}
-              className="w-full text-center text-xl text-stone-500 hover:text-stone-700 py-4"
+              className="w-full text-center text-xl text-slate-500 hover:text-slate-300 py-4"
             >
               ← Different number
             </button>

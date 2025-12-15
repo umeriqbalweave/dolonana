@@ -451,9 +451,7 @@ export default function GroupsPage() {
           <button
             type="button"
             onClick={withHaptics(() => router.push("/groups/new"))}
-            className={isDark 
-              ? "rounded-full bg-gradient-to-r from-zinc-400 via-zinc-300 to-zinc-400 px-5 py-3 text-lg font-bold text-zinc-800 shadow-lg transition hover:opacity-90" 
-              : "rounded-full bg-gradient-to-r from-zinc-400 via-zinc-300 to-zinc-400 px-5 py-3 text-lg font-medium text-zinc-800 shadow transition hover:from-zinc-300 hover:via-zinc-200 hover:to-zinc-300"}
+            className="rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 px-5 py-3 text-lg font-bold text-white shadow-lg transition hover:opacity-90"
           >
             + New
           </button>
