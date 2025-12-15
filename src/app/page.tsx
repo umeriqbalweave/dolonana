@@ -244,7 +244,7 @@ function HomeContent() {
               required
               maxLength={6}
             />
-            {error && (
+            {error && !loading && (
               <p className="text-base text-rose-400 text-center">{error}</p>
             )}
             <button
