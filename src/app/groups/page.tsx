@@ -595,18 +595,15 @@ export default function GroupsPage() {
           )}
         </div>
 
-        {/* Prominent Check-in Button - BIGGER with label */}
-        <div className="absolute bottom-44 left-1/2 -translate-x-1/2 z-30">
+        {/* Prominent Check-in Button - Round circular button */}
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-30">
           <motion.button
             type="button"
             onClick={withHaptics(() => router.push("/checkin"))}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="flex items-center gap-5 px-16 py-7 rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30 whitespace-nowrap"
-          >
-            <span className="text-6xl animate-pulse">🪷</span>
-            <span className="text-4xl font-bold text-white">Check In</span>
-          </motion.button>
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="h-20 w-20 rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30"
+          />
         </div>
       </main>
     </div>
