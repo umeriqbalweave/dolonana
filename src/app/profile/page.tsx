@@ -30,7 +30,7 @@ function ProfileContent() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSavedToast, setShowSavedToast] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
+  const [theme] = useState<"dark" | "light" | "warm">("dark");
   const [myCheckins, setMyCheckins] = useState<MyCheckin[]>([]);
   const [deleting, setDeleting] = useState(false);
   const [editingName, setEditingName] = useState(false);
@@ -66,13 +66,6 @@ function ProfileContent() {
         setNotificationsMuted(profile.notifications_muted ?? false);
       }
 
-      // Load theme from localStorage
-      if (typeof window !== "undefined") {
-        const stored = window.localStorage.getItem("theme");
-        if (stored === "light" || stored === "dark" || stored === "warm") {
-          setTheme(stored);
-        }
-      }
 
       // Load user's check-ins (all of them, including private)
       const { data: checkins } = await supabase
@@ -140,16 +133,6 @@ function ProfileContent() {
     setTimeout(() => {
       setShowSavedToast(false);
     }, 1200);
-  }
-
-  function toggleTheme() {
-    setTheme((prev) => {
-      const next = prev === "dark" ? "light" : prev === "light" ? "warm" : "dark";
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("theme", next);
-      }
-      return next;
-    });
   }
 
   async function handleSendFeedback() {
@@ -400,27 +383,6 @@ function ProfileContent() {
               />
             </button>
           </div>
-
-          {/* Theme Toggle */}
-          <button
-            type="button"
-            onClick={withHaptics(toggleTheme)}
-            className={
-              theme === "dark" 
-                ? "flex w-full items-center justify-between rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700" 
-                : theme === "warm"
-                ? "flex w-full items-center justify-between rounded-2xl border-2 border-stone-300 bg-stone-50 p-6 hover:border-stone-400"
-                : "flex w-full items-center justify-between rounded-2xl border-2 border-slate-200 bg-white p-6 hover:border-slate-300 shadow-sm"
-            }
-          >
-            <div className="flex items-center gap-4">
-              <span className="text-3xl">{theme === "dark" ? "🌙" : theme === "warm" ? "🪷" : "☀️"}</span>
-              <span className={theme === "dark" ? "text-xl text-slate-200" : "text-xl text-stone-700"}>
-                {theme === "dark" ? "Dark mode" : theme === "warm" ? "Warm mode" : "Light mode"}
-              </span>
-            </div>
-            <span className="text-lg text-slate-500">Tap to switch</span>
-          </button>
 
           {/* Send Feedback */}
           <button
