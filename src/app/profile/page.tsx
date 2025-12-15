@@ -193,21 +193,27 @@ function ProfileContent() {
 
     setDeleting(true);
 
-    // Delete all user's answers
-    await supabase.from("answers").delete().eq("user_id", userId);
+    try {
+      // Call API to delete all user data and auth user
+      const response = await fetch("/api/delete-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
 
-    // Delete all user's messages
-    await supabase.from("messages").delete().eq("user_id", userId);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to delete account");
+      }
 
-    // Delete profile
-    await supabase.from("profiles").delete().eq("id", userId);
-
-    // Delete memberships
-    await supabase.from("group_memberships").delete().eq("user_id", userId);
-
-    // Sign out
-    await supabase.auth.signOut();
-    router.replace("/");
+      // Sign out locally
+      await supabase.auth.signOut();
+      router.replace("/");
+    } catch (error) {
+      console.error("Error deleting profile:", error);
+      alert("Failed to delete profile. Please try again.");
+      setDeleting(false);
+    }
   }
 
   const isDark = theme === "dark";
