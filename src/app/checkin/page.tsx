@@ -38,8 +38,8 @@ function CheckInContent() {
   const [totalCheckins, setTotalCheckins] = useState<number>(0);
   const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [showGroupModal, setShowGroupModal] = useState(false);
-  const [selectedMedia, setSelectedMedia] = useState<File | null>(null);
-  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const [selectedMedia, setSelectedMedia] = useState<File[]>([]);
+  const [mediaPreviews, setMediaPreviews] = useState<string[]>([]);
   const mediaInputRef = useRef<HTMLInputElement>(null);
   
   // Voice recording state
@@ -380,27 +380,30 @@ function CheckInContent() {
         }
       }
 
-      // Upload media (image/video) if exists
-      let mediaFileUrl: string | null = null;
-      if (selectedMedia) {
-        const ext = selectedMedia.name.split('.').pop() || 'jpg';
-        const fileName = `${userId}/${Date.now()}.${ext}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("checkin-media")
-          .upload(fileName, selectedMedia, {
-            contentType: selectedMedia.type,
-            upsert: false,
-          });
-
-        if (uploadError) {
-          console.error("Media upload error:", uploadError);
-        } else if (uploadData) {
-          const { data: urlData } = supabase.storage
+      // Upload media (images) if exist - supports multiple
+      const mediaUrls: string[] = [];
+      if (selectedMedia.length > 0) {
+        for (const file of selectedMedia) {
+          const ext = file.name.split('.').pop() || 'jpg';
+          const fileName = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+          const { data: uploadData, error: uploadError } = await supabase.storage
             .from("checkin-media")
-            .getPublicUrl(fileName);
-          mediaFileUrl = urlData.publicUrl;
+            .upload(fileName, file, {
+              contentType: file.type,
+              upsert: false,
+            });
+
+          if (uploadError) {
+            console.error("Media upload error:", uploadError);
+          } else if (uploadData) {
+            const { data: urlData } = supabase.storage
+              .from("checkin-media")
+              .getPublicUrl(fileName);
+            mediaUrls.push(urlData.publicUrl);
+          }
         }
       }
+      const mediaFileUrl = mediaUrls.length > 0 ? mediaUrls.join(",") : null;
 
       // Insert check-in
       const { data: checkin, error: checkinError } = await supabase
@@ -742,17 +745,24 @@ function CheckInContent() {
                     className={`w-full min-h-[160px] resize-none mb-4 text-xl rounded-2xl p-4 ${isDark ? "bg-zinc-900 border border-zinc-700 text-white placeholder:text-zinc-500" : inputClass}`}
                   />
 
-                  {/* Media preview */}
-                  {mediaPreview && (
-                    <div className="relative mb-4 inline-block">
-                      <img src={mediaPreview} alt="Preview" className="max-h-32 rounded-xl" />
-                      <button
-                        type="button"
-                        onClick={() => { setSelectedMedia(null); setMediaPreview(null); }}
-                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-zinc-800 text-white text-sm flex items-center justify-center"
-                      >
-                        ✕
-                      </button>
+                  {/* Media previews - multiple images */}
+                  {mediaPreviews.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {mediaPreviews.map((preview, index) => (
+                        <div key={index} className="relative">
+                          <img src={preview} alt={`Preview ${index + 1}`} className="h-20 w-20 object-cover rounded-xl" />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedMedia(prev => prev.filter((_, i) => i !== index));
+                              setMediaPreviews(prev => prev.filter((_, i) => i !== index));
+                            }}
+                            className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-zinc-800 text-white text-xs flex items-center justify-center"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   )}
 
@@ -769,24 +779,29 @@ function CheckInContent() {
                     <input
                       ref={mediaInputRef}
                       type="file"
-                      accept="image/*,video/*"
+                      accept="image/*"
+                      multiple
                       onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          setSelectedMedia(file);
-                          setMediaPreview(URL.createObjectURL(file));
+                        const files = Array.from(e.target.files || []);
+                        const remaining = 5 - selectedMedia.length;
+                        const newFiles = files.slice(0, remaining);
+                        if (newFiles.length > 0) {
+                          setSelectedMedia(prev => [...prev, ...newFiles]);
+                          setMediaPreviews(prev => [...prev, ...newFiles.map(f => URL.createObjectURL(f))]);
                         }
+                        e.target.value = ''; // Reset input
                       }}
                       className="hidden"
                     />
                     <button
                       type="button"
                       onClick={withHaptics(() => mediaInputRef.current?.click())}
+                      disabled={selectedMedia.length >= 5}
                       className={isDark 
-                        ? "h-12 w-12 rounded-full flex items-center justify-center text-xl bg-zinc-800 border border-zinc-700"
-                        : "h-12 w-12 rounded-full flex items-center justify-center text-xl shadow-lg bg-blue-500 text-white"}
+                        ? "h-12 w-12 rounded-full flex items-center justify-center text-xl bg-zinc-800 border border-zinc-700 disabled:opacity-50"
+                        : "h-12 w-12 rounded-full flex items-center justify-center text-xl shadow-lg bg-blue-500 text-white disabled:opacity-50"}
                     >
-                      📷
+                      {selectedMedia.length > 0 ? `${selectedMedia.length}/5` : "📷"}
                     </button>
                     <button
                       type="button"
