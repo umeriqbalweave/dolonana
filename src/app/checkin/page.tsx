@@ -34,6 +34,10 @@ export default function CheckInPage() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
+  const [showGroupModal, setShowGroupModal] = useState(false);
+  const [selectedMedia, setSelectedMedia] = useState<File | null>(null);
+  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const mediaInputRef = useRef<HTMLInputElement>(null);
   
   // Voice recording state
   const [isRecording, setIsRecording] = useState(false);
@@ -369,6 +373,28 @@ export default function CheckInPage() {
         }
       }
 
+      // Upload media (image/video) if exists
+      let mediaFileUrl: string | null = null;
+      if (selectedMedia) {
+        const ext = selectedMedia.name.split('.').pop() || 'jpg';
+        const fileName = `${userId}/${Date.now()}.${ext}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("checkin-media")
+          .upload(fileName, selectedMedia, {
+            contentType: selectedMedia.type,
+            upsert: false,
+          });
+
+        if (uploadError) {
+          console.error("Media upload error:", uploadError);
+        } else if (uploadData) {
+          const { data: urlData } = supabase.storage
+            .from("checkin-media")
+            .getPublicUrl(fileName);
+          mediaFileUrl = urlData.publicUrl;
+        }
+      }
+
       // Insert check-in
       const { data: checkin, error: checkinError } = await supabase
         .from("checkins")
@@ -378,6 +404,7 @@ export default function CheckInPage() {
           message: message.trim() || null,
           is_private: false,
           audio_url: audioFileUrl,
+          media_url: mediaFileUrl,
         })
         .select()
         .single();
@@ -634,8 +661,8 @@ export default function CheckInPage() {
             </motion.div>
           )}
 
-          {/* Step 2: Optional Message */}
-          {step === "message" && (
+          {/* Step 2: Message + Share */}
+          {step === "message" && !sent && (
             <motion.div
               key="message"
               initial={{ opacity: 0, y: 20 }}
@@ -643,114 +670,120 @@ export default function CheckInPage() {
               exit={{ opacity: 0, y: -20 }}
               className="w-full max-w-lg text-center"
             >
-              <p className={`text-3xl font-bold ${textPrimary} mb-2`}>
-                What&apos;s going on?
+              <p className={`text-3xl font-bold ${textPrimary} mb-1`}>
+                Add a few words
               </p>
-              <p className={`text-xl ${textSecondary} mb-8`}>
-                Optional - share as much or as little as you want
+              <p className={`text-lg ${textSecondary} mb-6`}>
+                Share what&apos;s on your mind (optional)
               </p>
 
-              {/* Voice Recording - SIMPLIFIED: hide other UI during recording/transcribing */}
+              {/* Recording states */}
               {isRecording ? (
                 <motion.div
                   initial={{ scale: 0.9 }}
-                  animate={{ scale: [1, 1.05, 1] }}
+                  animate={{ scale: [1, 1.02, 1] }}
                   transition={{ duration: 1, repeat: Infinity }}
-                  className="py-12"
+                  className="py-6"
                 >
                   <motion.button
                     type="button"
                     onClick={withHaptics(stopRecording)}
-                    className="w-40 h-40 rounded-full flex items-center justify-center text-7xl shadow-2xl bg-rose-500 ring-8 ring-rose-300/50"
+                    className={isDark 
+                      ? "w-24 h-24 rounded-full flex items-center justify-center text-4xl bg-zinc-700 border-2 border-zinc-500 mx-auto"
+                      : "w-24 h-24 rounded-full flex items-center justify-center text-4xl shadow-xl bg-rose-500 mx-auto"}
                   >
                     ⏹️
                   </motion.button>
-                  <div className="mt-6 flex items-center justify-center gap-2">
-                    <span className="h-5 w-5 rounded-full bg-rose-500 animate-pulse" />
-                    <span className="text-3xl font-bold text-rose-600">Recording...</span>
-                  </div>
-                  <p className="text-2xl text-stone-600 mt-3">Tap to stop</p>
+                  <p className={`text-lg mt-3 ${textSecondary}`}>Tap to stop</p>
                 </motion.div>
               ) : isTranscribing ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="py-12"
-                >
-                  <div className="flex flex-col items-center gap-4">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="text-7xl"
-                    >
-                      ⏳
-                    </motion.div>
-                    <span className="text-3xl font-bold text-amber-700">Transcribing...</span>
-                    <p className="text-xl text-amber-600">Please wait</p>
-                  </div>
+                <motion.div className="py-6">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="text-4xl mb-2"
+                  >
+                    ⏳
+                  </motion.div>
+                  <span className={`text-lg ${textSecondary}`}>Transcribing...</span>
                 </motion.div>
               ) : (
                 <>
-                  {/* Normal state - BIG mic button with text area side by side */}
-                  <div className="flex items-start gap-4 w-full mb-4">
-                    <motion.button
-                      type="button"
-                      onClick={withHaptics(startRecording)}
-                      whileTap={{ scale: 0.95 }}
-                      whileHover={{ scale: 1.05 }}
-                      className="w-32 h-32 md:w-40 md:h-40 rounded-full flex-shrink-0 flex items-center justify-center text-6xl md:text-7xl shadow-2xl bg-gradient-to-br from-amber-400 to-orange-500"
-                    >
-                      🎙️
-                    </motion.button>
-                    <textarea
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                          e.preventDefault();
-                          handleMessageNext();
-                        }
-                      }}
-                      placeholder="Or type here..."
-                      className={`flex-1 min-h-[128px] md:min-h-[160px] resize-none shadow-lg ${inputClass}`}
-                    />
-                  </div>
+                  {/* Large text area */}
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Type here..."
+                    className={`w-full min-h-[160px] resize-none mb-4 text-xl rounded-2xl p-4 ${isDark ? "bg-zinc-900 border border-zinc-700 text-white placeholder:text-zinc-500" : inputClass}`}
+                  />
 
-                  {/* Audio saved indicator */}
-                  {audioUrl && (
-                    <div className="mb-4 p-3 bg-emerald-50 rounded-2xl border-2 border-emerald-200 flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-emerald-500 flex items-center justify-center text-xl text-white">✓</div>
-                      <span className="text-lg font-bold text-emerald-700 flex-1">Voice saved</span>
+                  {/* Media preview */}
+                  {mediaPreview && (
+                    <div className="relative mb-4 inline-block">
+                      <img src={mediaPreview} alt="Preview" className="max-h-32 rounded-xl" />
                       <button
                         type="button"
-                        onClick={withHaptics(removeAudio)}
-                        className="h-8 w-8 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-lg hover:bg-rose-200"
+                        onClick={() => { setSelectedMedia(null); setMediaPreview(null); }}
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-zinc-800 text-white text-sm flex items-center justify-center"
                       >
                         ✕
                       </button>
                     </div>
                   )}
 
-                  <div className="flex gap-4">
+                  {/* Audio saved indicator */}
+                  {audioUrl && (
+                    <div className={`mb-4 px-4 py-2 rounded-full inline-flex items-center gap-2 ${isDark ? "bg-zinc-800" : "bg-emerald-100"}`}>
+                      <span className={isDark ? "text-zinc-300" : "text-emerald-700"}>🎙️ Voice saved</span>
+                      <button type="button" onClick={withHaptics(removeAudio)} className="text-zinc-500 hover:text-zinc-300">✕</button>
+                    </div>
+                  )}
+
+                  {/* Action buttons row: mic + image */}
+                  <div className="flex items-center justify-center gap-4 mb-6">
+                    <input
+                      ref={mediaInputRef}
+                      type="file"
+                      accept="image/*,video/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setSelectedMedia(file);
+                          setMediaPreview(URL.createObjectURL(file));
+                        }
+                      }}
+                      className="hidden"
+                    />
                     <button
                       type="button"
-                      onClick={withHaptics(() => setStep("number"))}
+                      onClick={withHaptics(() => mediaInputRef.current?.click())}
                       className={isDark 
-                        ? "flex-1 rounded-2xl bg-white/10 border border-white/20 px-6 py-5 text-2xl font-medium text-white/90 hover:bg-white/20"
-                        : "flex-1 rounded-2xl bg-rose-500 px-6 py-5 text-2xl font-bold text-white shadow-lg hover:bg-rose-600"}
+                        ? "h-12 w-12 rounded-full flex items-center justify-center text-xl bg-zinc-800 border border-zinc-700"
+                        : "h-12 w-12 rounded-full flex items-center justify-center text-xl shadow-lg bg-blue-500 text-white"}
                     >
-                      ← Back
+                      📷
                     </button>
                     <button
                       type="button"
-                      onClick={withHaptics(handleMessageNext)}
+                      onClick={withHaptics(startRecording)}
                       className={isDark 
-                        ? "flex-1 rounded-2xl bg-white px-6 py-5 text-2xl font-semibold text-black"
-                        : "flex-1 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 px-6 py-5 text-2xl font-bold text-white shadow-lg"}
+                        ? "h-12 w-12 rounded-full flex items-center justify-center text-xl bg-zinc-800 border border-zinc-700"
+                        : "h-12 w-12 rounded-full flex items-center justify-center text-xl shadow-lg bg-amber-500 text-white"}
                     >
-                      Next →
+                      🎙️
                     </button>
                   </div>
+
+                  {/* Single Share button */}
+                  <button
+                    type="button"
+                    onClick={withHaptics(() => setShowGroupModal(true))}
+                    className={isDark 
+                      ? "w-full rounded-2xl bg-white px-6 py-5 text-2xl font-semibold text-black"
+                      : "w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 px-6 py-5 text-2xl font-bold text-white shadow-lg"}
+                  >
+                    Share
+                  </button>
                 </>
               )}
             </motion.div>
@@ -919,6 +952,92 @@ export default function CheckInPage() {
           )}
         </AnimatePresence>
       </main>
+
+      {/* Bottom Modal for Group Selection */}
+      <AnimatePresence>
+        {showGroupModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/60"
+            onClick={() => setShowGroupModal(false)}
+          >
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className={`absolute bottom-0 left-0 right-0 rounded-t-3xl p-6 max-h-[70vh] overflow-y-auto ${isDark ? "bg-zinc-900" : "bg-white"}`}
+            >
+              <div className="w-12 h-1 bg-zinc-600 rounded-full mx-auto mb-6" />
+              
+              <p className={`text-2xl font-bold ${textPrimary} mb-4 text-center`}>
+                Share with
+              </p>
+
+              {/* No groups message */}
+              {groups.length === 0 && people.length === 0 && (
+                <div className={`text-center p-6 rounded-2xl mb-4 ${isDark ? "bg-zinc-800" : "bg-amber-50"}`}>
+                  <p className={`text-lg ${isDark ? "text-zinc-300" : "text-amber-800"}`}>
+                    No groups yet. This will be saved privately.
+                  </p>
+                </div>
+              )}
+
+              {/* Group selection */}
+              {groups.length > 0 && (
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  {groups.map((group) => (
+                    <button
+                      key={group.id}
+                      type="button"
+                      onClick={withHaptics(() => toggleGroup(group.id))}
+                      className={`relative overflow-hidden rounded-2xl ${
+                        selectedGroups.has(group.id) 
+                          ? isDark ? "ring-2 ring-white" : "ring-2 ring-emerald-500"
+                          : isDark ? "ring-1 ring-zinc-700" : "ring-1 ring-stone-200"
+                      }`}
+                    >
+                      <div className="h-24 w-full overflow-hidden">
+                        {group.image_url ? (
+                          <img src={group.image_url} alt={group.name} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className={`h-full w-full flex items-center justify-center text-3xl font-bold ${isDark ? "bg-zinc-800 text-zinc-600" : "bg-gradient-to-br from-orange-400 to-amber-400 text-white/50"}`}>
+                            {group.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      {selectedGroups.has(group.id) && (
+                        <div className="absolute top-2 right-2 h-6 w-6 rounded-full bg-white text-black flex items-center justify-center text-sm">✓</div>
+                      )}
+                      <div className={`p-2 ${isDark ? "bg-zinc-800" : "bg-white"}`}>
+                        <p className={`text-sm font-medium truncate ${isDark ? "text-zinc-300" : "text-stone-800"}`}>{group.name}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Submit button */}
+              <button
+                type="button"
+                onClick={withHaptics(() => {
+                  setShowGroupModal(false);
+                  handleShare();
+                })}
+                disabled={sending}
+                className={isDark 
+                  ? "w-full rounded-2xl bg-white px-6 py-5 text-xl font-semibold text-black disabled:opacity-30"
+                  : "w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 px-6 py-5 text-xl font-bold text-white shadow-lg disabled:opacity-50"}
+              >
+                {sending ? "Submitting..." : "Submit"}
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
