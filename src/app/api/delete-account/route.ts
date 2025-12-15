@@ -10,15 +10,29 @@ export async function POST(req: NextRequest) {
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!url) {
-    console.error("Missing Supabase URL");
-    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  console.log("Delete account - URL exists:", !!url);
+  console.log("Delete account - Service key exists:", !!serviceKey);
+  console.log("Delete account - User ID:", userId);
+
+  if (!url || !serviceKey) {
+    console.error("Missing required env vars - URL:", !!url, "ServiceKey:", !!serviceKey);
+    return NextResponse.json({ 
+      error: "Server configuration error - missing service key",
+      hasUrl: !!url,
+      hasServiceKey: !!serviceKey
+    }, { status: 500 });
   }
 
-  // Use service key if available, otherwise fall back to anon key
-  const supabase = createClient(url, serviceKey || anonKey || "");
+  // Create admin client with service role key
+  const supabase = createClient(url, serviceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  });
+
+  const results: Record<string, string> = {};
 
   try {
     // First get all checkin IDs for this user
@@ -27,53 +41,49 @@ export async function POST(req: NextRequest) {
       .select("id")
       .eq("user_id", userId);
     
-    if (checkinsError) console.log("Checkins fetch error (non-fatal):", checkinsError);
+    results.checkinsFetch = checkinsError ? `error: ${checkinsError.message}` : `found ${checkins?.length || 0}`;
     
     const checkinIds = checkins?.map(c => c.id) || [];
 
     // Delete checkin_groups for user's checkins
     if (checkinIds.length > 0) {
       const { error: cgError } = await supabase.from("checkin_groups").delete().in("checkin_id", checkinIds);
-      if (cgError) console.log("Checkin_groups delete error (non-fatal):", cgError);
+      results.checkinGroups = cgError ? `error: ${cgError.message}` : "deleted";
     }
 
     // Delete all user's checkins
     const { error: delCheckinsErr } = await supabase.from("checkins").delete().eq("user_id", userId);
-    if (delCheckinsErr) console.log("Checkins delete error (non-fatal):", delCheckinsErr);
+    results.checkins = delCheckinsErr ? `error: ${delCheckinsErr.message}` : "deleted";
 
     // Delete all user's answers
     const { error: answersErr } = await supabase.from("answers").delete().eq("user_id", userId);
-    if (answersErr) console.log("Answers delete error (non-fatal):", answersErr);
+    results.answers = answersErr ? `error: ${answersErr.message}` : "deleted";
 
     // Delete all user's messages
     const { error: msgsErr } = await supabase.from("messages").delete().eq("user_id", userId);
-    if (msgsErr) console.log("Messages delete error (non-fatal):", msgsErr);
+    results.messages = msgsErr ? `error: ${msgsErr.message}` : "deleted";
 
     // Delete memberships
     const { error: membErr } = await supabase.from("group_memberships").delete().eq("user_id", userId);
-    if (membErr) console.log("Memberships delete error (non-fatal):", membErr);
+    results.memberships = membErr ? `error: ${membErr.message}` : "deleted";
 
     // Delete profile
     const { error: profErr } = await supabase.from("profiles").delete().eq("id", userId);
-    if (profErr) console.log("Profile delete error (non-fatal):", profErr);
+    results.profile = profErr ? `error: ${profErr.message}` : "deleted";
 
-    // Delete the auth user (only works with service key)
-    if (serviceKey) {
-      const { error: deleteUserError } = await supabase.auth.admin.deleteUser(userId);
-      if (deleteUserError) {
-        console.error("Error deleting auth user:", deleteUserError);
-        // Continue anyway - data is deleted
-      }
-    } else {
-      console.log("Service key not available - auth user not deleted, but all data cleared");
-    }
+    // Delete the auth user
+    const { error: deleteUserError } = await supabase.auth.admin.deleteUser(userId);
+    results.authUser = deleteUserError ? `error: ${deleteUserError.message}` : "deleted";
 
-    return NextResponse.json({ success: true });
+    console.log("Delete account results:", results);
+
+    return NextResponse.json({ success: true, results });
   } catch (error: any) {
     console.error("Error deleting account:", error);
     return NextResponse.json({ 
       error: "Failed to delete account",
-      message: error?.message 
+      message: error?.message,
+      results
     }, { status: 500 });
   }
 }
