@@ -596,15 +596,15 @@ export default function GroupsPage() {
         </div>
 
         {/* Check-in Button - minimal empty circle */}
-        <div className="absolute bottom-36 left-1/2 -translate-x-1/2 z-30">
+        <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-30">
           <motion.button
             type="button"
             onClick={withHaptics(() => router.push("/checkin"))}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className={isDark 
-              ? "h-14 w-14 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 shadow-lg"
-              : "h-16 w-16 rounded-full bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 shadow-xl shadow-rose-500/30"}
+              ? "h-20 w-20 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 shadow-xl"
+              : "h-24 w-24 rounded-full bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 shadow-2xl shadow-rose-500/30"}
           />
         </div>
       </main>
