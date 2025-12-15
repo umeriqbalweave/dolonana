@@ -51,7 +51,16 @@ export default function GroupsPage() {
 
   useEffect(() => {
     async function loadUser() {
-      const { data } = await supabase.auth.getUser();
+      const { data, error: authError } = await supabase.auth.getUser();
+      
+      // If auth fails (403, expired token, etc.), sign out and redirect
+      if (authError) {
+        console.log("Auth error, signing out:", authError.message);
+        await supabase.auth.signOut();
+        router.replace("/");
+        return;
+      }
+      
       const currentUserId = data.user?.id ?? null;
       const phone = data.user?.phone ?? null;
 

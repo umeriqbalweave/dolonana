@@ -18,9 +18,29 @@ function HomeContent() {
 
   useEffect(() => {
     async function checkSession() {
-      const { data } = await supabase.auth.getSession();
-      if (data.session?.user) {
-        router.replace("/groups");
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        
+        // If there's an error or invalid session, clear it
+        if (error) {
+          console.log("Session error, signing out:", error.message);
+          await supabase.auth.signOut();
+          return;
+        }
+        
+        if (data.session?.user) {
+          // Verify the session is still valid by trying to get user
+          const { error: userError } = await supabase.auth.getUser();
+          if (userError) {
+            console.log("User fetch error, signing out:", userError.message);
+            await supabase.auth.signOut();
+            return;
+          }
+          router.replace("/groups");
+        }
+      } catch (err) {
+        console.log("Auth check failed, signing out");
+        await supabase.auth.signOut();
       }
     }
 
