@@ -686,19 +686,16 @@ export default function GroupDetailPage() {
 
   return (
     <div className={bgClass}>
-      {/* Floating Back Button - always visible */}
-      <motion.button
+      {/* Back Button - simple style */}
+      <button
         type="button"
         onClick={withHaptics(() => router.push("/groups"))}
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        whileTap={{ scale: 0.95 }}
         className={isDark 
-          ? "fixed top-4 left-4 z-30 h-12 px-4 rounded-full bg-white/10 border border-white/20 text-white/90 text-lg font-medium flex items-center gap-2 hover:bg-white/20"
-          : "fixed top-4 left-4 z-30 h-14 px-5 rounded-full bg-rose-500 text-white text-xl font-bold flex items-center gap-2 shadow-2xl hover:bg-rose-600"}
+          ? "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-white/10 text-white/80 flex items-center justify-center hover:bg-white/20"
+          : "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-stone-200 text-stone-600 flex items-center justify-center hover:bg-stone-300"}
       >
-        ← Back
-      </motion.button>
+        ←
+      </button>
 
       {/* Header - QWF style with group image */}
       <header className={headerClass}>
@@ -799,18 +796,18 @@ export default function GroupDetailPage() {
                           }
                         }
                       }}
-                      className={`flex-shrink-0 h-24 w-24 rounded-full overflow-hidden shadow-lg ${checkin.audio_url ? "cursor-pointer hover:scale-105 transition" : ""}`}
+                      className={`flex-shrink-0 h-12 w-12 rounded-full overflow-hidden shadow ${checkin.audio_url ? "cursor-pointer hover:scale-105 transition" : ""}`}
                     >
                       {avatarUrl ? (
                         <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                       ) : (
-                        <div className={`h-full w-full flex items-center justify-center text-3xl font-bold ${isDark ? "bg-slate-700 text-slate-300" : "bg-stone-200 text-stone-500"}`}>
+                        <div className={`h-full w-full flex items-center justify-center text-lg font-bold ${isDark ? "bg-slate-700 text-slate-300" : "bg-stone-200 text-stone-500"}`}>
                           {displayName[0]}
                         </div>
                       )}
                     </button>
                     
-                    {/* Audio Play Button - same size as avatar, nicer green */}
+                    {/* Audio Play Button */}
                     {checkin.audio_url && (
                       <div className="flex flex-col items-center flex-shrink-0">
                         <button
@@ -830,11 +827,11 @@ export default function GroupDetailPage() {
                               }
                             }
                           }}
-                          className="h-24 w-24 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-white text-4xl font-bold flex items-center justify-center shadow-xl hover:scale-105 transition"
+                          className="h-10 w-10 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-white text-xl font-bold flex items-center justify-center shadow hover:scale-105 transition"
                         >
                           ▶
                         </button>
-                        <span id={`checkin-time-${checkin.id}`} className="text-sm text-teal-600 mt-1 font-medium">0:00</span>
+                        <span id={`checkin-time-${checkin.id}`} className="text-xs text-teal-600 mt-1 font-medium">0:00</span>
                         <audio 
                           id={`checkin-audio-${checkin.id}`} 
                           src={checkin.audio_url} 
@@ -943,18 +940,18 @@ export default function GroupDetailPage() {
                           }
                         }
                       }}
-                      className={`flex-shrink-0 h-24 w-24 rounded-full overflow-hidden shadow-lg ${msg.audio_url ? "cursor-pointer hover:scale-105 transition" : ""}`}
+                      className={`flex-shrink-0 h-12 w-12 rounded-full overflow-hidden shadow ${msg.audio_url ? "cursor-pointer hover:scale-105 transition" : ""}`}
                     >
                       {avatarUrl ? (
                         <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                       ) : (
-                        <div className={`h-full w-full flex items-center justify-center text-3xl font-bold ${isDark ? "bg-slate-700 text-slate-300" : "bg-stone-200 text-stone-500"}`}>
+                        <div className={`h-full w-full flex items-center justify-center text-lg font-bold ${isDark ? "bg-slate-700 text-slate-300" : "bg-stone-200 text-stone-500"}`}>
                           {displayName[0]}
                         </div>
                       )}
                     </button>
                     
-                    {/* Audio Play Button - same size as avatar, nicer green */}
+                    {/* Audio Play Button */}
                     {msg.audio_url && (
                       <div className="flex flex-col items-center flex-shrink-0">
                         <button
@@ -973,11 +970,11 @@ export default function GroupDetailPage() {
                               }
                             }
                           }}
-                          className="h-24 w-24 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-white text-4xl font-bold flex items-center justify-center shadow-xl hover:scale-105 transition"
+                          className="h-10 w-10 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-white text-xl font-bold flex items-center justify-center shadow hover:scale-105 transition"
                         >
                           ▶
                         </button>
-                        <span id={`msg-time-${msg.id}`} className="text-sm text-teal-600 mt-1 font-medium">0:00</span>
+                        <span id={`msg-time-${msg.id}`} className="text-xs text-teal-600 mt-1 font-medium">0:00</span>
                         <audio 
                           id={`audio-${msg.id}`} 
                           src={msg.audio_url} 
