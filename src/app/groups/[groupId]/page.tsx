@@ -835,7 +835,9 @@ export default function GroupDetailPage() {
                         <audio 
                           id={`checkin-audio-${checkin.id}`} 
                           src={checkin.audio_url} 
+                          preload="metadata"
                           className="hidden"
+                          onError={(e) => console.error("Audio error:", e)}
                           onTimeUpdate={(e) => {
                             const audio = e.currentTarget;
                             const timeEl = document.getElementById(`checkin-time-${checkin.id}`);
@@ -978,7 +980,9 @@ export default function GroupDetailPage() {
                         <audio 
                           id={`audio-${msg.id}`} 
                           src={msg.audio_url} 
+                          preload="metadata"
                           className="hidden"
+                          onError={(e) => console.error("Audio error:", e)}
                           onTimeUpdate={(e) => {
                             const audio = e.currentTarget;
                             const timeEl = document.getElementById(`msg-time-${msg.id}`);
