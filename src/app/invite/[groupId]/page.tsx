@@ -239,92 +239,94 @@ export default function GroupInvitePage() {
     );
   }
 
+  // Rotating words for tutorial animation
+  const [wordIndex, setWordIndex] = useState(0);
+  const feelings = ["good", "happy", "tired", "anxious", "grateful"];
+  
+  useEffect(() => {
+    if (step === "tutorial" && tutorialStep === 2) {
+      const interval = setInterval(() => {
+        setWordIndex((prev) => (prev + 1) % feelings.length);
+      }, 1500);
+      return () => clearInterval(interval);
+    }
+  }, [step, tutorialStep]);
+
   if (step === "tutorial") {
     const tutorials = [
       {
-        emoji: "",
-        title: "Pick how you feel",
+        title: "How it works",
+        subtitle: "A simple way to stay connected",
         visual: (
-          <div className="flex items-center justify-center gap-6">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.1 }}
-              className="h-24 w-24 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-5xl shadow-xl"
-            >
-              😔
-            </motion.div>
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="h-24 w-24 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-5xl shadow-xl"
-            >
-              😐
-            </motion.div>
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="h-24 w-24 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-5xl shadow-xl"
-            >
-              😊
-            </motion.div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-8xl"
+          >
+            🪷
+          </motion.div>
         ),
       },
       {
-        emoji: "🎤",
-        title: "Add a voice note",
+        title: "Check in with a number",
+        subtitle: "And add a few words",
         visual: (
           <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-3">
+              {[3, 7].map((num, i) => (
+                <motion.div
+                  key={num}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.1 + i * 0.15 }}
+                  className="h-14 w-14 rounded-full bg-zinc-800 border border-zinc-600 flex items-center justify-center text-xl font-bold text-white"
+                >
+                  {num}
+                </motion.div>
+              ))}
+            </div>
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="h-32 w-32 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-6xl shadow-xl"
-            >
-              🎙️
-            </motion.div>
-            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-2xl text-stone-500"
+              transition={{ delay: 0.4 }}
+              className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 min-w-[200px]"
             >
-              or type a message
-            </motion.p>
+              <span className="text-zinc-500 text-lg">Today I&apos;m feeling </span>
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={wordIndex}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="text-white text-lg font-medium"
+                >
+                  {feelings[wordIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </motion.div>
           </div>
         ),
       },
       {
-        emoji: "💜",
-        title: "Send to your family",
+        title: "Share with people who matter",
+        subtitle: "Your family and close ones",
         visual: (
-          <div className="flex -space-x-6 justify-center">
-            {memberProfiles.slice(0, 4).map((member, i) => (
+          <div className="flex items-center justify-center gap-3">
+            {[0, 1, 2].map((i) => (
               <motion.div
-                key={member.id}
-                initial={{ scale: 0, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                transition={{ delay: i * 0.15 }}
-                className="relative"
+                key={i}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: [0.8, 1.05, 1], opacity: 1 }}
+                transition={{ delay: 0.2 + i * 0.15, duration: 0.3 }}
+                className="h-16 w-16 rounded-2xl bg-zinc-800 border-2 border-zinc-600 flex items-center justify-center overflow-hidden"
               >
-                <div className="h-24 w-24 rounded-full border-4 border-white bg-stone-200 overflow-hidden shadow-xl">
-                  {member.avatar_url ? (
-                    <img src={member.avatar_url} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="h-full w-full flex items-center justify-center text-3xl font-bold text-stone-500">
-                      {member.display_name?.[0] || "?"}
-                    </div>
-                  )}
-                </div>
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: 0.5 + i * 0.1 }}
-                  className="absolute -bottom-1 -right-1 text-2xl"
+                  transition={{ delay: 0.5 + i * 0.15 }}
+                  className="text-white text-lg"
                 >
-                  ❤️
+                  ✓
                 </motion.div>
               </motion.div>
             ))}
@@ -345,9 +347,9 @@ export default function GroupInvitePage() {
             exit={{ opacity: 0, x: -50 }}
             className="flex flex-col items-center"
           >
-            <div className="text-8xl mb-6">{current.emoji}</div>
-            <p className="text-4xl font-bold text-white mb-10 text-center">{current.title}</p>
-            <div className="mb-12">{current.visual}</div>
+            <div className="mb-8">{current.visual}</div>
+            <p className="text-3xl font-bold text-white mb-2 text-center">{current.title}</p>
+            <p className="text-lg text-zinc-400 mb-8 text-center">{current.subtitle}</p>
           </motion.div>
         </AnimatePresence>
 
@@ -355,8 +357,8 @@ export default function GroupInvitePage() {
           {[1, 2, 3].map(n => (
             <div
               key={n}
-              className={`h-4 w-4 rounded-full transition-all ${
-                n === tutorialStep ? "bg-zinc-300 scale-125" : "bg-zinc-700"
+              className={`h-3 w-3 rounded-full transition-all ${
+                n === tutorialStep ? "bg-white scale-125" : "bg-zinc-700"
               }`}
             />
           ))}
@@ -372,9 +374,9 @@ export default function GroupInvitePage() {
             }
           })}
           whileTap={{ scale: 0.95 }}
-          className="w-full max-w-xs rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 px-8 py-6 text-3xl font-bold text-white shadow-xl"
+          className="w-full max-w-xs rounded-full bg-white px-8 py-5 text-xl font-semibold text-black"
         >
-          {tutorialStep < 3 ? "→" : "Join! 💜"}
+          {tutorialStep < 3 ? "Next" : "Got it, let's go"}
         </motion.button>
 
         <button
@@ -390,98 +392,72 @@ export default function GroupInvitePage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-black px-8 py-12">
-      {/* Group Image - LARGE and prominent */}
+      {/* Inviter pic left, Group pic right */}
       <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring", bounce: 0.4 }}
-        className="mb-6"
-      >
-        <div className="h-48 w-48 rounded-full border-4 border-zinc-600 bg-zinc-800 overflow-hidden shadow-2xl ring-4 ring-zinc-700/50">
-          {group.image_url ? (
-            <img src={group.image_url} alt={group.name} className="h-full w-full object-cover" />
-          ) : (
-            <div className="h-full w-full flex items-center justify-center text-6xl font-bold text-zinc-400 bg-gradient-to-br from-zinc-700 to-zinc-800">
-              {group.name[0]}
-            </div>
-          )}
-        </div>
-      </motion.div>
-
-      <motion.h1
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="text-4xl font-bold text-white text-center mb-6"
+        className="flex items-center justify-center gap-6 mb-8"
       >
-        {group.name}
-      </motion.h1>
-
-      {/* Inviter info - LARGER and more prominent */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="flex flex-col items-center gap-3 mb-10"
-      >
-        <div className="h-20 w-20 rounded-full border-3 border-zinc-600 bg-zinc-800 overflow-hidden shadow-xl ring-2 ring-zinc-700/50">
-          {ownerProfile?.avatar_url ? (
-            <img src={ownerProfile.avatar_url} alt={adminName} className="h-full w-full object-cover" />
-          ) : (
-            <div className="h-full w-full flex items-center justify-center text-2xl font-bold text-zinc-400">
-              {adminName[0]}
-            </div>
-          )}
-        </div>
-        <p className="text-xl text-zinc-300">
-          <span className="font-semibold text-white">{adminName}</span> invited you
-        </p>
-      </motion.div>
-
-      {memberProfiles.length > 0 && (
+        {/* Inviter */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="flex -space-x-5 mb-10"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.1, type: "spring" }}
+          className="flex flex-col items-center"
         >
-          {memberProfiles.slice(0, 5).map((member, i) => (
-            <motion.div
-              key={member.id}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.5 + i * 0.1, type: "spring" }}
-              className="h-24 w-24 rounded-full border-4 border-zinc-800 bg-zinc-700 overflow-hidden shadow-lg"
-            >
-              {member.avatar_url ? (
-                <img src={member.avatar_url} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <div className="h-full w-full flex items-center justify-center text-3xl font-bold text-zinc-400">
-                  {member.display_name?.[0] || "?"}
-                </div>
-              )}
-            </motion.div>
-          ))}
-          {memberProfiles.length > 5 && (
-            <div className="h-24 w-24 rounded-full border-4 border-zinc-800 bg-zinc-700 flex items-center justify-center text-2xl font-bold text-zinc-300 shadow-lg">
-              +{memberProfiles.length - 5}
-            </div>
-          )}
+          <div className="h-24 w-24 rounded-full border-2 border-zinc-600 bg-zinc-800 overflow-hidden">
+            {ownerProfile?.avatar_url ? (
+              <img src={ownerProfile.avatar_url} alt={adminName} className="h-full w-full object-cover" />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center text-2xl font-bold text-zinc-400">
+                {adminName[0]}
+              </div>
+            )}
+          </div>
+          <p className="text-sm text-zinc-500 mt-2">{adminName}</p>
         </motion.div>
-      )}
+
+        <span className="text-2xl text-zinc-600">→</span>
+
+        {/* Group */}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.2, type: "spring" }}
+          className="flex flex-col items-center"
+        >
+          <div className="h-24 w-24 rounded-full border-2 border-zinc-600 bg-zinc-800 overflow-hidden">
+            {group.image_url ? (
+              <img src={group.image_url} alt={group.name} className="h-full w-full object-cover" />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center text-2xl font-bold text-zinc-400">
+                {group.name[0]}
+              </div>
+            )}
+          </div>
+          <p className="text-sm text-zinc-500 mt-2">{group.name}</p>
+        </motion.div>
+      </motion.div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="text-xl text-zinc-300 mb-10 text-center"
+      >
+        invited you to join
+      </motion.p>
 
       <motion.button
         type="button"
         onClick={withHaptics(() => setStep("tutorial"))}
-        whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="w-full max-w-xs rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 px-8 py-7 text-4xl font-bold text-white shadow-2xl flex items-center justify-center gap-4"
+        transition={{ delay: 0.4 }}
+        className="w-full max-w-xs rounded-full bg-white px-8 py-5 text-xl font-semibold text-black"
       >
-        <span>Join</span>
-        <span className="text-5xl">✓</span>
+        How it works
       </motion.button>
 
       {isMember && (
@@ -490,8 +466,8 @@ export default function GroupInvitePage() {
           onClick={withHaptics(() => router.push(`/groups/${group.id}`))}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="mt-6 text-xl text-zinc-500 underline"
+          transition={{ delay: 0.6 }}
+          className="mt-6 text-lg text-zinc-500"
         >
           Already joined → Go to group
         </motion.button>
