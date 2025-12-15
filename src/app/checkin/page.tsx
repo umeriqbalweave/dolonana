@@ -35,6 +35,7 @@ function CheckInContent() {
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [totalCheckins, setTotalCheckins] = useState<number>(0);
   const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<File | null>(null);
@@ -431,6 +432,13 @@ function CheckInContent() {
         if (linkError) throw linkError;
       }
 
+      // Fetch total check-in count for this user
+      const { count } = await supabase
+        .from("checkins")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId);
+      
+      setTotalCheckins(count || 1);
       setSent(true);
       setTimeout(() => {
         // If came from invite, go to that group; otherwise go to groups list
@@ -439,7 +447,7 @@ function CheckInContent() {
         } else {
           router.push("/groups");
         }
-      }, 2000);
+      }, 3000);
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : JSON.stringify(err);
       console.error("Error sharing check-in:", errorMsg, err);
@@ -951,7 +959,7 @@ function CheckInContent() {
             </motion.div>
           )}
 
-          {/* Success State with Streak Animation */}
+          {/* Success State with Streak Count */}
           {sent && (
             <motion.div
               key="sent"
@@ -959,47 +967,47 @@ function CheckInContent() {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center"
             >
-              {/* Growing plant animation based on streak */}
+              {/* Plant emoji based on check-in count */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-                className="text-8xl mb-6"
+                transition={{ type: "spring", bounce: 0.5 }}
+                className="text-7xl mb-4"
               >
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: [0, 1, 1, 0] }}
-                  transition={{ duration: 2, times: [0, 0.2, 0.8, 1] }}
-                >
-                  🌱
-                </motion.span>
-                <motion.span
-                  initial={{ opacity: 0, position: "absolute" }}
-                  animate={{ opacity: [0, 0, 1, 1, 0] }}
-                  transition={{ duration: 2, times: [0, 0.2, 0.4, 0.8, 1] }}
-                  className="absolute left-1/2 -translate-x-1/2"
-                >
-                  🌿
-                </motion.span>
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: [0, 0, 0, 1] }}
-                  transition={{ duration: 2, times: [0, 0.4, 0.6, 1] }}
-                  className="absolute left-1/2 -translate-x-1/2"
-                >
-                  🌳
-                </motion.span>
+                {totalCheckins <= 3 ? "🌱" : totalCheckins <= 10 ? "🌿" : totalCheckins <= 30 ? "🌳" : "🌲"}
               </motion.div>
-              <p className={`text-4xl font-bold ${textPrimary} mb-2`}>
-                Submitted!
-              </p>
+              
+              {/* Prominent check-in count */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="mb-4"
+              >
+                <p className={`text-6xl font-bold ${textPrimary}`}>
+                  {totalCheckins}
+                </p>
+                <p className={`text-xl ${textSecondary}`}>
+                  {totalCheckins === 1 ? "check-in" : "check-ins"}
+                </p>
+              </motion.div>
+              
+              {/* Encouraging message based on count */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className={`text-xl ${textSecondary}`}
+                transition={{ delay: 0.6 }}
+                className={`text-lg ${textSecondary} max-w-xs mx-auto`}
               >
-                Keep growing your streak 🌱
+                {totalCheckins === 1 
+                  ? "Great start! Come back tomorrow 🌟" 
+                  : totalCheckins < 5 
+                  ? "You're building a habit! Keep it up 💪"
+                  : totalCheckins < 15
+                  ? "Amazing consistency! You're growing 🌱"
+                  : totalCheckins < 30
+                  ? "Incredible dedication! 🔥"
+                  : "You're a check-in champion! 🏆"}
               </motion.p>
             </motion.div>
           )}
