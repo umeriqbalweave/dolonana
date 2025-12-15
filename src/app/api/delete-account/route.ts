@@ -19,10 +19,18 @@ export async function POST(req: NextRequest) {
   const supabase = createClient(url, serviceKey);
 
   try {
-    // Delete checkin_groups (links between checkins and groups)
-    await supabase.from("checkin_groups").delete().eq("checkin_id", 
-      supabase.from("checkins").select("id").eq("user_id", userId)
-    );
+    // First get all checkin IDs for this user
+    const { data: checkins } = await supabase
+      .from("checkins")
+      .select("id")
+      .eq("user_id", userId);
+    
+    const checkinIds = checkins?.map(c => c.id) || [];
+
+    // Delete checkin_groups for user's checkins
+    if (checkinIds.length > 0) {
+      await supabase.from("checkin_groups").delete().in("checkin_id", checkinIds);
+    }
 
     // Delete all user's checkins
     await supabase.from("checkins").delete().eq("user_id", userId);
