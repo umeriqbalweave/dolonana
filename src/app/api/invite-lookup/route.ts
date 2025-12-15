@@ -29,6 +29,8 @@ export async function GET(req: NextRequest) {
 
   const supabase = createClient(url, key);
 
+  console.log("Invite lookup request:", { groupId, shortId, hasServiceKey: !!serviceKey, hasAnonKey: !!anonKey });
+
   try {
     let group;
 
@@ -41,7 +43,12 @@ export async function GET(req: NextRequest) {
         .maybeSingle();
       
       if (queryError) {
-        console.error("Group query error:", queryError);
+        console.error("Group query error:", JSON.stringify(queryError));
+        return NextResponse.json({ 
+          error: "Database query failed", 
+          details: queryError.message,
+          code: queryError.code 
+        }, { status: 500 });
       }
       console.log("Group lookup result:", { groupId, found: !!data });
       group = data;
