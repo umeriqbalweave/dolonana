@@ -511,10 +511,10 @@ function CheckInContent() {
         animate={{ scale: 1 }}
         whileTap={{ scale: 0.95 }}
         className={isDark 
-          ? "fixed top-4 left-4 z-30 h-12 px-4 rounded-full bg-white/10 border border-white/20 text-white/90 text-lg font-medium flex items-center gap-2 hover:bg-white/20"
-          : "fixed top-4 left-4 z-30 h-14 px-5 rounded-full bg-rose-500 text-white text-xl font-bold flex items-center gap-2 shadow-2xl hover:bg-rose-600"}
+          ? "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-white/10 text-white/80 flex items-center justify-center hover:bg-white/20"
+          : "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-stone-200 text-stone-600 flex items-center justify-center hover:bg-stone-300"}
       >
-        ← Back
+        ←
       </motion.button>
 
       {/* Header */}
@@ -634,7 +634,7 @@ function CheckInContent() {
                     </motion.div>
                     
                     {/* Scale labels */}
-                    <div className="flex justify-between text-sm text-stone-500 mb-3 px-1">
+                    <div className={`flex justify-between text-sm mb-3 px-1 ${isDark ? "text-zinc-500" : "text-stone-500"}`}>
                       <span>Struggling</span>
                       <span>Thriving</span>
                     </div>
@@ -677,7 +677,7 @@ function CheckInContent() {
                       setUseDetailedScale(false);
                       window.localStorage.setItem("checkin-scale", "emoji");
                     })}
-                    className="text-base text-stone-500 underline hover:text-stone-700"
+                    className={isDark ? "text-base text-zinc-500 underline hover:text-zinc-300" : "text-base text-stone-500 underline hover:text-stone-700"}
                   >
                     Use simple emojis instead
                   </button>
@@ -696,7 +696,7 @@ function CheckInContent() {
               className="w-full max-w-lg text-center"
             >
               <p className={`text-3xl font-bold ${textPrimary} mb-1`}>
-                <span className="text-lg font-normal text-stone-400">(optional)</span> Add a few words
+                <span className={`text-lg font-normal ${isDark ? "text-zinc-500" : "text-stone-400"}`}>(optional)</span> Add a few words
               </p>
               <p className={`text-lg ${textSecondary} mb-6`}>
                 Share what&apos;s on your mind
