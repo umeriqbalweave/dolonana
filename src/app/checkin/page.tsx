@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
@@ -20,7 +20,7 @@ type Person = {
   avatar_url: string | null;
 };
 
-export default function CheckInPage() {
+function CheckInContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inviteGroupId = searchParams.get("inviteGroupId");
@@ -1050,5 +1050,13 @@ export default function CheckInPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function CheckInPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-black"><span className="text-4xl">🪷</span></div>}>
+      <CheckInContent />
+    </Suspense>
   );
 }
