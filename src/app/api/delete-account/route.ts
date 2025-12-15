@@ -67,6 +67,10 @@ export async function POST(req: NextRequest) {
     const { error: membErr } = await supabase.from("group_memberships").delete().eq("user_id", userId);
     results.memberships = membErr ? `error: ${membErr.message}` : "deleted";
 
+    // Delete groups owned by user (this may cascade to related data)
+    const { error: groupsErr } = await supabase.from("groups").delete().eq("owner_id", userId);
+    results.ownedGroups = groupsErr ? `error: ${groupsErr.message}` : "deleted";
+
     // Delete profile
     const { error: profErr } = await supabase.from("profiles").delete().eq("id", userId);
     results.profile = profErr ? `error: ${profErr.message}` : "deleted";
