@@ -935,7 +935,7 @@ function CheckInContent() {
                   onClick={withHaptics(() => setStep("message"))}
                   className={isDark 
                     ? "flex-1 rounded-2xl bg-white/10 border border-white/20 px-6 py-5 text-2xl font-medium text-white/90 hover:bg-white/20"
-                    : "flex-1 rounded-2xl bg-rose-500 px-6 py-5 text-2xl font-bold text-white shadow-lg hover:bg-rose-600"}
+                    : "flex-1 rounded-2xl bg-stone-200 px-6 py-5 text-2xl font-medium text-stone-600 hover:bg-stone-300"}
                 >
                   ← Back
                 </button>
