@@ -46,7 +46,7 @@ export default function GroupsPage() {
   const [swipeOffsets, setSwipeOffsets] = useState<Record<string, number>>({});
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
   const [showWelcome, setShowWelcome] = useState(false);
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
 

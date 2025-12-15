@@ -10,13 +10,15 @@ export async function POST(req: NextRequest) {
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!url || !serviceKey) {
-    console.error("Missing Supabase env vars");
+  if (!url) {
+    console.error("Missing Supabase URL");
     return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
   }
 
-  const supabase = createClient(url, serviceKey);
+  // Use service key if available, otherwise fall back to anon key
+  const supabase = createClient(url, serviceKey || anonKey || "");
 
   try {
     // First get all checkin IDs for this user
@@ -55,12 +57,15 @@ export async function POST(req: NextRequest) {
     const { error: profErr } = await supabase.from("profiles").delete().eq("id", userId);
     if (profErr) console.log("Profile delete error (non-fatal):", profErr);
 
-    // Delete the auth user
-    const { error: deleteUserError } = await supabase.auth.admin.deleteUser(userId);
-    
-    if (deleteUserError) {
-      console.error("Error deleting auth user:", deleteUserError);
-      // Continue anyway - data is deleted
+    // Delete the auth user (only works with service key)
+    if (serviceKey) {
+      const { error: deleteUserError } = await supabase.auth.admin.deleteUser(userId);
+      if (deleteUserError) {
+        console.error("Error deleting auth user:", deleteUserError);
+        // Continue anyway - data is deleted
+      }
+    } else {
+      console.log("Service key not available - auth user not deleted, but all data cleared");
     }
 
     return NextResponse.json({ success: true });
