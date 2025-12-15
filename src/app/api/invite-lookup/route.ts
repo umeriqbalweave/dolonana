@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const shortId = searchParams.get("shortId");
@@ -13,24 +10,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing shortId or groupId" }, { status: 400 });
   }
 
-  // Check env vars at runtime
+  // Use anon key (public) - groups table has RLS allowing select
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   
-  if (!url || !key) {
-    console.error("Missing Supabase env vars at runtime:", { 
-      hasUrl: !!url, 
-      hasKey: !!key,
-      urlLength: url?.length,
-      keyLength: key?.length 
-    });
-    return NextResponse.json({ 
-      error: "Server configuration error",
-      debug: { hasUrl: !!url, hasKey: !!key }
-    }, { status: 500 });
+  if (!url || !anonKey) {
+    console.error("Missing Supabase env vars:", { hasUrl: !!url, hasAnonKey: !!anonKey });
+    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
   }
 
-  const supabase = createClient(url, key);
+  const supabase = createClient(url, anonKey);
 
   try {
     let group;
