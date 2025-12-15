@@ -233,17 +233,21 @@ function ProfileContent() {
     <div className={bgClass}>
       <FloatingEmojis count={5} />
       <div className="relative z-10 mx-auto max-w-md px-4 py-6">
+        {/* Floating Back Button */}
+        <motion.button
+          type="button"
+          onClick={withHaptics(() => router.push("/groups"))}
+          initial={{ scale: 0.9 }}
+          animate={{ scale: 1 }}
+          whileTap={{ scale: 0.95 }}
+          className="fixed top-4 left-4 z-30 h-14 px-5 rounded-full bg-rose-500 text-white text-xl font-bold flex items-center gap-2 shadow-2xl hover:bg-rose-600"
+        >
+          ← Back
+        </motion.button>
+
         {/* Header */}
-        <header className="mb-8 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={withHaptics(() => router.push("/groups"))}
-            className={isDark ? "rounded-full border-2 border-slate-700 bg-slate-900 px-6 py-3 text-xl text-slate-300 hover:border-emerald-400 hover:text-emerald-300" : "rounded-full border-2 border-slate-300 bg-white px-6 py-3 text-xl text-slate-600 hover:border-emerald-500 hover:text-emerald-600 shadow-sm"}
-          >
-            ← Back
-          </button>
+        <header className="mb-8 flex items-center justify-center">
           <h1 className="text-3xl font-bold">Profile</h1>
-          <div className="w-24" />
         </header>
 
         {/* Profile Photo - Clickable to update */}

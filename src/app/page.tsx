@@ -104,7 +104,7 @@ function HomeContent() {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("display_name, avatar_url, phone")
+      .select("display_name, avatar_url, phone_number")
       .eq("id", userId)
       .maybeSingle();
 

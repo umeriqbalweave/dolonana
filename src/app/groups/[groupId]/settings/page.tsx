@@ -184,17 +184,21 @@ export default function GroupSettingsPage() {
 
   return (
     <div className={bgClass}>
+      {/* Floating Back Button */}
+      <motion.button
+        type="button"
+        onClick={withHaptics(() => router.back())}
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        whileTap={{ scale: 0.95 }}
+        className="fixed top-4 left-4 z-30 h-14 px-5 rounded-full bg-rose-500 text-white text-xl font-bold flex items-center gap-2 shadow-2xl hover:bg-rose-600"
+      >
+        ← Back
+      </motion.button>
+
       {/* Header */}
-      <header className={`flex items-center justify-between gap-4 border-b px-4 py-4 ${isDark ? "border-slate-800 bg-slate-950/70" : isWarm ? "border-orange-200 bg-[#FEF3E2]" : "border-slate-200 bg-white/80"}`}>
-        <button
-          type="button"
-          onClick={withHaptics(() => router.back())}
-          className={isDark ? "text-slate-400 hover:text-white text-lg" : "text-stone-500 hover:text-stone-800 text-lg"}
-        >
-          ← Back
-        </button>
+      <header className={`flex items-center justify-center gap-4 border-b px-4 py-4 ${isDark ? "border-slate-800 bg-slate-950/70" : isWarm ? "border-orange-200 bg-[#FEF3E2]" : "border-slate-200 bg-white/80"}`}>
         <h1 className="text-xl font-bold">Settings</h1>
-        <div className="w-16" />
       </header>
 
       <main className="max-w-md mx-auto px-4 py-6 space-y-6">

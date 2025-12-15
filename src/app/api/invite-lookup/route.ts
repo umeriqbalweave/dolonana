@@ -13,6 +13,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing shortId or groupId" }, { status: 400 });
   }
 
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.error("Missing Supabase env vars:", { hasUrl: !!supabaseUrl, hasKey: !!supabaseServiceKey });
+    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  }
+
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
@@ -20,11 +25,16 @@ export async function GET(req: NextRequest) {
 
     if (groupId) {
       // Full group ID lookup
-      const { data } = await supabase
+      const { data, error: queryError } = await supabase
         .from("groups")
-        .select("id, name, owner_id, question_prompt, image_url")
+        .select("id, name, owner_id, image_url")
         .eq("id", groupId)
         .maybeSingle();
+      
+      if (queryError) {
+        console.error("Group query error:", queryError);
+      }
+      console.log("Group lookup result:", { groupId, found: !!data });
       group = data;
     } else if (shortId) {
       // First check the short_invites table
@@ -37,7 +47,7 @@ export async function GET(req: NextRequest) {
       if (shortInvite?.group_id) {
         const { data } = await supabase
           .from("groups")
-          .select("id, name, owner_id, question_prompt, image_url")
+          .select("id, name, owner_id, image_url")
           .eq("id", shortInvite.group_id)
           .maybeSingle();
         group = data;
@@ -45,7 +55,7 @@ export async function GET(req: NextRequest) {
         // Fallback: try UUID prefix lookup for old-style short links
         const { data: allGroups } = await supabase
           .from("groups")
-          .select("id, name, owner_id, question_prompt, image_url");
+          .select("id, name, owner_id, image_url");
         
         group = allGroups?.find((g: any) => g.id.startsWith(shortId)) || null;
       }

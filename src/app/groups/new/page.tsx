@@ -81,6 +81,23 @@ export default function NewGroupPage() {
     }
   }, []);
 
+  // Handle Enter key for steps without text inputs
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Enter") {
+        if (step === "picture" && !creating) {
+          e.preventDefault();
+          handleCreateGroup();
+        } else if (step === "invites" && !invitePhone.trim()) {
+          e.preventDefault();
+          handleDone();
+        }
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [step, creating, invitePhone]);
+
   async function handleCreateGroup() {
     if (!groupName.trim() || !userId) return;
 
@@ -198,18 +215,24 @@ export default function NewGroupPage() {
             : "flex items-center justify-between border-b border-slate-200 bg-white/80 px-4 py-4 shadow-sm"
         }
       >
-        <button
-          type="button"
-          onClick={withHaptics(() => router.back())}
-          className={isDark ? "text-slate-400 hover:text-white" : "text-stone-500 hover:text-stone-800"}
-        >
-          ← Back
-        </button>
-        <h1 className="text-lg font-semibold">New Group</h1>
-        <div className="w-12" />
+        <div className="w-24" />
+        <h1 className="text-2xl font-bold">New Group</h1>
+        <div className="w-24" />
       </header>
 
-      <main className="px-4 py-6 max-w-md mx-auto">
+      {/* Floating Back Button */}
+      <motion.button
+        type="button"
+        onClick={withHaptics(() => router.back())}
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        whileTap={{ scale: 0.95 }}
+        className="fixed top-4 left-4 z-30 h-14 px-5 rounded-full bg-rose-500 text-white text-xl font-bold flex items-center gap-2 shadow-2xl hover:bg-rose-600"
+      >
+        ← Back
+      </motion.button>
+
+      <main className="px-6 py-8 max-w-lg mx-auto">
         {/* Step 1: Name */}
         {step === "name" && (
           <motion.div
@@ -217,10 +240,10 @@ export default function NewGroupPage() {
             animate={{ opacity: 1, y: 0 }}
             className={cardClass}
           >
-            <div className="text-center mb-6">
-              <div className="text-5xl mb-3">🪷</div>
-              <h2 className="text-xl font-bold">Name your group</h2>
-              <p className={isDark ? "text-sm text-slate-400 mt-1" : "text-sm text-stone-500 mt-1"}>
+            <div className="text-center mb-8">
+              <div className="text-8xl mb-4">🪷</div>
+              <h2 className="text-3xl font-bold">Name your group</h2>
+              <p className={isDark ? "text-xl text-slate-400 mt-2" : "text-xl text-stone-500 mt-2"}>
                 Who will you be checking in with?
               </p>
             </div>
@@ -229,18 +252,24 @@ export default function NewGroupPage() {
               type="text"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && groupName.trim()) {
+                  e.preventDefault();
+                  setStep("picture");
+                }
+              }}
               placeholder={namePlaceholder}
-              className={inputClass}
+              className="w-full rounded-2xl bg-white border-3 border-orange-200 px-6 py-5 text-2xl text-stone-800 placeholder:text-stone-400 outline-none focus:border-orange-400"
               autoFocus
             />
 
-            {error && <p className="text-rose-400 text-sm mt-2">{error}</p>}
+            {error && <p className="text-rose-400 text-lg mt-3">{error}</p>}
 
             <button
               type="button"
               onClick={withHaptics(() => setStep("picture"))}
               disabled={!groupName.trim()}
-              className="w-full mt-4 rounded-xl bg-amber-500 px-4 py-3 font-bold text-white disabled:opacity-50"
+              className="w-full mt-6 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-5 text-2xl font-bold text-white disabled:opacity-50 shadow-lg"
             >
               Continue →
             </button>
@@ -254,10 +283,10 @@ export default function NewGroupPage() {
             animate={{ opacity: 1, y: 0 }}
             className={cardClass}
           >
-            <div className="text-center mb-6">
-              <div className="text-5xl mb-3">✨</div>
-              <h2 className="text-xl font-bold">Add a group photo</h2>
-              <p className={isDark ? "text-sm text-slate-400 mt-1" : "text-sm text-stone-500 mt-1"}>
+            <div className="text-center mb-8">
+              <div className="text-8xl mb-4">✨</div>
+              <h2 className="text-3xl font-bold">Add a group photo</h2>
+              <p className={isDark ? "text-xl text-slate-400 mt-2" : "text-xl text-stone-500 mt-2"}>
                 Optional - helps identify the group
               </p>
             </div>
@@ -284,34 +313,34 @@ export default function NewGroupPage() {
               <div
                 className={
                   isDark
-                    ? "h-24 w-24 rounded-full bg-slate-800 border-2 border-dashed border-slate-600 overflow-hidden flex items-center justify-center hover:border-amber-400"
-                    : "h-24 w-24 rounded-full bg-stone-100 border-2 border-dashed border-stone-300 overflow-hidden flex items-center justify-center hover:border-amber-500"
+                    ? "h-40 w-40 rounded-full bg-slate-800 border-4 border-dashed border-slate-600 overflow-hidden flex items-center justify-center hover:border-amber-400"
+                    : "h-40 w-40 rounded-full bg-stone-100 border-4 border-dashed border-stone-300 overflow-hidden flex items-center justify-center hover:border-amber-500"
                 }
               >
                 {groupImagePreview ? (
                   <img src={groupImagePreview} alt="" className="h-full w-full object-cover" />
                 ) : (
-                  <span className="text-3xl">📷</span>
+                  <span className="text-6xl">📷</span>
                 )}
               </div>
-              <p className={isDark ? "text-xs text-slate-500 mt-2" : "text-xs text-stone-500 mt-2"}>
+              <p className={isDark ? "text-lg text-slate-500 mt-3" : "text-lg text-stone-500 mt-3"}>
                 Tap to upload
               </p>
             </button>
 
-            <div className="flex gap-3 mt-6">
+            <div className="flex gap-4 mt-8">
               <button
                 type="button"
                 onClick={withHaptics(() => setStep("name"))}
-                className={isDark ? "flex-1 rounded-xl bg-slate-800 px-4 py-3 font-medium" : "flex-1 rounded-xl bg-stone-200 px-4 py-3 font-medium text-stone-700"}
+                className={isDark ? "flex-1 rounded-2xl bg-slate-800 px-6 py-5 text-xl font-medium" : "flex-1 rounded-2xl bg-stone-200 px-6 py-5 text-xl font-medium text-stone-700"}
               >
-                Back
+                ← Back
               </button>
               <button
                 type="button"
                 onClick={withHaptics(handleCreateGroup)}
                 disabled={creating}
-                className="flex-1 rounded-xl bg-amber-500 px-4 py-3 font-bold text-white disabled:opacity-50"
+                className="flex-1 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-5 text-xl font-bold text-white disabled:opacity-50 shadow-lg"
               >
                 {creating ? "Creating..." : "Create Group"}
               </button>
@@ -326,22 +355,22 @@ export default function NewGroupPage() {
             animate={{ opacity: 1, y: 0 }}
             className={cardClass}
           >
-            <div className="text-center mb-6">
-              <div className="text-5xl mb-3">💜</div>
-              <h2 className="text-xl font-bold">Invite friends</h2>
-              <p className={isDark ? "text-sm text-slate-400 mt-1" : "text-sm text-stone-500 mt-1"}>
+            <div className="text-center mb-8">
+              <div className="text-8xl mb-4">💜</div>
+              <h2 className="text-3xl font-bold">Invite friends</h2>
+              <p className={isDark ? "text-xl text-slate-400 mt-2" : "text-xl text-stone-500 mt-2"}>
                 Share the group with people you care about
               </p>
             </div>
 
             {/* Invite by phone */}
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-3 mb-6">
               <input
                 type="tel"
                 value={invitePhone}
                 onChange={(e) => setInvitePhone(e.target.value)}
                 placeholder="Phone number"
-                className={`${inputClass} flex-1`}
+                className="flex-1 rounded-2xl bg-white border-3 border-orange-200 px-6 py-5 text-xl text-stone-800 placeholder:text-stone-400 outline-none focus:border-orange-400"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -353,7 +382,7 @@ export default function NewGroupPage() {
                 type="button"
                 onClick={withHaptics(handleAddInvite)}
                 disabled={!invitePhone.trim()}
-                className="rounded-xl bg-amber-500 px-4 py-3 font-bold text-white disabled:opacity-50"
+                className="rounded-2xl bg-amber-500 px-6 py-5 text-xl font-bold text-white disabled:opacity-50"
               >
                 Send
               </button>
@@ -361,15 +390,15 @@ export default function NewGroupPage() {
 
             {/* Invited list */}
             {invitedPhones.length > 0 && (
-              <div className="mb-4">
-                <p className={isDark ? "text-xs text-slate-500 mb-2" : "text-xs text-stone-500 mb-2"}>
+              <div className="mb-6">
+                <p className={isDark ? "text-lg text-slate-500 mb-3" : "text-lg text-stone-500 mb-3"}>
                   Invites sent:
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {invitedPhones.map((phone) => (
                     <span
                       key={phone}
-                      className={isDark ? "bg-slate-800 px-3 py-1 rounded-full text-sm" : "bg-stone-200 px-3 py-1 rounded-full text-sm text-stone-700"}
+                      className={isDark ? "bg-slate-800 px-4 py-2 rounded-full text-lg" : "bg-stone-200 px-4 py-2 rounded-full text-lg text-stone-700"}
                     >
                       {phone} ✓
                     </span>
@@ -384,8 +413,8 @@ export default function NewGroupPage() {
               onClick={withHaptics(handleCopyLink)}
               className={
                 isDark
-                  ? "w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-center mb-4"
-                  : "w-full rounded-xl bg-stone-100 border border-stone-300 px-4 py-3 text-center mb-4"
+                  ? "w-full rounded-2xl bg-slate-800 border-2 border-slate-700 px-6 py-5 text-xl text-center mb-6"
+                  : "w-full rounded-2xl bg-stone-100 border-2 border-stone-300 px-6 py-5 text-xl text-center mb-6"
               }
             >
               {copyMessage || "📋 Copy invite link"}
@@ -394,7 +423,7 @@ export default function NewGroupPage() {
             <button
               type="button"
               onClick={withHaptics(handleDone)}
-              className="w-full rounded-xl bg-amber-500 px-4 py-3 font-bold text-white"
+              className="w-full rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-5 text-2xl font-bold text-white shadow-lg"
             >
               Done →
             </button>

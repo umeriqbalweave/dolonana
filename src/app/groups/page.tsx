@@ -132,7 +132,7 @@ export default function GroupsPage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const stored = window.localStorage.getItem("theme");
-    if (stored === "light" || stored === "dark") {
+    if (stored === "light" || stored === "dark" || stored === "warm") {
       setTheme(stored);
     }
   }, []);
@@ -210,13 +210,40 @@ export default function GroupsPage() {
       membershipsByGroup.get(m.group_id)!.push(m.user_id);
     });
 
+    // Fetch display names for DM handling
+    const { data: allProfilesWithNames } = await supabase
+      .from("profiles")
+      .select("id, avatar_url, display_name")
+      .in("id", allMemberIds.slice(0, 50));
+    
+    const profileMapFull = new Map(allProfilesWithNames?.map(p => [p.id, p]) || []);
+
     // Build groups with member data
     const groupsWithData: Group[] = (groupsData ?? []).map(group => {
       const memberIds = membershipsByGroup.get(group.id) || [];
       const memberAvatars = memberIds.slice(0, 4).map(id => profileMap.get(id) || null);
       
+      // Check if this is a DM (name contains " + " and has exactly 2 members)
+      const isDM = group.name.includes(" + ") && memberIds.length === 2;
+      let displayName = group.name;
+      let displayImage = group.image_url;
+      
+      if (isDM) {
+        // Find the other person (not current user)
+        const otherUserId = memberIds.find(id => id !== currentUserId);
+        if (otherUserId) {
+          const otherProfile = profileMapFull.get(otherUserId);
+          if (otherProfile) {
+            displayName = otherProfile.display_name || "Friend";
+            displayImage = otherProfile.avatar_url || displayImage;
+          }
+        }
+      }
+      
       return {
         ...group,
+        name: displayName,
+        image_url: displayImage,
         memberAvatars,
         memberCount: memberIds.length,
       };
@@ -389,9 +416,9 @@ export default function GroupsPage() {
           <button
             type="button"
             onClick={withHaptics(() => router.push("/groups/new"))}
-            className="rounded-full bg-amber-500 px-8 py-4 text-xl font-bold text-white shadow-lg transition hover:bg-amber-400"
+            className="rounded-full bg-gradient-to-r from-orange-400 to-amber-400 px-8 py-4 text-xl font-bold text-white shadow-lg transition hover:from-orange-500 hover:to-amber-500"
           >
-            + New
+            + New Group
           </button>
           <button
             type="button"
@@ -451,6 +478,8 @@ export default function GroupsPage() {
           className={
             isDark
               ? "flex-1 overflow-y-auto bg-slate-950/80 px-4 pb-6 pt-4 md:px-8"
+              : isWarm
+              ? "flex-1 overflow-y-auto bg-[#FCEADE]/80 px-4 pb-6 pt-4 md:px-8"
               : "flex-1 overflow-y-auto bg-white/80 px-4 pb-6 pt-4 text-slate-900 md:px-8"
           }
         >
@@ -470,159 +499,24 @@ export default function GroupsPage() {
             </div>
           )}
 
-          {/* FEATURED GROUP (first/most active) */}
-          {groups.length > 0 && (() => {
-            const group = groups[0];
-            const isOwner = group.owner_id === userId;
-            const swipeOffset = swipeOffsets[group.id] || 0;
-            
-            return (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="relative overflow-hidden rounded-3xl mb-4"
-              >
-                {/* Delete/Leave button behind - only visible when swiped */}
-                {swipeOffset > 0 && (
-                  <button
-                    type="button"
-                    onClick={withHaptics(() => {
-                      if (isOwner) {
-                        handleDeleteGroup(group.id);
-                      } else {
-                        handleLeaveGroup(group.id);
-                      }
-                    })}
-                    disabled={deletingGroupId === group.id}
-                    className="absolute right-0 top-0 bottom-0 w-24 flex flex-col items-center justify-center gap-1 bg-rose-500 text-white rounded-r-3xl"
-                  >
-                    <span className="text-2xl">{isOwner ? "🗑️" : "👋"}</span>
-                    <span className="text-xs font-semibold">
-                      {deletingGroupId === group.id ? "..." : (isOwner ? "Delete" : "Leave")}
-                    </span>
-                  </button>
-                )}
-                
-                {/* Swipeable content */}
-                <div
-                  onTouchStart={(e) => handleSwipeStart(e, group.id)}
-                  onTouchMove={(e) => handleSwipeMove(e, group.id)}
-                  onTouchEnd={() => handleSwipeEnd(group.id)}
-                  onMouseDown={(e) => handleSwipeStart(e, group.id)}
-                  onMouseMove={(e) => swipeStartX.current !== null && handleSwipeMove(e, group.id)}
-                  onMouseUp={() => handleSwipeEnd(group.id)}
-                  onMouseLeave={() => swipeStartX.current !== null && handleSwipeEnd(group.id)}
-                  onClick={withHaptics(() => {
-                    if (!deletingGroupId && swipeOffset < 10) {
-                      if (typeof window !== "undefined") {
-                        const lastVisitsRaw = window.localStorage.getItem("groupLastVisits");
-                        const lastVisits: Record<string, string> = lastVisitsRaw ? JSON.parse(lastVisitsRaw) : {};
-                        lastVisits[group.id] = new Date().toISOString();
-                        window.localStorage.setItem("groupLastVisits", JSON.stringify(lastVisits));
-                      }
-                      setUnreadCounts((prev) => { const next = { ...prev }; delete next[group.id]; return next; });
-                      router.push(`/groups/${group.id}`);
-                    } else if (swipeOffset >= 10) {
-                      setSwipeOffsets(prev => ({ ...prev, [group.id]: 0 }));
-                    }
-                  })}
-                  style={{ transform: `translateX(-${swipeOffset}px)`, transition: swipeStartX.current ? 'none' : 'transform 0.2s ease-out' }}
-                  className={isDark ? "relative cursor-pointer rounded-3xl bg-gradient-to-br from-violet-600/30 via-emerald-600/20 to-violet-600/30 border border-white/20 p-5 backdrop-blur-sm" : "relative cursor-pointer rounded-3xl bg-gradient-to-br from-violet-100 via-emerald-50 to-violet-100 border border-violet-200 p-5 shadow-lg"}
-                >
-                  <div className="flex items-start gap-4">
-                    {/* Group Image */}
-                    <div className={isDark ? "h-24 w-24 overflow-hidden rounded-2xl bg-white/10 border-2 border-white/20 flex-shrink-0" : "h-24 w-24 overflow-hidden rounded-2xl bg-slate-100 border-2 border-slate-200 flex-shrink-0"}>
-                      {group.image_url ? (
-                        <img src={group.image_url} alt={group.name} className="h-full w-full object-cover" />
-                      ) : (
-                        <div className={isDark ? "h-full w-full flex items-center justify-center text-2xl font-bold text-white/60" : "h-full w-full flex items-center justify-center text-2xl font-bold text-slate-400"}>
-                          {group.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className={isDark ? "text-2xl font-bold text-white truncate" : "text-2xl font-bold text-slate-800 truncate"}>{group.name}</h3>
-                        {unreadCounts[group.id] > 0 && (
-                          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-xs font-bold text-white">
-                            {unreadCounts[group.id] > 99 ? "99+" : unreadCounts[group.id]}
-                          </span>
-                        )}
-                      </div>
-                      {/* Member count */}
-                      {/* Stacked Member Avatars */}
-                      <div className="flex items-center">
-                        <div className="flex -space-x-2">
-                          {group.memberAvatars?.slice(0, 4).map((avatar, i) => (
-                            <div key={i} className={isDark ? "h-10 w-10 rounded-full border-2 border-violet-900 bg-white/10 overflow-hidden" : "h-10 w-10 rounded-full border-2 border-white bg-slate-100 overflow-hidden shadow-sm"}>
-                              {avatar ? (
-                                <img src={avatar} alt="" className="h-full w-full object-cover" />
-                              ) : (
-                                <div className="h-full w-full bg-gradient-to-br from-emerald-400 to-violet-400" />
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                        {(group.memberCount ?? 0) > 4 && (
-                          <span className={isDark ? "ml-2 text-sm text-white/60" : "ml-2 text-sm text-slate-500"}>+{(group.memberCount ?? 0) - 4} more</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })()}
-
-          {/* OTHER GROUPS LIST */}
-          {groups.length > 1 && (
-            <div className="space-y-2">
-              <p className={isDark ? "text-sm text-white/50 uppercase tracking-wide px-1 mb-3" : "text-sm text-slate-500 uppercase tracking-wide px-1 mb-3"}>Other Groups</p>
-              {groups.slice(1).map((group, index) => {
-                const isOwner = group.owner_id === userId;
+          {/* IMAGE-HEAVY GROUP CARDS - 2 cols desktop, 1 col mobile */}
+          {groups.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-32">
+              {groups.map((group, index) => {
                 const swipeOffset = swipeOffsets[group.id] || 0;
                 
                 return (
                   <motion.div
                     key={group.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.2, delay: index * 0.05 }}
-                    className="relative overflow-hidden rounded-2xl"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    className="relative overflow-hidden rounded-3xl"
                   >
-                    {/* Delete/Leave button behind - only visible when swiped */}
-                    {swipeOffset > 0 && (
-                      <button
-                        type="button"
-                        onClick={withHaptics(() => {
-                          if (isOwner) {
-                            handleDeleteGroup(group.id);
-                          } else {
-                            handleLeaveGroup(group.id);
-                          }
-                        })}
-                        disabled={deletingGroupId === group.id}
-                        className="absolute right-0 top-0 bottom-0 w-20 flex flex-col items-center justify-center gap-1 bg-rose-500 text-white rounded-r-2xl"
-                      >
-                        <span className="text-xl">{isOwner ? "🗑️" : "👋"}</span>
-                        <span className="text-xs font-semibold">
-                          {deletingGroupId === group.id ? "..." : (isOwner ? "Delete" : "Leave")}
-                        </span>
-                      </button>
-                    )}
-                    
-                    {/* Swipeable content */}
+                    {/* Large tappable image card - tall on mobile, square-ish on desktop */}
                     <div
-                      onTouchStart={(e) => handleSwipeStart(e, group.id)}
-                      onTouchMove={(e) => handleSwipeMove(e, group.id)}
-                      onTouchEnd={() => handleSwipeEnd(group.id)}
-                      onMouseDown={(e) => handleSwipeStart(e, group.id)}
-                      onMouseMove={(e) => swipeStartX.current !== null && handleSwipeMove(e, group.id)}
-                      onMouseUp={() => handleSwipeEnd(group.id)}
-                      onMouseLeave={() => swipeStartX.current !== null && handleSwipeEnd(group.id)}
                       onClick={withHaptics(() => {
-                        if (!deletingGroupId && swipeOffset < 10) {
+                        if (swipeOffset < 10) {
                           if (typeof window !== "undefined") {
                             const lastVisitsRaw = window.localStorage.getItem("groupLastVisits");
                             const lastVisits: Record<string, string> = lastVisitsRaw ? JSON.parse(lastVisitsRaw) : {};
@@ -631,54 +525,65 @@ export default function GroupsPage() {
                           }
                           setUnreadCounts((prev) => { const next = { ...prev }; delete next[group.id]; return next; });
                           router.push(`/groups/${group.id}`);
-                        } else if (swipeOffset >= 10) {
-                          // Tap to close swipe
-                          setSwipeOffsets(prev => ({ ...prev, [group.id]: 0 }));
                         }
                       })}
-                      style={{ transform: `translateX(-${swipeOffset}px)`, transition: swipeStartX.current ? 'none' : 'transform 0.2s ease-out' }}
-                      className={isDark ? "relative cursor-pointer flex items-center gap-4 rounded-2xl bg-white/5 border border-white/10 px-5 py-5 hover:bg-white/10 hover:border-emerald-400/30 transition-colors" : "relative cursor-pointer flex items-center gap-4 rounded-2xl bg-white border border-slate-200 px-5 py-5 hover:bg-slate-50 hover:border-emerald-400 transition-colors shadow-sm"}
+                      className="relative cursor-pointer w-full overflow-hidden rounded-3xl shadow-xl bg-stone-200"
+                      style={{ minHeight: "calc(100vh - 280px)", maxHeight: "500px" }}
                     >
-                      {/* Group Image */}
-                      <div className={isDark ? "h-18 w-18 overflow-hidden rounded-xl bg-white/10 flex-shrink-0 relative ring-2 ring-emerald-500/30" : "h-18 w-18 overflow-hidden rounded-xl bg-slate-100 flex-shrink-0 relative ring-2 ring-orange-400/30"} style={{height: '72px', width: '72px'}}>
-                        {/* Always show initials as base layer */}
-                        <div className={isDark ? "absolute inset-0 flex items-center justify-center text-xl font-bold text-white/60" : "absolute inset-0 flex items-center justify-center text-xl font-bold text-slate-400"}>
-                          {group.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
+                      {/* FULL image - fills the entire box */}
+                      {group.image_url ? (
+                        <img 
+                          src={group.image_url} 
+                          alt={group.name} 
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className={isDark ? "absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-600 to-emerald-600" : "absolute inset-0 bg-gradient-to-br from-orange-400 via-amber-400 to-rose-400"}>
+                          <div className="absolute inset-0 flex items-center justify-center text-9xl font-bold text-white/30">
+                            {group.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
+                          </div>
                         </div>
-                        {/* Image loads on top when available */}
-                        {group.image_url && (
-                          <img 
-                            src={group.image_url} 
-                            alt={group.name} 
-                            className="absolute inset-0 h-full w-full object-cover"
-                            loading="lazy"
-                          />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className={isDark ? "text-xl font-bold text-white truncate" : "text-xl font-bold text-slate-800 truncate"}>{group.name}</p>
-                          {unreadCounts[group.id] > 0 && (
-                            <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-rose-500 px-2 text-sm font-bold text-white">
-                              {unreadCounts[group.id] > 99 ? "99+" : unreadCounts[group.id]}
-                            </span>
+                      )}
+                      
+                      {/* Gradient overlay at bottom for text readability */}
+                      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+                      
+                      {/* Unread badge - top right */}
+                      {unreadCounts[group.id] > 0 && (
+                        <div className="absolute top-4 right-4">
+                          <span className="flex h-12 min-w-12 items-center justify-center rounded-full bg-rose-500 px-4 text-2xl font-bold text-white shadow-lg">
+                            {unreadCounts[group.id] > 99 ? "99+" : unreadCounts[group.id]}
+                          </span>
+                        </div>
+                      )}
+                      
+                      {/* Bottom content - group name and member avatars */}
+                      <div className="absolute bottom-0 left-0 right-0 p-6">
+                        {/* Group name - VERY large */}
+                        <h3 className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
+                          {group.name}
+                        </h3>
+                        
+                        {/* Member avatars - large and prominent */}
+                        <div className="flex -space-x-3">
+                          {group.memberAvatars?.slice(0, 5).map((avatar, i) => (
+                            <div 
+                              key={i} 
+                              className="h-14 w-14 rounded-full border-3 border-white bg-stone-300 overflow-hidden shadow-lg"
+                            >
+                              {avatar ? (
+                                <img src={avatar} alt="" className="h-full w-full object-cover" />
+                              ) : (
+                                <div className="h-full w-full bg-gradient-to-br from-emerald-400 to-violet-400" />
+                              )}
+                            </div>
+                          ))}
+                          {(group.memberCount ?? 0) > 5 && (
+                            <div className="h-14 w-14 rounded-full border-3 border-white bg-orange-500 flex items-center justify-center text-lg font-bold text-white shadow-lg">
+                              +{(group.memberCount ?? 0) - 5}
+                            </div>
                           )}
                         </div>
-                        <p className={isDark ? "text-base text-white/50 truncate" : "text-base text-stone-500 truncate"}>
-                          {group.memberCount} {group.memberCount === 1 ? "member" : "members"}
-                        </p>
-                      </div>
-                      {/* Stacked Avatars (bigger) */}
-                      <div className="flex -space-x-2">
-                        {group.memberAvatars?.slice(0, 3).map((avatar, i) => (
-                          <div key={i} className={isDark ? "h-10 w-10 rounded-full border-2 border-slate-800 bg-white/10 overflow-hidden" : "h-10 w-10 rounded-full border-2 border-white bg-slate-100 overflow-hidden shadow-sm"}>
-                            {avatar ? (
-                              <img src={avatar} alt="" className="h-full w-full object-cover" />
-                            ) : (
-                              <div className="h-full w-full bg-gradient-to-br from-emerald-400 to-violet-400" />
-                            )}
-                          </div>
-                        ))}
                       </div>
                     </div>
                   </motion.div>
@@ -688,20 +593,18 @@ export default function GroupsPage() {
           )}
         </div>
 
-        {/* Prominent Check-in Button */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
+        {/* Prominent Check-in Button - BIGGER with label */}
+        <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-30">
           <motion.button
             type="button"
             onClick={withHaptics(() => router.push("/checkin"))}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-rose-500 via-amber-500 to-rose-500 text-5xl shadow-2xl shadow-rose-500/40 ring-4 ring-white/20"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="flex items-center gap-5 px-12 py-7 rounded-full bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30"
           >
-            <span className="animate-pulse">🪷</span>
+            <span className="text-6xl animate-pulse">🪷</span>
+            <span className="text-4xl font-bold text-white">Check In</span>
           </motion.button>
-          <p className={isDark ? "mt-3 text-center text-lg font-medium text-slate-400" : "mt-3 text-center text-lg font-medium text-stone-500"}>
-            Check in
-          </p>
         </div>
       </main>
     </div>
