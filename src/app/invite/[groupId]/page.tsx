@@ -191,7 +191,7 @@ export default function GroupInvitePage() {
 
   if (loading) {
     return (
-      <div className="relative flex min-h-screen flex-col items-center justify-center bg-black overflow-hidden">
+      <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] overflow-hidden">
         <FloatingEmojis count={5} />
         <motion.div
           animate={{ scale: [1, 1.2, 1] }}
@@ -206,17 +206,17 @@ export default function GroupInvitePage() {
 
   if (error || !group) {
     return (
-      <div className="relative flex min-h-screen flex-col items-center justify-center bg-black px-8 overflow-hidden">
+      <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] px-8 overflow-hidden">
         <FloatingEmojis count={5} />
         <div className="text-8xl mb-6">😔</div>
-        <p className="text-2xl text-slate-400 text-center">This invite has expired</p>
+        <p className="text-2xl text-[#a8a6a3] text-center">This invite has expired</p>
       </div>
     );
   }
 
   if (step === "joining") {
     return (
-      <div className="relative flex min-h-screen flex-col items-center justify-center bg-black px-8 overflow-hidden">
+      <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] px-8 overflow-hidden">
         <FloatingEmojis count={5} />
         <motion.div
           initial={{ scale: 0 }}
@@ -230,7 +230,7 @@ export default function GroupInvitePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-3xl font-bold text-stone-800 text-center"
+          className="text-3xl font-bold text-[#e8e6e3] text-center"
         >
           You&apos;re in!
         </motion.p>
@@ -335,7 +335,7 @@ export default function GroupInvitePage() {
     const current = tutorials[tutorialStep - 1];
 
     return (
-      <div className="relative flex min-h-screen flex-col items-center justify-center bg-black px-8 overflow-hidden">
+      <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] px-8 overflow-hidden">
         <FloatingEmojis count={5} />
         <AnimatePresence mode="wait">
           <motion.div
