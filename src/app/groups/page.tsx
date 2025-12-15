@@ -15,7 +15,25 @@ type Group = {
   created_at?: string;
   memberAvatars?: (string | null)[];
   memberCount?: number;
+  lastCheckinAt?: string | null;
 };
+
+function formatLastCheckin(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return "just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays === 1) return "yesterday";
+  if (diffDays < 7) return `${diffDays}d ago`;
+  
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
 
 export default function GroupsPage() {
   const router = useRouter();
@@ -218,6 +236,22 @@ export default function GroupsPage() {
     
     const profileMapFull = new Map(allProfilesWithNames?.map(p => [p.id, p]) || []);
 
+    // Fetch user's last check-in for each group
+    const { data: lastCheckins } = await supabase
+      .from("checkins")
+      .select("group_id, created_at")
+      .eq("user_id", currentUserId)
+      .in("group_id", groupIds)
+      .order("created_at", { ascending: false });
+    
+    // Map of group_id -> last check-in time
+    const lastCheckinMap = new Map<string, string>();
+    lastCheckins?.forEach(checkin => {
+      if (!lastCheckinMap.has(checkin.group_id)) {
+        lastCheckinMap.set(checkin.group_id, checkin.created_at);
+      }
+    });
+
     // Build groups with member data
     const groupsWithData: Group[] = (groupsData ?? []).map(group => {
       const memberIds = membershipsByGroup.get(group.id) || [];
@@ -246,6 +280,7 @@ export default function GroupsPage() {
         image_url: displayImage,
         memberAvatars,
         memberCount: memberIds.length,
+        lastCheckinAt: lastCheckinMap.get(group.id) || null,
       };
     });
 
@@ -562,9 +597,16 @@ export default function GroupsPage() {
                       {/* Bottom content - group name and member avatars */}
                       <div className="absolute bottom-0 left-0 right-0 p-4">
                         {/* Group name */}
-                        <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">
+                        <h3 className="text-2xl font-bold text-white mb-1 drop-shadow-lg">
                           {group.name}
                         </h3>
+                        
+                        {/* Last check-in time */}
+                        {group.lastCheckinAt && (
+                          <p className="text-xs text-white/70 mb-2">
+                            Last check-in: {formatLastCheckin(group.lastCheckinAt)}
+                          </p>
+                        )}
                         
                         {/* Member avatars */}
                         <div className="flex -space-x-2">
