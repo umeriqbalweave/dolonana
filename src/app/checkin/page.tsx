@@ -25,6 +25,7 @@ function CheckInContent() {
   const searchParams = useSearchParams();
   const inviteGroupId = searchParams.get("inviteGroupId");
   const [userId, setUserId] = useState<string | null>(null);
+  const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
   const [step, setStep] = useState<"number" | "message" | "groups">("number");
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
   const [useDetailedScale, setUseDetailedScale] = useState(false);
@@ -85,6 +86,17 @@ function CheckInContent() {
       }
 
       setUserId(currentUserId);
+
+      // Get user's display name for notifications
+      const { data: userProfile } = await supabase
+        .from("profiles")
+        .select("display_name")
+        .eq("id", currentUserId)
+        .maybeSingle();
+      
+      if (userProfile?.display_name) {
+        setUserDisplayName(userProfile.display_name);
+      }
 
       // Load user's groups
       const { data: memberships } = await supabase
@@ -425,6 +437,22 @@ function CheckInContent() {
           .insert(checkinGroups);
         
         if (linkError) throw linkError;
+
+        // Send SMS notifications to group members
+        try {
+          await fetch("/api/notify-checkin", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId,
+              userName: userDisplayName,
+              checkinNumber: selectedNumber,
+              groupIds: groupsToShare,
+            }),
+          });
+        } catch (notifyError) {
+          console.error("Failed to send check-in notifications:", notifyError);
+        }
       }
 
       // Fetch total check-in count for this user
