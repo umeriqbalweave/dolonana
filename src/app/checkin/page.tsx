@@ -464,7 +464,9 @@ export default function CheckInPage() {
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed top-4 left-4 z-30 h-14 px-5 rounded-full bg-rose-500 text-white text-xl font-bold flex items-center gap-2 shadow-2xl hover:bg-rose-600"
+        className={isDark 
+          ? "fixed top-4 left-4 z-30 h-12 px-4 rounded-full bg-white/10 border border-white/20 text-white/90 text-lg font-medium flex items-center gap-2 hover:bg-white/20"
+          : "fixed top-4 left-4 z-30 h-14 px-5 rounded-full bg-rose-500 text-white text-xl font-bold flex items-center gap-2 shadow-2xl hover:bg-rose-600"}
       >
         ← Back
       </motion.button>
@@ -727,14 +729,18 @@ export default function CheckInPage() {
                     <button
                       type="button"
                       onClick={withHaptics(() => setStep("number"))}
-                      className="flex-1 rounded-2xl bg-rose-500 px-6 py-5 text-2xl font-bold text-white shadow-lg hover:bg-rose-600"
+                      className={isDark 
+                        ? "flex-1 rounded-2xl bg-white/10 border border-white/20 px-6 py-5 text-2xl font-medium text-white/90 hover:bg-white/20"
+                        : "flex-1 rounded-2xl bg-rose-500 px-6 py-5 text-2xl font-bold text-white shadow-lg hover:bg-rose-600"}
                     >
                       ← Back
                     </button>
                     <button
                       type="button"
                       onClick={withHaptics(handleMessageNext)}
-                      className="flex-1 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 px-6 py-5 text-2xl font-bold text-white shadow-lg"
+                      className={isDark 
+                        ? "flex-1 rounded-2xl bg-white px-6 py-5 text-2xl font-semibold text-black"
+                        : "flex-1 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 px-6 py-5 text-2xl font-bold text-white shadow-lg"}
                     >
                       Next →
                     </button>
@@ -869,7 +875,9 @@ export default function CheckInPage() {
                 <button
                   type="button"
                   onClick={withHaptics(() => setStep("message"))}
-                  className="flex-1 rounded-2xl bg-rose-500 px-6 py-5 text-2xl font-bold text-white shadow-lg hover:bg-rose-600"
+                  className={isDark 
+                    ? "flex-1 rounded-2xl bg-white/10 border border-white/20 px-6 py-5 text-2xl font-medium text-white/90 hover:bg-white/20"
+                    : "flex-1 rounded-2xl bg-rose-500 px-6 py-5 text-2xl font-bold text-white shadow-lg hover:bg-rose-600"}
                 >
                   ← Back
                 </button>
@@ -877,13 +885,15 @@ export default function CheckInPage() {
                   type="button"
                   onClick={withHaptics(handleShare)}
                   disabled={sending}
-                  className={`flex-1 rounded-2xl px-6 py-5 text-2xl font-bold text-white shadow-lg disabled:opacity-50 ${
-                    selectedPerson 
-                      ? "bg-gradient-to-r from-violet-500 to-purple-500" 
-                      : groups.length === 0 && people.length === 0
-                      ? "bg-gradient-to-r from-amber-500 to-orange-500"
-                      : "bg-gradient-to-r from-emerald-500 to-teal-500"
-                  }`}
+                  className={isDark 
+                    ? "flex-1 rounded-2xl bg-white px-6 py-5 text-2xl font-semibold text-black disabled:opacity-30"
+                    : `flex-1 rounded-2xl px-6 py-5 text-2xl font-bold text-white shadow-lg disabled:opacity-50 ${
+                      selectedPerson 
+                        ? "bg-gradient-to-r from-violet-500 to-purple-500" 
+                        : groups.length === 0 && people.length === 0
+                        ? "bg-gradient-to-r from-amber-500 to-orange-500"
+                        : "bg-gradient-to-r from-emerald-500 to-teal-500"
+                    }`}
                 >
                   {sending ? "..." : selectedPerson ? `Send to ${people.find(p => p.id === selectedPerson)?.display_name || "them"} ✓` : groups.length === 0 && people.length === 0 ? "Save ✓" : "Share ✓"}
                 </button>

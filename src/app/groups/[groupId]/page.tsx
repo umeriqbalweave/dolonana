@@ -692,7 +692,9 @@ export default function GroupDetailPage() {
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed top-4 left-4 z-30 h-14 px-5 rounded-full bg-rose-500 text-white text-xl font-bold flex items-center gap-2 shadow-2xl hover:bg-rose-600"
+        className={isDark 
+          ? "fixed top-4 left-4 z-30 h-12 px-4 rounded-full bg-white/10 border border-white/20 text-white/90 text-lg font-medium flex items-center gap-2 hover:bg-white/20"
+          : "fixed top-4 left-4 z-30 h-14 px-5 rounded-full bg-rose-500 text-white text-xl font-bold flex items-center gap-2 shadow-2xl hover:bg-rose-600"}
       >
         ← Back
       </motion.button>
@@ -723,7 +725,9 @@ export default function GroupDetailPage() {
           <button
             type="button"
             onClick={withHaptics(() => router.push(`/groups/${groupId}/settings`))}
-            className="h-12 px-4 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white text-lg font-bold flex items-center gap-2 shadow-lg hover:scale-105 transition"
+            className={isDark 
+              ? "h-10 px-4 rounded-full bg-white/10 border border-white/20 text-white/90 text-base font-medium flex items-center gap-2 hover:bg-white/20 transition"
+              : "h-12 px-4 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white text-lg font-bold flex items-center gap-2 shadow-lg hover:scale-105 transition"}
           >
             ⚙️ Settings
           </button>
@@ -1086,7 +1090,9 @@ export default function GroupDetailPage() {
           <button
             type="button"
             onClick={() => imageInputRef.current?.click()}
-            className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-lg flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-105 transition"
+            className={isDark 
+              ? "h-10 w-10 rounded-full bg-white/10 border border-white/20 text-white/80 text-lg flex items-center justify-center flex-shrink-0 hover:bg-white/20 transition"
+              : "h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-lg flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-105 transition"}
           >
             📷
           </button>
@@ -1095,12 +1101,14 @@ export default function GroupDetailPage() {
             value={newMessageText}
             onChange={(e) => setNewMessageText(e.target.value)}
             placeholder="Type a message..."
-            className={`flex-1 rounded-full border-2 px-4 py-3 text-lg outline-none ${isDark ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-amber-400" : "bg-white border-orange-200 text-stone-800 placeholder:text-stone-400 focus:border-orange-400"}`}
+            className={`flex-1 rounded-full border px-4 py-3 text-lg outline-none ${isDark ? "bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-white/40" : "bg-white border-2 border-orange-200 text-stone-800 placeholder:text-stone-400 focus:border-orange-400"}`}
           />
           <button
             type="submit"
             disabled={!newMessageText.trim() || sendingMessage}
-            className="h-10 w-10 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white text-lg flex items-center justify-center disabled:opacity-50 flex-shrink-0 shadow-lg"
+            className={isDark 
+              ? "h-10 w-10 rounded-full bg-white text-black text-lg flex items-center justify-center disabled:opacity-30 flex-shrink-0"
+              : "h-10 w-10 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white text-lg flex items-center justify-center disabled:opacity-50 flex-shrink-0 shadow-lg"}
           >
             {sendingMessage ? "..." : "→"}
           </button>
@@ -1170,7 +1178,9 @@ export default function GroupDetailPage() {
           onClick={withHaptics(startRecording)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="fixed bottom-28 right-4 h-24 w-24 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-5xl shadow-2xl flex items-center justify-center z-20"
+          className={isDark 
+            ? "fixed bottom-28 right-4 h-20 w-20 rounded-full bg-white/10 border border-white/20 text-4xl flex items-center justify-center z-20 hover:bg-white/20"
+            : "fixed bottom-28 right-4 h-24 w-24 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-5xl shadow-2xl flex items-center justify-center z-20"}
         >
           🎙️
         </motion.button>

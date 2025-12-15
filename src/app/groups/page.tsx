@@ -416,14 +416,16 @@ export default function GroupsPage() {
           <button
             type="button"
             onClick={withHaptics(() => router.push("/groups/new"))}
-            className="rounded-full bg-gradient-to-r from-orange-400 to-amber-400 px-5 py-3 text-lg font-bold text-white shadow-lg transition hover:from-orange-500 hover:to-amber-500"
+            className={isDark 
+              ? "rounded-full bg-white/10 border border-white/20 px-5 py-3 text-lg font-bold text-white/90 transition hover:bg-white/20" 
+              : "rounded-full bg-gradient-to-r from-orange-400 to-amber-400 px-5 py-3 text-lg font-bold text-white shadow-lg transition hover:from-orange-500 hover:to-amber-500"}
           >
             + New
           </button>
           <button
             type="button"
             onClick={withHaptics(() => router.push("/profile"))}
-            className={isDark ? "flex h-16 w-16 items-center justify-center rounded-full border-3 border-slate-700 bg-slate-950/80 text-lg font-semibold text-slate-200 hover:border-amber-400 ring-2 ring-amber-500/50" : "flex h-16 w-16 items-center justify-center rounded-full border-3 border-stone-300 bg-white text-lg font-semibold text-stone-700 hover:border-amber-500 shadow-md ring-2 ring-orange-400/50"}
+            className={isDark ? "flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-white/10 text-lg font-semibold text-white/90 hover:bg-white/20" : "flex h-16 w-16 items-center justify-center rounded-full border-3 border-stone-300 bg-white text-lg font-semibold text-stone-700 hover:border-amber-500 shadow-md ring-2 ring-orange-400/50"}
           >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -600,10 +602,12 @@ export default function GroupsPage() {
             onClick={withHaptics(() => router.push("/checkin"))}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="flex items-center gap-5 px-12 py-7 rounded-full bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30"
+            className={isDark 
+              ? "flex items-center gap-4 px-10 py-6 rounded-full bg-white text-black shadow-2xl shadow-white/20"
+              : "flex items-center gap-5 px-12 py-7 rounded-full bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30"}
           >
-            <span className="text-6xl animate-pulse">🪷</span>
-            <span className="text-4xl font-bold text-white">Check In</span>
+            <span className={isDark ? "text-5xl" : "text-6xl animate-pulse"}>🪷</span>
+            <span className={isDark ? "text-3xl font-semibold" : "text-4xl font-bold text-white"}>Check In</span>
           </motion.button>
         </div>
       </main>
