@@ -37,7 +37,6 @@ function CheckInContent() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [totalCheckins, setTotalCheckins] = useState<number>(0);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<File[]>([]);
   const [mediaPreviews, setMediaPreviews] = useState<string[]>([]);
@@ -52,15 +51,8 @@ function CheckInContent() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  const isDark = theme === "dark";
-  const isWarm = theme === "warm";
-
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedTheme = window.localStorage.getItem("theme");
-      if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "warm") {
-        setTheme(savedTheme);
-      }
       // Load saved check-in style preference
       const savedScale = window.localStorage.getItem("checkin-scale");
       if (savedScale === "detailed") {
@@ -485,29 +477,17 @@ function CheckInContent() {
     return num >= 101 && num <= 103;
   }
 
-  // Theme-aware classes
-  const bgClass = isDark
-    ? "relative flex min-h-screen flex-col bg-black text-slate-50"
-    : isWarm
-    ? "relative flex min-h-screen flex-col bg-[#FCEADE] text-stone-800"
-    : "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900";
-
-  const headerClass = isDark
-    ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4"
-    : isWarm
-    ? "flex items-center justify-between gap-4 border-b border-orange-200 bg-[#FEF3E2] px-4 py-4"
-    : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4";
-  
-  const cardBg = isDark ? "bg-slate-900/50" : isWarm ? "bg-white" : "bg-white";
-  const textPrimary = isDark ? "text-white" : "text-stone-800";
-  const textSecondary = isDark ? "text-slate-400" : "text-stone-600";
-  const inputClass = isDark 
-    ? "rounded-3xl bg-slate-800 border-3 border-slate-700 px-5 py-4 text-xl text-white placeholder:text-slate-500 outline-none focus:border-amber-400"
-    : "rounded-3xl bg-white border-3 border-orange-200 px-5 py-4 text-xl text-stone-800 placeholder:text-stone-400 outline-none focus:border-orange-400";
+  // Color scheme classes
+  const bgClass = "relative flex min-h-screen flex-col bg-[#0a0a0a] text-[#e8e6e3]";
+  const headerClass = "flex items-center justify-between gap-4 border-b border-[#1a1a1a] bg-[#0f0f0f]/90 px-4 py-4";
+  const cardBg = "bg-[#1a1a1a]";
+  const textPrimary = "text-[#e8e6e3]";
+  const textSecondary = "text-[#a8a6a3]";
+  const inputClass = "rounded-3xl bg-[#1a1a1a] border-2 border-[#2a2a2a] px-5 py-4 text-xl text-[#e8e6e3] placeholder:text-[#666] outline-none focus:border-[#ffaa00] transition-colors duration-200";
 
   return (
     <div className={bgClass}>
-      {isDark && <FloatingEmojis count={5} />}
+      <FloatingEmojis count={5} />
       
       {/* Floating Back Button */}
       <motion.button
@@ -516,9 +496,7 @@ function CheckInContent() {
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         whileTap={{ scale: 0.95 }}
-        className={isDark 
-          ? "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-white/10 text-white/80 flex items-center justify-center hover:bg-white/20"
-          : "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-stone-200 text-stone-600 flex items-center justify-center hover:bg-stone-300"}
+        className="fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-[#1a1a1a] text-[#a8a6a3] flex items-center justify-center hover:bg-[#2a2a2a] transition-colors duration-200"
       >
         ←
       </motion.button>
@@ -564,12 +542,10 @@ function CheckInContent() {
                       whileTap={{ scale: 0.95 }}
                       className="flex flex-col items-center gap-3"
                     >
-                      <div className={isDark 
-                        ? "h-20 w-20 md:h-28 md:w-28 rounded-full bg-zinc-800 border border-zinc-600 flex items-center justify-center text-4xl md:text-6xl"
-                        : "h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl"}>
+                      <div className="h-20 w-20 md:h-28 md:w-28 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center text-4xl md:text-6xl">
                         😔
                       </div>
-                      <span className={isDark ? "text-base md:text-lg text-zinc-400" : "text-lg md:text-2xl font-bold text-rose-600"}>Not great</span>
+                      <span className="text-base md:text-lg text-[#a8a6a3]">Not great</span>
                     </motion.button>
 
                     <motion.button
@@ -583,12 +559,10 @@ function CheckInContent() {
                       whileTap={{ scale: 0.95 }}
                       className="flex flex-col items-center gap-3"
                     >
-                      <div className={isDark 
-                        ? "h-20 w-20 md:h-28 md:w-28 rounded-full bg-zinc-800 border border-zinc-600 flex items-center justify-center text-4xl md:text-6xl"
-                        : "h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl"}>
+                      <div className="h-20 w-20 md:h-28 md:w-28 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center text-4xl md:text-6xl">
                         😐
                       </div>
-                      <span className={isDark ? "text-base md:text-lg text-zinc-400" : "text-lg md:text-2xl font-bold text-amber-600"}>Okay</span>
+                      <span className="text-base md:text-lg text-[#a8a6a3]">Okay</span>
                     </motion.button>
 
                     <motion.button
@@ -602,12 +576,10 @@ function CheckInContent() {
                       whileTap={{ scale: 0.95 }}
                       className="flex flex-col items-center gap-3"
                     >
-                      <div className={isDark 
-                        ? "h-20 w-20 md:h-28 md:w-28 rounded-full bg-zinc-800 border border-zinc-600 flex items-center justify-center text-4xl md:text-6xl"
-                        : "h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl"}>
+                      <div className="h-20 w-20 md:h-28 md:w-28 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center text-4xl md:text-6xl">
                         😊
                       </div>
-                      <span className={isDark ? "text-base md:text-lg text-zinc-400" : "text-lg md:text-2xl font-bold text-emerald-600"}>Good!</span>
+                      <span className="text-base md:text-lg text-[#a8a6a3]">Good!</span>
                     </motion.button>
                   </div>
 
@@ -617,7 +589,7 @@ function CheckInContent() {
                       setUseDetailedScale(true);
                       window.localStorage.setItem("checkin-scale", "detailed");
                     })}
-                    className={isDark ? "text-xl text-zinc-400 underline hover:text-zinc-300" : "text-lg text-stone-500 underline hover:text-stone-700"}
+                    className="text-lg text-[#666] underline hover:text-[#a8a6a3] transition-colors duration-200"
                   >
                     Use 1-10 scale instead
                   </button>
@@ -643,19 +615,15 @@ function CheckInContent() {
                           }
                         }}
                         placeholder="?"
-                        className={`w-32 h-32 text-7xl font-bold text-center rounded-2xl outline-none ${
-                          isDark 
-                            ? "bg-zinc-900 border-2 border-zinc-700 text-white focus:border-amber-400" 
-                            : "bg-white border-3 border-stone-300 text-stone-800 focus:border-amber-500 shadow-lg"
-                        }`}
+                        className="w-32 h-32 text-7xl font-bold text-center rounded-2xl outline-none bg-[#1a1a1a] border-2 border-[#2a2a2a] text-[#e8e6e3] focus:border-[#ffaa00] transition-colors duration-200"
                       />
-                      <p className={`mt-2 text-sm ${isDark ? "text-zinc-500" : "text-stone-500"}`}>
+                      <p className="mt-2 text-sm text-[#666]">
                         Tap to edit
                       </p>
                     </div>
                     
                     {/* Scale labels */}
-                    <div className={`flex justify-between text-sm mb-2 px-1 ${isDark ? "text-zinc-500" : "text-stone-500"}`}>
+                    <div className="flex justify-between text-sm mb-2 px-1 text-[#666]">
                       <span>1 - Struggling</span>
                       <span>10 - Thriving</span>
                     </div>
@@ -672,9 +640,7 @@ function CheckInContent() {
                       }}
                       className="w-full h-3 rounded-full appearance-none cursor-pointer accent-amber-500"
                       style={{
-                        background: isDark 
-                          ? `linear-gradient(to right, #f43f5e 0%, #f59e0b 30%, #10b981 60%, #14b8a6 100%)`
-                          : `linear-gradient(to right, #f43f5e 0%, #f59e0b 30%, #10b981 60%, #14b8a6 100%)`
+                        background: `linear-gradient(to right, #f43f5e 0%, #f59e0b 30%, #10b981 60%, #14b8a6 100%)`
                       }}
                     />
                     
@@ -688,7 +654,7 @@ function CheckInContent() {
                           window.localStorage.setItem("checkin-scale", "detailed");
                           setStep("message");
                         })}
-                        className="w-full mt-6 rounded-2xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 px-6 py-4 text-xl font-bold text-white shadow-lg"
+                        className="w-full mt-6 rounded-2xl bg-gradient-to-b from-[#f0f0f0] to-[#c0c0c0] px-6 py-4 text-xl font-bold text-[#1a1a1a] shadow-lg"
                       >
                         Continue →
                       </motion.button>
@@ -701,7 +667,7 @@ function CheckInContent() {
                       setUseDetailedScale(false);
                       window.localStorage.setItem("checkin-scale", "emoji");
                     })}
-                    className={isDark ? "text-base text-zinc-500 underline hover:text-zinc-300" : "text-base text-stone-500 underline hover:text-stone-700"}
+                    className="text-base text-[#666] underline hover:text-[#a8a6a3] transition-colors duration-200"
                   >
                     Use simple emojis instead
                   </button>
@@ -720,7 +686,7 @@ function CheckInContent() {
               className="w-full max-w-lg text-center"
             >
               <p className={`text-3xl font-bold ${textPrimary} mb-1`}>
-                Add a few words <span className={isDark ? "text-zinc-500" : "text-stone-400"}>(optional)</span>
+                Add a few words <span className="text-[#666]">(optional)</span>
               </p>
               <p className={`text-lg ${textSecondary} mb-6`}>
                 Share what&apos;s on your mind
@@ -737,9 +703,7 @@ function CheckInContent() {
                   <motion.button
                     type="button"
                     onClick={withHaptics(stopRecording)}
-                    className={isDark 
-                      ? "w-24 h-24 rounded-full flex items-center justify-center text-4xl bg-zinc-700 border-2 border-zinc-500 mx-auto"
-                      : "w-24 h-24 rounded-full flex items-center justify-center text-4xl shadow-xl bg-rose-500 mx-auto"}
+                    className="w-24 h-24 rounded-full flex items-center justify-center text-4xl bg-[#8b0000] border-2 border-[#6b0000] mx-auto"
                   >
                     ⏹️
                   </motion.button>
@@ -763,7 +727,7 @@ function CheckInContent() {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type here..."
-                    className={`w-full min-h-[160px] resize-none mb-4 text-xl rounded-2xl p-4 ${isDark ? "bg-zinc-900 border border-zinc-700 text-white placeholder:text-zinc-500" : inputClass}`}
+                    className="w-full min-h-[160px] resize-none mb-4 text-xl rounded-2xl p-4 bg-[#1a1a1a] border border-[#2a2a2a] text-[#e8e6e3] placeholder:text-[#666]"
                   />
 
                   {/* Media previews - multiple images */}
@@ -789,9 +753,9 @@ function CheckInContent() {
 
                   {/* Audio saved indicator */}
                   {audioUrl && (
-                    <div className={`mb-4 px-4 py-2 rounded-full inline-flex items-center gap-2 ${isDark ? "bg-zinc-800" : "bg-emerald-100"}`}>
-                      <span className={isDark ? "text-zinc-300" : "text-emerald-700"}>🎙️ Voice saved</span>
-                      <button type="button" onClick={withHaptics(removeAudio)} className="text-zinc-500 hover:text-zinc-300">✕</button>
+                    <div className="mb-4 px-4 py-2 rounded-full inline-flex items-center gap-2 bg-[#1a1a1a]">
+                      <span className="text-[#4CAF50]">🎙️ Voice saved</span>
+                      <button type="button" onClick={withHaptics(removeAudio)} className="text-[#666] hover:text-[#a8a6a3]">✕</button>
                     </div>
                   )}
 
@@ -818,18 +782,14 @@ function CheckInContent() {
                       type="button"
                       onClick={withHaptics(() => mediaInputRef.current?.click())}
                       disabled={selectedMedia.length >= 5}
-                      className={isDark 
-                        ? "h-12 w-12 rounded-full flex items-center justify-center text-xl bg-zinc-800 border border-zinc-700 disabled:opacity-50"
-                        : "h-12 w-12 rounded-full flex items-center justify-center text-xl shadow-lg bg-blue-500 text-white disabled:opacity-50"}
+                      className="h-12 w-12 rounded-full flex items-center justify-center text-xl bg-[#1a1a1a] border border-[#2a2a2a] disabled:opacity-50 transition-colors duration-200"
                     >
                       {selectedMedia.length > 0 ? `${selectedMedia.length}/5` : "📷"}
                     </button>
                     <button
                       type="button"
                       onClick={withHaptics(startRecording)}
-                      className={isDark 
-                        ? "h-12 w-12 rounded-full flex items-center justify-center text-xl bg-zinc-800 border border-zinc-700"
-                        : "h-12 w-12 rounded-full flex items-center justify-center text-xl shadow-lg bg-amber-500 text-white"}
+                      className="h-12 w-12 rounded-full flex items-center justify-center text-xl bg-[#1a1a1a] border border-[#2a2a2a] transition-colors duration-200"
                     >
                       🎙️
                     </button>
@@ -839,9 +799,7 @@ function CheckInContent() {
                   <button
                     type="button"
                     onClick={withHaptics(() => setShowGroupModal(true))}
-                    className={isDark 
-                      ? "w-full rounded-2xl bg-white px-6 py-5 text-2xl font-semibold text-black"
-                      : "w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 px-6 py-5 text-2xl font-bold text-white shadow-lg"}
+                    className="w-full rounded-2xl bg-gradient-to-b from-[#f0f0f0] to-[#c0c0c0] px-6 py-5 text-2xl font-bold text-[#1a1a1a] shadow-lg"
                   >
                     Share
                   </button>
@@ -969,9 +927,7 @@ function CheckInContent() {
                 <button
                   type="button"
                   onClick={withHaptics(() => setStep("message"))}
-                  className={isDark 
-                    ? "flex-1 rounded-2xl bg-white/10 border border-white/20 px-6 py-5 text-2xl font-medium text-white/90 hover:bg-white/20"
-                    : "flex-1 rounded-2xl bg-stone-200 px-6 py-5 text-2xl font-medium text-stone-600 hover:bg-stone-300"}
+                  className="flex-1 rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] px-6 py-5 text-2xl font-medium text-[#a8a6a3] hover:bg-[#2a2a2a] transition-colors duration-200"
                 >
                   ← Back
                 </button>
@@ -979,15 +935,7 @@ function CheckInContent() {
                   type="button"
                   onClick={withHaptics(handleShare)}
                   disabled={sending}
-                  className={isDark 
-                    ? "flex-1 rounded-2xl bg-white px-6 py-5 text-2xl font-semibold text-black disabled:opacity-30"
-                    : `flex-1 rounded-2xl px-6 py-5 text-2xl font-bold text-white shadow-lg disabled:opacity-50 ${
-                      selectedPerson 
-                        ? "bg-gradient-to-r from-violet-500 to-purple-500" 
-                        : groups.length === 0 && people.length === 0
-                        ? "bg-gradient-to-r from-amber-500 to-orange-500"
-                        : "bg-gradient-to-r from-emerald-500 to-teal-500"
-                    }`}
+                  className="flex-1 rounded-2xl bg-gradient-to-b from-[#f0f0f0] to-[#c0c0c0] px-6 py-5 text-2xl font-bold text-[#1a1a1a] shadow-lg disabled:opacity-30"
                 >
                   {sending ? "..." : selectedPerson ? `Send to ${people.find(p => p.id === selectedPerson)?.display_name || "them"} ✓` : groups.length === 0 && people.length === 0 ? "Save ✓" : "Share ✓"}
                 </button>
@@ -1066,7 +1014,7 @@ function CheckInContent() {
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className={`absolute bottom-0 left-0 right-0 rounded-t-3xl p-6 max-h-[70vh] overflow-y-auto ${isDark ? "bg-zinc-900" : "bg-white"}`}
+              className="absolute bottom-0 left-0 right-0 rounded-t-3xl p-6 max-h-[70vh] overflow-y-auto bg-[#0f0f0f]"
             >
               <div className="w-12 h-1 bg-zinc-600 rounded-full mx-auto mb-6" />
               
@@ -1076,8 +1024,8 @@ function CheckInContent() {
 
               {/* No groups message */}
               {groups.length === 0 && people.length === 0 && (
-                <div className={`text-center p-6 rounded-2xl mb-4 ${isDark ? "bg-zinc-800" : "bg-amber-50"}`}>
-                  <p className={`text-lg ${isDark ? "text-zinc-300" : "text-amber-800"}`}>
+                <div className="text-center p-6 rounded-2xl mb-4 bg-[#1a1a1a]">
+                  <p className="text-lg text-[#a8a6a3]">
                     No groups yet. This will be saved privately.
                   </p>
                 </div>
@@ -1093,15 +1041,15 @@ function CheckInContent() {
                       onClick={withHaptics(() => toggleGroup(group.id))}
                       className={`relative overflow-hidden rounded-2xl ${
                         selectedGroups.has(group.id) 
-                          ? isDark ? "ring-2 ring-white" : "ring-2 ring-emerald-500"
-                          : isDark ? "ring-1 ring-zinc-700" : "ring-1 ring-stone-200"
+                          ? "ring-2 ring-[#4CAF50]"
+                          : "ring-1 ring-[#2a2a2a]"
                       }`}
                     >
                       <div className="h-24 w-full overflow-hidden">
                         {group.image_url ? (
                           <img src={group.image_url} alt={group.name} className="h-full w-full object-cover" />
                         ) : (
-                          <div className={`h-full w-full flex items-center justify-center text-3xl font-bold ${isDark ? "bg-zinc-800 text-zinc-600" : "bg-gradient-to-br from-orange-400 to-amber-400 text-white/50"}`}>
+                          <div className="h-full w-full flex items-center justify-center text-3xl font-bold bg-[#1a1a1a] text-[#666]">
                             {group.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
                           </div>
                         )}
@@ -1109,8 +1057,8 @@ function CheckInContent() {
                       {selectedGroups.has(group.id) && (
                         <div className="absolute top-2 right-2 h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-sm">✓</div>
                       )}
-                      <div className={`p-2 ${isDark ? "bg-zinc-800" : "bg-white"}`}>
-                        <p className={`text-sm font-medium truncate ${isDark ? "text-zinc-300" : "text-stone-800"}`}>{group.name}</p>
+                      <div className="p-2 bg-[#1a1a1a]">
+                        <p className="text-sm font-medium truncate text-[#e8e6e3]">{group.name}</p>
                       </div>
                     </button>
                   ))}
@@ -1125,9 +1073,7 @@ function CheckInContent() {
                   handleShare();
                 })}
                 disabled={sending}
-                className={isDark 
-                  ? "w-full rounded-2xl bg-white px-6 py-5 text-xl font-semibold text-black disabled:opacity-30"
-                  : "w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 px-6 py-5 text-xl font-bold text-white shadow-lg disabled:opacity-50"}
+                className="w-full rounded-2xl bg-gradient-to-b from-[#f0f0f0] to-[#c0c0c0] px-6 py-5 text-xl font-bold text-[#1a1a1a] shadow-lg disabled:opacity-30"
               >
                 {sending ? "Submitting..." : "Submit"}
               </button>

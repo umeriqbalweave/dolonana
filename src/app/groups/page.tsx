@@ -46,19 +46,9 @@ export default function GroupsPage() {
   const [swipeOffsets, setSwipeOffsets] = useState<Record<string, number>>({});
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
   const [showWelcome, setShowWelcome] = useState(false);
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
 
-  function toggleTheme() {
-    setTheme((previous) => {
-      const next = previous === "dark" ? "light" : previous === "light" ? "warm" : "dark";
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("theme", next);
-      }
-      return next;
-    });
-  }
 
   useEffect(() => {
     async function loadUser() {
@@ -147,13 +137,6 @@ export default function GroupsPage() {
     };
   }, [groups, userId]);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = window.localStorage.getItem("theme");
-    if (stored === "light" || stored === "dark" || stored === "warm") {
-      setTheme(stored);
-    }
-  }, []);
 
   function toE164(phone: string): string {
     const digits = phone.replace(/\D/g, "");
@@ -414,36 +397,18 @@ export default function GroupsPage() {
     }));
   }
 
-  const isDark = theme === "dark";
-  const isWarm = theme === "warm";
-
-  // Theme-based classes
-  const bgClass = isDark 
-    ? "relative min-h-screen bg-black text-slate-50 overflow-hidden"
-    : isWarm
-    ? "relative min-h-screen bg-[#FCEADE] text-stone-800 overflow-hidden"
-    : "relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 overflow-hidden";
-
   return (
-    <div className={bgClass}>
+    <div className="relative min-h-screen bg-[#0a0a0a] text-[#e8e6e3] overflow-hidden">
       <FloatingEmojis count={6} />
-      <header
-        className={
-          isDark
-            ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4 md:px-8"
-            : isWarm
-            ? "flex items-center justify-between gap-4 border-b border-stone-200 bg-white/80 backdrop-blur-sm px-4 py-4 md:px-8"
-            : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 text-slate-900 shadow-sm md:px-8"
-        }
-      >
+      <header className="flex items-center justify-between gap-4 border-b border-[#1a1a1a] bg-[#0f0f0f]/90 px-4 py-4 md:px-8">
         <div>
           <h1
-            className="cursor-pointer text-5xl font-bold tracking-tight md:text-6xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent"
+            className="cursor-pointer text-5xl font-bold tracking-tight md:text-6xl text-[#e8e6e3]"
             onClick={withHaptics(() => setShowWelcome(true))}
           >
             CWF
           </h1>
-          <p className={isDark ? "text-base text-slate-400 md:text-lg" : "text-base text-stone-500 md:text-lg"}>
+          <p className="text-base text-[#a8a6a3] md:text-lg">
             Check in with your people.
           </p>
         </div>
@@ -451,14 +416,14 @@ export default function GroupsPage() {
           <button
             type="button"
             onClick={withHaptics(() => router.push("/groups/new"))}
-            className="rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 px-5 py-3 text-lg font-bold text-white shadow-lg transition hover:opacity-90"
+            className="rounded-full bg-gradient-to-b from-[#f0f0f0] to-[#c0c0c0] px-5 py-3 text-lg font-bold text-[#1a1a1a] shadow-lg transition hover:opacity-90"
           >
             + New
           </button>
           <button
             type="button"
             onClick={withHaptics(() => router.push("/profile"))}
-            className={isDark ? "flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-white/10 text-lg font-semibold text-white/90 hover:bg-white/20" : "flex h-12 w-12 items-center justify-center rounded-full border-2 border-stone-200 bg-white text-lg font-semibold text-stone-700 hover:border-stone-400 shadow"}
+            className="flex h-14 w-14 items-center justify-center rounded-full border border-[#2a2a2a] bg-[#1a1a1a] text-lg font-semibold text-[#e8e6e3] hover:bg-[#2a2a2a] transition-colors duration-200"
           >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -509,28 +474,20 @@ export default function GroupsPage() {
 
       
       <main className="flex h-[calc(100vh-64px)] flex-col px-0 py-0">
-        <div
-          className={
-            isDark
-              ? "flex-1 overflow-y-auto bg-slate-950/80 px-4 pb-6 pt-4 md:px-8"
-              : isWarm
-              ? "flex-1 overflow-y-auto bg-[#FCEADE]/80 px-4 pb-6 pt-4 md:px-8"
-              : "flex-1 overflow-y-auto bg-white/80 px-4 pb-6 pt-4 text-slate-900 md:px-8"
-          }
-        >
+        <div className="flex-1 overflow-y-auto bg-[#0f0f0f] px-4 pb-6 pt-4 md:px-8">
           {groupsLoading && (
             <div className="relative flex flex-col items-center justify-center min-h-[60vh]">
               <div className="absolute top-10 left-10 text-4xl opacity-20 animate-pulse">🪷</div>
               <div className="absolute bottom-10 right-10 text-4xl opacity-20 animate-pulse">✨</div>
               <div className="animate-pulse text-6xl mb-4">🪷</div>
-              <p className={isDark ? "text-lg text-slate-400" : "text-lg text-slate-600"}>Loading your circles...</p>
+              <p className="text-lg text-[#a8a6a3]">Loading your circles...</p>
             </div>
           )}
           {!groupsLoading && groups.length === 0 && (
             <div className="py-8 text-center">
               <div className="text-6xl mb-4">🪷</div>
-              <p className={isDark ? "text-lg text-slate-400 mb-2" : "text-lg text-slate-600 mb-2"}>No circles yet</p>
-              <p className={isDark ? "text-sm text-slate-500" : "text-sm text-slate-500"}>Create a group to start checking in with friends</p>
+              <p className="text-lg text-[#a8a6a3] mb-2">No circles yet</p>
+              <p className="text-sm text-[#666]">Create a group to start checking in with friends</p>
             </div>
           )}
 
@@ -573,7 +530,7 @@ export default function GroupsPage() {
                           className="absolute inset-0 h-full w-full object-cover"
                         />
                       ) : (
-                        <div className={isDark ? "absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-600 to-emerald-600" : "absolute inset-0 bg-gradient-to-br from-orange-400 via-amber-400 to-rose-400"}>
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a2a] via-[#1a1a1a] to-[#2a2a2a]">
                           <div className="absolute inset-0 flex items-center justify-center text-9xl font-bold text-white/30">
                             {group.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
                           </div>
@@ -642,7 +599,7 @@ export default function GroupsPage() {
             onClick={withHaptics(() => router.push("/checkin"))}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="h-24 w-24 rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30"
+            className="h-24 w-24 rounded-full bg-gradient-to-b from-[#f0f0f0] to-[#c0c0c0] shadow-2xl ring-4 ring-[#2a2a2a]"
           />
         </div>
       </main>
