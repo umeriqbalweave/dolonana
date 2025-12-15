@@ -432,7 +432,7 @@ export default function GroupsPage() {
           isDark
             ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4 md:px-8"
             : isWarm
-            ? "flex items-center justify-between gap-4 border-b border-orange-200 bg-[#FEF3E2] px-4 py-4 md:px-8"
+            ? "flex items-center justify-between gap-4 border-b border-stone-200 bg-white/80 backdrop-blur-sm px-4 py-4 md:px-8"
             : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 text-slate-900 shadow-sm md:px-8"
         }
       >
@@ -453,14 +453,14 @@ export default function GroupsPage() {
             onClick={withHaptics(() => router.push("/groups/new"))}
             className={isDark 
               ? "rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 px-5 py-3 text-lg font-bold text-zinc-800 transition hover:from-zinc-200 hover:to-zinc-400" 
-              : "rounded-full bg-gradient-to-r from-orange-400 to-amber-400 px-5 py-3 text-lg font-bold text-white shadow-lg transition hover:from-orange-500 hover:to-amber-500"}
+              : "rounded-full bg-stone-800 px-5 py-3 text-lg font-medium text-white shadow transition hover:bg-stone-700"}
           >
             + New
           </button>
           <button
             type="button"
             onClick={withHaptics(() => router.push("/profile"))}
-            className={isDark ? "flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-white/10 text-lg font-semibold text-white/90 hover:bg-white/20" : "flex h-16 w-16 items-center justify-center rounded-full border-3 border-stone-300 bg-white text-lg font-semibold text-stone-700 hover:border-amber-500 shadow-md ring-2 ring-orange-400/50"}
+            className={isDark ? "flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-white/10 text-lg font-semibold text-white/90 hover:bg-white/20" : "flex h-12 w-12 items-center justify-center rounded-full border-2 border-stone-200 bg-white text-lg font-semibold text-stone-700 hover:border-stone-400 shadow"}
           >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
