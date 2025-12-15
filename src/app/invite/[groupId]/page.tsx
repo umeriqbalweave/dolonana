@@ -40,6 +40,7 @@ export default function GroupInvitePage() {
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState<"welcome" | "tutorial" | "joining">("welcome");
   const [tutorialStep, setTutorialStep] = useState(1);
+  const [wordIndex, setWordIndex] = useState(0);
 
   useEffect(() => {
     async function loadInvite() {
@@ -105,6 +106,17 @@ export default function GroupInvitePage() {
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     }
   }, [loading, group, error, step]);
+
+  // Rotating words for tutorial animation
+  const feelings = ["good", "happy", "tired", "anxious", "grateful"];
+  useEffect(() => {
+    if (step === "tutorial" && tutorialStep === 2) {
+      const interval = setInterval(() => {
+        setWordIndex((prev) => (prev + 1) % feelings.length);
+      }, 1500);
+      return () => clearInterval(interval);
+    }
+  }, [step, tutorialStep]);
 
   async function handleJoin() {
     if (!group) return;
@@ -238,19 +250,6 @@ export default function GroupInvitePage() {
       </div>
     );
   }
-
-  // Rotating words for tutorial animation
-  const [wordIndex, setWordIndex] = useState(0);
-  const feelings = ["good", "happy", "tired", "anxious", "grateful"];
-  
-  useEffect(() => {
-    if (step === "tutorial" && tutorialStep === 2) {
-      const interval = setInterval(() => {
-        setWordIndex((prev) => (prev + 1) % feelings.length);
-      }, 1500);
-      return () => clearInterval(interval);
-    }
-  }, [step, tutorialStep]);
 
   if (step === "tutorial") {
     const tutorials = [
