@@ -595,17 +595,20 @@ export default function GroupsPage() {
           )}
         </div>
 
-        {/* Check-in Button - minimal empty circle */}
-        <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-30">
+        {/* Prominent Check-in Button - BIGGER with label */}
+        <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-30">
           <motion.button
             type="button"
             onClick={withHaptics(() => router.push("/checkin"))}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             className={isDark 
-              ? "h-20 w-20 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 shadow-xl"
-              : "h-24 w-24 rounded-full bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 shadow-2xl shadow-rose-500/30"}
-          />
+              ? "flex items-center gap-4 px-10 py-6 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 shadow-2xl"
+              : "flex items-center gap-5 px-12 py-7 rounded-full bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30"}
+          >
+            <span className={isDark ? "text-5xl" : "text-6xl animate-pulse"}>🪷</span>
+            <span className={isDark ? "text-3xl font-semibold text-zinc-800" : "text-4xl font-bold text-white"}>Check In</span>
+          </motion.button>
         </div>
       </main>
     </div>
