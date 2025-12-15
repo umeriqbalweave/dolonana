@@ -610,52 +610,58 @@ function CheckInContent() {
                 </>
               ) : (
                 <>
-                  {/* Detailed 1-10 scale */}
-                  <p className={isDark ? "text-2xl text-zinc-500 mb-8" : "text-3xl text-stone-600 mb-12"}>
-                    1 = struggling &nbsp;•&nbsp; 10 = thriving
-                  </p>
-
-                  <div className="grid grid-cols-5 gap-3 md:gap-4 w-full max-w-md mx-auto mb-8">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
-                      const color = num <= 3 ? "from-rose-500 to-rose-600" 
-                        : num <= 5 ? "from-amber-500 to-amber-600"
-                        : num <= 7 ? "from-emerald-500 to-emerald-600"
-                        : "from-violet-500 to-violet-600";
-                      return (
-                        <motion.button
-                          key={num}
-                          type="button"
-                          onClick={withHaptics(() => {
-                            window.localStorage.setItem("checkin-scale", "detailed");
-                            handleNumberSelect(num);
-                          })}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className={isDark 
-                            ? `h-14 w-14 md:h-16 md:w-16 rounded-xl text-2xl md:text-3xl font-medium transition-all ${
-                                selectedNumber === num 
-                                  ? "bg-white text-black" 
-                                  : "bg-zinc-800 border border-zinc-600 text-zinc-300 hover:bg-zinc-700"
-                              }`
-                            : `h-20 md:h-24 w-full rounded-2xl text-3xl md:text-4xl font-bold text-white shadow-xl transition-all bg-gradient-to-br ${color} ${
-                                selectedNumber === num ? "ring-4 ring-stone-800 scale-105" : ""
-                              }`}
-                        >
-                          {num}
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-
-                  {selectedNumber && isEmojiScale(selectedNumber) && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="text-9xl mb-6"
+                  {/* Detailed 1-10 scale - Horizontal slider style */}
+                  <div className="w-full max-w-sm mx-auto mb-8">
+                    {/* Emoji feedback based on selection */}
+                    <motion.div 
+                      key={selectedNumber || 0}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="text-7xl mb-6 text-center"
                     >
-                      {selectedNumber === 101 ? "😔" : selectedNumber === 102 ? "😐" : "😊"}
+                      {!selectedNumber ? "🤔" : 
+                       selectedNumber <= 3 ? "😔" : 
+                       selectedNumber <= 5 ? "😐" : 
+                       selectedNumber <= 7 ? "🙂" : "😊"}
                     </motion.div>
-                  )}
+                    
+                    {/* Scale labels */}
+                    <div className="flex justify-between text-sm text-stone-500 mb-3 px-1">
+                      <span>Struggling</span>
+                      <span>Thriving</span>
+                    </div>
+                    
+                    {/* Number buttons in a row */}
+                    <div className="flex gap-1 w-full">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+                        const bgColor = num <= 3 ? "bg-rose-500" 
+                          : num <= 5 ? "bg-amber-500"
+                          : num <= 7 ? "bg-emerald-500"
+                          : "bg-teal-500";
+                        const isSelected = selectedNumber === num;
+                        return (
+                          <motion.button
+                            key={num}
+                            type="button"
+                            onClick={withHaptics(() => {
+                              window.localStorage.setItem("checkin-scale", "detailed");
+                              handleNumberSelect(num);
+                            })}
+                            whileTap={{ scale: 0.9 }}
+                            className={`flex-1 h-14 rounded-xl text-lg font-bold transition-all ${
+                              isSelected 
+                                ? `${bgColor} text-white shadow-lg scale-110 z-10` 
+                                : isDark 
+                                  ? "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                                  : "bg-stone-200 text-stone-600 hover:bg-stone-300"
+                            }`}
+                          >
+                            {num}
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
                   <button
                     type="button"
@@ -663,7 +669,7 @@ function CheckInContent() {
                       setUseDetailedScale(false);
                       window.localStorage.setItem("checkin-scale", "emoji");
                     })}
-                    className="text-lg text-stone-500 underline hover:text-stone-700 mt-4"
+                    className="text-base text-stone-500 underline hover:text-stone-700"
                   >
                     Use simple emojis instead
                   </button>
