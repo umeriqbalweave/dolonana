@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const groupId = searchParams.get("groupId");
 
-  let groupName = "Dolo";
+  let groupName = "CWF";
   let groupImage: string | null = null;
   let inviterName: string | null = null;
 
@@ -99,7 +99,7 @@ export async function GET(request: Request) {
           {inviterName ? `${inviterName} invited you to join` : "Answer first. Then see theirs."}
         </div>
 
-        {/* Dolo badge */}
+        {/* CWF badge */}
         {groupId && (
           <div
             style={{

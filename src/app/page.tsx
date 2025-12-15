@@ -165,7 +165,7 @@ function HomeContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
             >
-              Dolo
+              CWF
             </motion.h1>
             <motion.p
               className="mb-10 text-center text-xl text-zinc-400 md:text-2xl"

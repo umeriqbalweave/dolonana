@@ -210,8 +210,8 @@ export default function GroupSettingsPage() {
             if (navigator.share) {
               try {
                 await navigator.share({
-                  title: `Join ${group?.name || "our group"} on Dolo`,
-                  text: "Check in with me on Dolo!",
+                  title: `Join ${group?.name || "our group"} on CWF`,
+                  text: "Check in with me on CWF!",
                   url: inviteUrl,
                 });
               } catch {

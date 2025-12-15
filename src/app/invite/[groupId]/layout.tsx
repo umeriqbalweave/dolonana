@@ -19,11 +19,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .eq("id", groupId)
     .maybeSingle();
 
-  let title = "Join Dolo";
+  let title = "Join CWF";
   let description = "Answer first. Then see theirs.";
 
   if (group) {
-    title = `Join ${group.name} on Dolo`;
+    title = `Join ${group.name} on CWF`;
     
     // Get owner name
     const { data: owner } = await supabase

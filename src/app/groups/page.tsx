@@ -406,7 +406,7 @@ export default function GroupsPage() {
             className="cursor-pointer text-5xl font-bold tracking-tight md:text-6xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent"
             onClick={withHaptics(() => setShowWelcome(true))}
           >
-            Dolo
+            CWF
           </h1>
           <p className={isDark ? "text-base text-slate-400 md:text-lg" : "text-base text-stone-500 md:text-lg"}>
             Check in with your people.

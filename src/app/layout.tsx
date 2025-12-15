@@ -16,33 +16,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dolo - Check in with your people",
+  title: "CWF - Check in with your people",
   description: "Daily check-ins with friends. Share how you're feeling and let your people know what's going on.",
   keywords: ["friends", "check-in", "mental health", "social app", "friend groups", "wellness"],
-  authors: [{ name: "Dolo" }],
-  creator: "Dolo",
-  publisher: "Dolo",
+  authors: [{ name: "CWF" }],
+  creator: "CWF",
+  publisher: "CWF",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://dolo.app",
-    siteName: "Dolo",
-    title: "Dolo - Check in with your people",
+    url: "https://checkinwithfriends.app",
+    siteName: "CWF",
+    title: "CWF - Check in with your people",
     description: "Daily check-ins with friends. Share how you're feeling and let your people know what's going on.",
     images: [
       {
-        url: "https://dolo.app/api/og",
+        url: "https://checkinwithfriends.app/api/og",
         width: 1200,
         height: 630,
-        alt: "Dolo - Check in with your people",
+        alt: "CWF - Check in with your people",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dolo - Check in with your people",
+    title: "CWF - Check in with your people",
     description: "Daily check-ins with friends. Share how you're feeling and let your people know what's going on.",
-    images: ["https://dolo.app/api/og"],
+    images: ["https://checkinwithfriends.app/api/og"],
   },
   icons: {
     icon: "/favicon.ico",
