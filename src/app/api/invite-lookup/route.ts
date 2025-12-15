@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
       // Full group ID lookup
       const { data, error: queryError } = await supabase
         .from("groups")
-        .select("id, name, owner_id, image_url")
+        .select("id, name, owner_id, image_url, description")
         .eq("id", groupId)
         .maybeSingle();
       
