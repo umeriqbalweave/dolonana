@@ -146,11 +146,17 @@ export default function GroupInvitePage() {
         .maybeSingle();
 
       const hasName = profile?.display_name && profile.display_name.trim().length > 0;
+      const isNewMember = !isMember; // They just joined
       
       setTimeout(() => {
         if (!hasName) {
-          router.replace(`/onboarding?then=/groups/${group.id}`);
+          // New user needs onboarding first, then check-in
+          router.replace(`/onboarding?then=/checkin?inviteGroupId=${group.id}`);
+        } else if (isNewMember) {
+          // New member with name - go to check-in first with group pre-selected
+          router.replace(`/checkin?inviteGroupId=${group.id}`);
         } else {
+          // Returning member - go straight to group
           router.replace(`/groups/${group.id}`);
         }
       }, 2000);

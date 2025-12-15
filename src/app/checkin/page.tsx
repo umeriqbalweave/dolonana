@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { withHaptics } from "@/lib/haptics";
 
@@ -22,6 +22,8 @@ type Person = {
 
 export default function CheckInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const inviteGroupId = searchParams.get("inviteGroupId");
   const [userId, setUserId] = useState<string | null>(null);
   const [step, setStep] = useState<"number" | "message" | "groups">("number");
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
@@ -108,8 +110,12 @@ export default function CheckInPage() {
           // Filter out DM groups (2-member groups with names containing " + ")
           const regularGroups = groupsData.filter(g => !g.name.includes(" + "));
           setGroups(regularGroups);
-          // Select all regular groups by default
-          setSelectedGroups(new Set(regularGroups.map((g) => g.id)));
+          // If coming from invite, only select that group; otherwise select all
+          if (inviteGroupId && regularGroups.some(g => g.id === inviteGroupId)) {
+            setSelectedGroups(new Set([inviteGroupId]));
+          } else {
+            setSelectedGroups(new Set(regularGroups.map((g) => g.id)));
+          }
         }
 
         // Fetch all unique members across all groups (for DM option)
@@ -427,7 +433,12 @@ export default function CheckInPage() {
 
       setSent(true);
       setTimeout(() => {
-        router.push("/groups");
+        // If came from invite, go to that group; otherwise go to groups list
+        if (inviteGroupId) {
+          router.push(`/groups/${inviteGroupId}`);
+        } else {
+          router.push("/groups");
+        }
       }, 2000);
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : JSON.stringify(err);
