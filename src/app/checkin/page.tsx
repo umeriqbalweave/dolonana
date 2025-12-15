@@ -532,7 +532,7 @@ function CheckInContent() {
                 animate={{ opacity: 1 }}
                 className={`text-4xl font-bold ${textPrimary} mb-6`}
               >
-                How are you feeling?
+                How are you doing today?
               </motion.p>
 
               {!useDetailedScale ? (
@@ -682,10 +682,10 @@ function CheckInContent() {
               className="w-full max-w-lg text-center"
             >
               <p className={`text-3xl font-bold ${textPrimary} mb-1`}>
-                Add a few words
+                <span className="text-lg font-normal text-stone-400">(optional)</span> Add a few words
               </p>
               <p className={`text-lg ${textSecondary} mb-6`}>
-                Share what&apos;s on your mind (optional)
+                Share what&apos;s on your mind
               </p>
 
               {/* Recording states */}
@@ -1021,7 +1021,7 @@ function CheckInContent() {
                         )}
                       </div>
                       {selectedGroups.has(group.id) && (
-                        <div className="absolute top-2 right-2 h-6 w-6 rounded-full bg-white text-black flex items-center justify-center text-sm">✓</div>
+                        <div className="absolute top-2 right-2 h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-sm">✓</div>
                       )}
                       <div className={`p-2 ${isDark ? "bg-zinc-800" : "bg-white"}`}>
                         <p className={`text-sm font-medium truncate ${isDark ? "text-zinc-300" : "text-stone-800"}`}>{group.name}</p>
