@@ -35,7 +35,7 @@ function CheckInContent() {
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);

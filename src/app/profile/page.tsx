@@ -30,7 +30,7 @@ function ProfileContent() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSavedToast, setShowSavedToast] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [myCheckins, setMyCheckins] = useState<MyCheckin[]>([]);
   const [deleting, setDeleting] = useState(false);
   const [editingName, setEditingName] = useState(false);

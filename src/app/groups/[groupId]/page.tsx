@@ -58,7 +58,7 @@ export default function GroupDetailPage() {
   const [loading, setLoading] = useState(true);
   const [newMessageText, setNewMessageText] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("dark");
+  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [profilesById, setProfilesById] = useState<Record<string, { avatar_url: string | null; display_name: string | null }>>({});
   const [showFullImage, setShowFullImage] = useState(false);
   const [reactionPickerCheckinId, setReactionPickerCheckinId] = useState<string | null>(null);
