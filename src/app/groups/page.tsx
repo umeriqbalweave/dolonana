@@ -417,7 +417,7 @@ export default function GroupsPage() {
             type="button"
             onClick={withHaptics(() => router.push("/groups/new"))}
             className={isDark 
-              ? "rounded-full bg-white/10 border border-white/20 px-5 py-3 text-lg font-bold text-white/90 transition hover:bg-white/20" 
+              ? "rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 px-5 py-3 text-lg font-bold text-zinc-800 transition hover:from-zinc-200 hover:to-zinc-400" 
               : "rounded-full bg-gradient-to-r from-orange-400 to-amber-400 px-5 py-3 text-lg font-bold text-white shadow-lg transition hover:from-orange-500 hover:to-amber-500"}
           >
             + New
@@ -596,18 +596,16 @@ export default function GroupsPage() {
         </div>
 
         {/* Prominent Check-in Button - BIGGER with label */}
-        <div className="absolute bottom-36 left-1/2 -translate-x-1/2 z-30">
+        <div className="absolute bottom-44 left-1/2 -translate-x-1/2 z-30">
           <motion.button
             type="button"
             onClick={withHaptics(() => router.push("/checkin"))}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className={isDark 
-              ? "flex items-center gap-4 px-14 py-6 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 shadow-2xl whitespace-nowrap"
-              : "flex items-center gap-5 px-16 py-7 rounded-full bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30 whitespace-nowrap"}
+            className="flex items-center gap-5 px-16 py-7 rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30 whitespace-nowrap"
           >
-            <span className={isDark ? "text-5xl" : "text-6xl animate-pulse"}>🪷</span>
-            <span className={isDark ? "text-3xl font-semibold text-zinc-800" : "text-4xl font-bold text-white"}>Check In</span>
+            <span className="text-6xl animate-pulse">🪷</span>
+            <span className="text-4xl font-bold text-white">Check In</span>
           </motion.button>
         </div>
       </main>

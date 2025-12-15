@@ -165,7 +165,7 @@ export default function GroupInvitePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FCEADE]">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-black">
         <motion.div
           animate={{ scale: [1, 1.2, 1] }}
           transition={{ duration: 1.5, repeat: Infinity }}
@@ -179,16 +179,16 @@ export default function GroupInvitePage() {
 
   if (error || !group) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FCEADE] px-8">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-black px-8">
         <div className="text-8xl mb-6">😔</div>
-        <p className="text-2xl text-stone-600 text-center">This invite has expired</p>
+        <p className="text-2xl text-zinc-400 text-center">This invite has expired</p>
       </div>
     );
   }
 
   if (step === "joining") {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FCEADE] px-8">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-black px-8">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -201,7 +201,7 @@ export default function GroupInvitePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-3xl font-bold text-stone-800 text-center"
+          className="text-3xl font-bold text-white text-center"
         >
           You&apos;re in!
         </motion.p>
@@ -217,12 +217,12 @@ export default function GroupInvitePage() {
               initial={{ scale: 0, x: -20 }}
               animate={{ scale: 1, x: 0 }}
               transition={{ delay: 0.8 + i * 0.1 }}
-              className="h-20 w-20 rounded-full border-4 border-white bg-stone-200 overflow-hidden shadow-lg"
+              className="h-20 w-20 rounded-full border-4 border-zinc-700 bg-zinc-800 overflow-hidden shadow-lg"
             >
               {member.avatar_url ? (
                 <img src={member.avatar_url} alt="" className="h-full w-full object-cover" />
               ) : (
-                <div className="h-full w-full flex items-center justify-center text-2xl font-bold text-stone-500">
+                <div className="h-full w-full flex items-center justify-center text-2xl font-bold text-zinc-400">
                   {member.display_name?.[0] || "?"}
                 </div>
               )}
@@ -330,7 +330,7 @@ export default function GroupInvitePage() {
     const current = tutorials[tutorialStep - 1];
 
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FCEADE] px-8">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-black px-8">
         <AnimatePresence mode="wait">
           <motion.div
             key={tutorialStep}
@@ -340,7 +340,7 @@ export default function GroupInvitePage() {
             className="flex flex-col items-center"
           >
             <div className="text-8xl mb-6">{current.emoji}</div>
-            <p className="text-4xl font-bold text-stone-800 mb-10 text-center">{current.title}</p>
+            <p className="text-4xl font-bold text-white mb-10 text-center">{current.title}</p>
             <div className="mb-12">{current.visual}</div>
           </motion.div>
         </AnimatePresence>
@@ -350,7 +350,7 @@ export default function GroupInvitePage() {
             <div
               key={n}
               className={`h-4 w-4 rounded-full transition-all ${
-                n === tutorialStep ? "bg-orange-500 scale-125" : "bg-stone-300"
+                n === tutorialStep ? "bg-zinc-300 scale-125" : "bg-zinc-700"
               }`}
             />
           ))}
@@ -366,7 +366,7 @@ export default function GroupInvitePage() {
             }
           })}
           whileTap={{ scale: 0.95 }}
-          className="w-full max-w-xs rounded-full bg-gradient-to-r from-orange-500 to-amber-500 px-8 py-6 text-3xl font-bold text-white shadow-xl"
+          className="w-full max-w-xs rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 px-8 py-6 text-3xl font-bold text-white shadow-xl"
         >
           {tutorialStep < 3 ? "→" : "Join! 💜"}
         </motion.button>
@@ -374,7 +374,7 @@ export default function GroupInvitePage() {
         <button
           type="button"
           onClick={() => setStep("welcome")}
-          className="mt-6 text-xl text-stone-500"
+          className="mt-6 text-xl text-zinc-500"
         >
           ← Back
         </button>
@@ -383,7 +383,7 @@ export default function GroupInvitePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#FCEADE] px-8 py-12">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-black px-8 py-12">
       {/* Group Image */}
       <motion.div
         initial={{ scale: 0 }}
@@ -391,11 +391,11 @@ export default function GroupInvitePage() {
         transition={{ type: "spring", bounce: 0.4 }}
         className="mb-4"
       >
-        <div className="h-40 w-40 rounded-full border-4 border-orange-300 bg-white overflow-hidden shadow-2xl">
+        <div className="h-40 w-40 rounded-full border-4 border-zinc-700 bg-zinc-800 overflow-hidden shadow-2xl">
           {group.image_url ? (
             <img src={group.image_url} alt={group.name} className="h-full w-full object-cover" />
           ) : (
-            <div className="h-full w-full flex items-center justify-center text-5xl font-bold text-stone-400 bg-gradient-to-br from-orange-200 to-amber-200">
+            <div className="h-full w-full flex items-center justify-center text-5xl font-bold text-zinc-500 bg-gradient-to-br from-zinc-700 to-zinc-800">
               {group.name[0]}
             </div>
           )}
@@ -406,7 +406,7 @@ export default function GroupInvitePage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="text-4xl font-bold text-stone-800 text-center mb-2"
+        className="text-4xl font-bold text-white text-center mb-2"
       >
         {group.name}
       </motion.h1>
@@ -418,16 +418,16 @@ export default function GroupInvitePage() {
         transition={{ delay: 0.3 }}
         className="flex items-center gap-3 mb-8"
       >
-        <div className="h-12 w-12 rounded-full border-2 border-orange-200 bg-white overflow-hidden shadow">
+        <div className="h-12 w-12 rounded-full border-2 border-zinc-700 bg-zinc-800 overflow-hidden shadow">
           {ownerProfile?.avatar_url ? (
             <img src={ownerProfile.avatar_url} alt={adminName} className="h-full w-full object-cover" />
           ) : (
-            <div className="h-full w-full flex items-center justify-center text-lg font-bold text-stone-400">
+            <div className="h-full w-full flex items-center justify-center text-lg font-bold text-zinc-500">
               {adminName[0]}
             </div>
           )}
         </div>
-        <p className="text-xl text-stone-600">
+        <p className="text-xl text-zinc-400">
           {adminName} invited you
         </p>
       </motion.div>
@@ -445,19 +445,19 @@ export default function GroupInvitePage() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.5 + i * 0.1, type: "spring" }}
-              className="h-24 w-24 rounded-full border-4 border-white bg-stone-200 overflow-hidden shadow-lg"
+              className="h-24 w-24 rounded-full border-4 border-zinc-800 bg-zinc-700 overflow-hidden shadow-lg"
             >
               {member.avatar_url ? (
                 <img src={member.avatar_url} alt="" className="h-full w-full object-cover" />
               ) : (
-                <div className="h-full w-full flex items-center justify-center text-3xl font-bold text-stone-500">
+                <div className="h-full w-full flex items-center justify-center text-3xl font-bold text-zinc-400">
                   {member.display_name?.[0] || "?"}
                 </div>
               )}
             </motion.div>
           ))}
           {memberProfiles.length > 5 && (
-            <div className="h-24 w-24 rounded-full border-4 border-white bg-orange-100 flex items-center justify-center text-2xl font-bold text-orange-600 shadow-lg">
+            <div className="h-24 w-24 rounded-full border-4 border-zinc-800 bg-zinc-700 flex items-center justify-center text-2xl font-bold text-zinc-300 shadow-lg">
               +{memberProfiles.length - 5}
             </div>
           )}
@@ -472,7 +472,7 @@ export default function GroupInvitePage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="w-full max-w-xs rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-7 text-4xl font-bold text-white shadow-2xl flex items-center justify-center gap-4"
+        className="w-full max-w-xs rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 px-8 py-7 text-4xl font-bold text-white shadow-2xl flex items-center justify-center gap-4"
       >
         <span>Join</span>
         <span className="text-5xl">✓</span>
@@ -485,7 +485,7 @@ export default function GroupInvitePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="mt-6 text-xl text-stone-500 underline"
+          className="mt-6 text-xl text-zinc-500 underline"
         >
           Already joined → Go to group
         </motion.button>
