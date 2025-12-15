@@ -71,9 +71,19 @@ export async function POST(req: NextRequest) {
     const { error: profErr } = await supabase.from("profiles").delete().eq("id", userId);
     results.profile = profErr ? `error: ${profErr.message}` : "deleted";
 
-    // Delete the auth user
-    const { error: deleteUserError } = await supabase.auth.admin.deleteUser(userId);
-    results.authUser = deleteUserError ? `error: ${deleteUserError.message}` : "deleted";
+    // Delete the auth user using admin API
+    try {
+      const { error: deleteUserError } = await supabase.auth.admin.deleteUser(userId);
+      if (deleteUserError) {
+        console.error("Auth delete error details:", JSON.stringify(deleteUserError));
+        results.authUser = `error: ${deleteUserError.message} (${deleteUserError.status || 'no status'})`;
+      } else {
+        results.authUser = "deleted";
+      }
+    } catch (authError: any) {
+      console.error("Auth delete exception:", authError);
+      results.authUser = `exception: ${authError?.message || 'unknown'}`;
+    }
 
     console.log("Delete account results:", results);
 
