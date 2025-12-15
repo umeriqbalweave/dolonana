@@ -10,16 +10,24 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing shortId or groupId" }, { status: 400 });
   }
 
-  // Use service role key to bypass RLS for invite lookups
+  // Use service role key to bypass RLS, fall back to anon key
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   
-  if (!url || !serviceKey) {
-    console.error("Missing Supabase env vars:", { hasUrl: !!url, hasServiceKey: !!serviceKey });
+  if (!url) {
+    console.error("Missing NEXT_PUBLIC_SUPABASE_URL");
     return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
   }
 
-  const supabase = createClient(url, serviceKey);
+  // Prefer service key, fall back to anon key
+  const key = serviceKey || anonKey;
+  if (!key) {
+    console.error("Missing both SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_ANON_KEY");
+    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  }
+
+  const supabase = createClient(url, key);
 
   try {
     let group;
