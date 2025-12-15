@@ -148,7 +148,7 @@ function HomeContent() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-black text-slate-50 overflow-hidden">
+    <div className="relative flex min-h-screen items-center justify-center bg-[#0a0a0a] text-[#e8e6e3] overflow-hidden">
       <FloatingEmojis count={5} />
       <motion.main
         initial={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -160,7 +160,7 @@ function HomeContent() {
         {!inviteGroupId && (
           <>
             <motion.h1
-              className="mb-3 text-center text-5xl font-bold tracking-tight md:text-6xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent"
+              className="mb-3 text-center text-5xl font-bold tracking-tight md:text-6xl text-[#e8e6e3]"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
@@ -168,7 +168,7 @@ function HomeContent() {
               CWF
             </motion.h1>
             <motion.p
-              className="mb-10 text-center text-xl text-slate-400 md:text-2xl"
+              className="mb-10 text-center text-xl text-[#a8a6a3] md:text-2xl"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.18 }}
@@ -192,7 +192,7 @@ function HomeContent() {
               value={phone}
               onChange={(event) => setPhone(event.target.value)}
               placeholder="+1 555 555 5555"
-              className="w-full rounded-2xl border-2 border-slate-700 bg-slate-900 px-6 py-5 text-2xl text-white text-center outline-none focus:border-amber-400"
+              className="w-full rounded-2xl border-2 border-[#2a2a2a] bg-[#1a1a1a] px-6 py-5 text-2xl text-[#e8e6e3] text-center outline-none focus:border-[#ffaa00] transition-colors duration-200"
               required
             />
             {error && (
@@ -202,7 +202,7 @@ function HomeContent() {
               type="submit"
               disabled={loading}
               onClick={withHaptics(() => {})}
-              className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 px-6 py-5 text-2xl font-bold text-white transition hover:opacity-90 disabled:opacity-60"
+              className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-b from-[#f0f0f0] to-[#c0c0c0] px-6 py-5 text-2xl font-bold text-[#1a1a1a] transition hover:opacity-90 disabled:opacity-60"
             >
               {loading ? "Sending..." : "Send code"}
             </button>
@@ -240,7 +240,7 @@ function HomeContent() {
                 }
               }}
               placeholder="123456"
-              className="w-full rounded-xl border-2 border-slate-700 bg-slate-900 px-5 py-4 text-2xl text-white text-center outline-none focus:border-amber-400 tracking-[0.3em]"
+              className="w-full rounded-xl border-2 border-[#2a2a2a] bg-[#1a1a1a] px-5 py-4 text-2xl text-[#e8e6e3] text-center outline-none focus:border-[#ffaa00] tracking-[0.3em] transition-colors duration-200"
               required
               maxLength={6}
             />
@@ -251,14 +251,14 @@ function HomeContent() {
               type="submit"
               disabled={loading}
               onClick={withHaptics(() => {})}
-              className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 px-6 py-5 text-2xl font-bold text-white transition hover:opacity-90 disabled:opacity-60"
+              className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-b from-[#f0f0f0] to-[#c0c0c0] px-6 py-5 text-2xl font-bold text-[#1a1a1a] transition hover:opacity-90 disabled:opacity-60"
             >
               {loading ? "Verifying..." : "Verify"}
             </button>
             <button
               type="button"
               onClick={withHaptics(() => setStep("phone"))}
-              className="w-full text-center text-xl text-slate-500 hover:text-slate-300 py-4"
+              className="w-full text-center text-xl text-[#666] hover:text-[#a8a6a3] py-4 transition-colors duration-200"
             >
               ← Different number
             </button>
@@ -273,8 +273,8 @@ export default function Home() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[#FCEADE] text-stone-800">
-          <p className="text-base text-stone-500">Loading...</p>
+        <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a] text-[#e8e6e3]">
+          <p className="text-base text-[#a8a6a3]">Loading...</p>
         </div>
       }
     >
