@@ -452,7 +452,7 @@ export default function GroupsPage() {
             type="button"
             onClick={withHaptics(() => router.push("/groups/new"))}
             className={isDark 
-              ? "rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 px-5 py-3 text-lg font-bold text-zinc-800 transition hover:from-zinc-200 hover:to-zinc-400" 
+              ? "rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 px-5 py-3 text-lg font-bold text-white shadow-lg transition hover:opacity-90" 
               : "rounded-full bg-stone-800 px-5 py-3 text-lg font-medium text-white shadow transition hover:bg-stone-700"}
           >
             + New
@@ -644,7 +644,7 @@ export default function GroupsPage() {
             onClick={withHaptics(() => router.push("/checkin"))}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="h-20 w-20 rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30"
+            className="h-24 w-24 rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30"
           />
         </div>
       </main>
