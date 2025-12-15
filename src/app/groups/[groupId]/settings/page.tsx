@@ -202,37 +202,6 @@ export default function GroupSettingsPage() {
       </header>
 
       <main className="max-w-md mx-auto px-4 py-6 space-y-6">
-        {/* Invite Button - Prominent */}
-        <button
-          type="button"
-          onClick={withHaptics(async () => {
-            const inviteUrl = `${origin}/invite/${groupId}`;
-            if (navigator.share) {
-              try {
-                await navigator.share({
-                  title: `Join ${group?.name || "our group"} on CWF`,
-                  text: "Check in with me on CWF!",
-                  url: inviteUrl,
-                });
-              } catch {
-                await navigator.clipboard.writeText(inviteUrl);
-                setCopyMessage("Invite link copied!");
-                setTimeout(() => setCopyMessage(null), 2000);
-              }
-            } else {
-              await navigator.clipboard.writeText(inviteUrl);
-              setCopyMessage("Invite link copied!");
-              setTimeout(() => setCopyMessage(null), 2000);
-            }
-          })}
-          className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] transition"
-        >
-          📤 Invite People to Group
-        </button>
-        {copyMessage && (
-          <p className="text-center text-emerald-600 font-bold">{copyMessage}</p>
-        )}
-
         {/* Group Image */}
         <div className="flex flex-col items-center">
           <input
@@ -294,13 +263,24 @@ export default function GroupSettingsPage() {
           <label className={`block text-sm font-medium mb-2 ${isDark ? "text-slate-400" : "text-stone-500"}`}>
             Invite Friends
           </label>
-          <button
-            type="button"
-            onClick={withHaptics(handleCopyInviteLink)}
-            className={`w-full rounded-xl px-4 py-3 text-lg font-medium ${isDark ? "bg-slate-800 text-slate-200 hover:bg-slate-700" : "bg-stone-100 text-stone-700 hover:bg-stone-200"}`}
-          >
-            {copyMessage || "📋 Copy Invite Link"}
-          </button>
+          <div className="flex items-center gap-2">
+            <div className={`flex-1 rounded-xl px-3 py-3 text-sm truncate ${isDark ? "bg-slate-800 text-slate-300" : "bg-stone-100 text-stone-600"}`}>
+              {origin}/invite/{groupId}
+            </div>
+            <button
+              type="button"
+              onClick={withHaptics(handleCopyInviteLink)}
+              className={`px-4 py-3 rounded-xl font-medium whitespace-nowrap ${
+                copyMessage 
+                  ? "bg-emerald-500 text-white" 
+                  : isDark 
+                    ? "bg-slate-700 text-slate-200 hover:bg-slate-600" 
+                    : "bg-stone-200 text-stone-700 hover:bg-stone-300"
+              }`}
+            >
+              {copyMessage ? "✓ Copied" : "Copy"}
+            </button>
+          </div>
         </div>
 
         {/* Members */}
