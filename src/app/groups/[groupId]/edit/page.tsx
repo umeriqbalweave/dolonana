@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { uploadImage } from "@/lib/uploadImage";
 import { withHaptics } from "@/lib/haptics";
-import FloatingEmojis from "@/components/FloatingEmojis";
 
 export default function EditGroupPage() {
   const router = useRouter();
@@ -234,24 +233,20 @@ export default function EditGroupPage() {
 
   if (loading) {
     return (
-      <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-violet-950 via-slate-900 to-emerald-900 text-slate-50 overflow-hidden">
-        <div className="absolute top-20 left-10 text-5xl opacity-20 animate-bounce">✨</div>
-        <div className="absolute bottom-32 right-10 text-5xl opacity-20 animate-pulse">🎉</div>
-        <div className="animate-spin text-6xl mb-4">✨</div>
-        <p className="text-xs text-slate-400">Loading group...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
+        <p className="text-xl text-[#a8a6a3]">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-gradient-to-br from-violet-950 via-slate-900 to-emerald-900 text-slate-50 overflow-hidden">
-      <FloatingEmojis count={5} />
+    <div className="relative flex min-h-screen flex-col bg-[#0a0a0a] text-[#e8e6e3] overflow-hidden">
       <main className="relative z-10 flex-1 px-4 pb-8 pt-4 md:px-8">
         <header className="mb-8 flex items-center justify-between gap-4">
           <button
             type="button"
             onClick={withHaptics(() => router.push(`/groups/${groupId}`))}
-            className="rounded-full border border-slate-700 bg-slate-950/80 px-3 py-1 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300"
+            className="rounded-full border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-1 text-xs text-[#a8a6a3] hover:border-[#3a3a3a] hover:text-[#e8e6e3] transition-colors"
           >
             ← Back to chat
           </button>
@@ -282,7 +277,7 @@ export default function EditGroupPage() {
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   placeholder="sofía & umer fan club"
-                  className="w-full rounded-lg border border-slate-700 bg-slate-900/80 px-3 py-3 text-base text-slate-50 outline-none focus:border-emerald-400 md:text-lg"
+                  className="w-full rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-3 text-base text-[#e8e6e3] outline-none focus:border-[#888] md:text-lg"
                   required
                 />
               </div>
@@ -290,7 +285,7 @@ export default function EditGroupPage() {
               <button
                 type="submit"
                 onClick={withHaptics(() => {})}
-                className="flex w-full items-center justify-center rounded-lg bg-emerald-400 px-3 py-2 text-sm font-medium text-slate-950 transition hover:bg-emerald-300 disabled:opacity-60"
+                className="flex w-full items-center justify-center rounded-lg bg-[#e8e6e3] px-3 py-2 text-sm font-medium text-[#1a1a1a] transition hover:bg-[#d0d0d0] disabled:opacity-30"
               >
                 Next
               </button>
@@ -347,14 +342,14 @@ export default function EditGroupPage() {
                 <button
                   type="button"
                   onClick={withHaptics(() => setStep("name"))}
-                  className="flex-1 rounded-lg border border-slate-700 px-3 py-2 text-xs font-medium text-slate-300 hover:border-slate-500"
+                  className="flex-1 rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-2 text-xs font-medium text-[#a8a6a3] hover:border-[#3a3a3a] transition-colors"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   onClick={withHaptics(() => {})}
-                  className="flex-1 rounded-lg bg-emerald-400 px-3 py-2 text-xs font-medium text-slate-950 transition hover:bg-emerald-300"
+                  className="flex-1 rounded-lg bg-[#e8e6e3] px-3 py-2 text-xs font-medium text-[#1a1a1a] transition hover:bg-[#d0d0d0]"
                 >
                   Next
                 </button>
@@ -383,7 +378,7 @@ export default function EditGroupPage() {
                   value={prompt}
                   onChange={(event) => setPrompt(event.target.value)}
                   placeholder="fun, slightly deep questions about our week and friendships"
-                  className="min-h-[120px] w-full rounded-lg border border-slate-700 bg-slate-900/80 px-3 py-3 pr-12 text-base text-slate-50 outline-none focus:border-emerald-400 md:text-lg"
+                  className="min-h-[120px] w-full rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-3 pr-12 text-base text-[#e8e6e3] outline-none focus:border-[#888] md:text-lg"
                 />
                 <button
                   type="button"
@@ -426,7 +421,7 @@ export default function EditGroupPage() {
                           {item.options.map((option, optIndex) => (
                             <span
                               key={optIndex}
-                              className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-sm text-emerald-300"
+                              className="rounded-full border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-1.5 text-sm text-[#a8a6a3]"
                             >
                               {option}
                             </span>
@@ -446,14 +441,14 @@ export default function EditGroupPage() {
                 <button
                   type="button"
                   onClick={withHaptics(() => setStep("picture"))}
-                  className="flex-1 rounded-lg border border-slate-700 px-3 py-2 text-xs font-medium text-slate-300 hover:border-slate-500"
+                  className="flex-1 rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-2 text-xs font-medium text-[#a8a6a3] hover:border-[#3a3a3a] transition-colors"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   onClick={withHaptics(() => {})}
-                  className="flex-1 rounded-lg bg-emerald-400 px-3 py-2 text-xs font-medium text-slate-950 transition hover:bg-emerald-300"
+                  className="flex-1 rounded-lg bg-[#e8e6e3] px-3 py-2 text-xs font-medium text-[#1a1a1a] transition hover:bg-[#d0d0d0]"
                 >
                   Next
                 </button>
@@ -492,7 +487,7 @@ export default function EditGroupPage() {
                     type="button"
                     onClick={withHaptics(() => setJugguEnabled(!jugguEnabled))}
                     className={`relative h-7 w-12 rounded-full transition-colors ${
-                      jugguEnabled ? "bg-emerald-400" : "bg-slate-600"
+                      jugguEnabled ? "bg-[#e8e6e3]" : "bg-[#2a2a2a]"
                     }`}
                   >
                     <span
@@ -518,7 +513,7 @@ export default function EditGroupPage() {
                   value={jugguPersonality}
                   onChange={(event) => setJugguPersonality(event.target.value)}
                   placeholder="e.g. speak in roman urdu, be extra sarcastic, roast people harder..."
-                  className="min-h-[80px] w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-slate-50 outline-none placeholder:text-slate-600 focus:border-emerald-400"
+                  className="min-h-[80px] w-full rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] px-4 py-3 text-sm text-[#e8e6e3] outline-none placeholder:text-[#666] focus:border-[#888]"
                 />
               )}
 
@@ -526,14 +521,14 @@ export default function EditGroupPage() {
                 <button
                   type="button"
                   onClick={withHaptics(() => setStep("prompt"))}
-                  className="flex-1 rounded-lg border border-slate-700 px-3 py-2 text-xs font-medium text-slate-300 hover:border-slate-500"
+                  className="flex-1 rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-2 text-xs font-medium text-[#a8a6a3] hover:border-[#3a3a3a] transition-colors"
                 >
                   Back
                 </button>
                 <button
                   type="button"
                   onClick={withHaptics(() => setStep("notifications"))}
-                  className="flex-1 rounded-lg bg-emerald-400 px-3 py-2 text-xs font-medium text-slate-950 transition hover:bg-emerald-300"
+                  className="flex-1 rounded-lg bg-[#e8e6e3] px-3 py-2 text-xs font-medium text-[#1a1a1a] transition hover:bg-[#d0d0d0]"
                 >
                   Next
                 </button>
@@ -565,7 +560,7 @@ export default function EditGroupPage() {
                     onClick={withHaptics(() => handleToggleNotification("daily_question_sms"))}
                     disabled={savingNotifications}
                     className={`relative h-7 w-12 rounded-full transition ${
-                      dailyQuestionSms ? "bg-emerald-500" : "bg-slate-700"
+                      dailyQuestionSms ? "bg-[#e8e6e3]" : "bg-[#2a2a2a]"
                     }`}
                   >
                     <span
@@ -587,7 +582,7 @@ export default function EditGroupPage() {
                     onClick={withHaptics(() => handleToggleNotification("message_sms"))}
                     disabled={savingNotifications}
                     className={`relative h-7 w-12 rounded-full transition ${
-                      messageSms ? "bg-emerald-500" : "bg-slate-700"
+                      messageSms ? "bg-[#e8e6e3]" : "bg-[#2a2a2a]"
                     }`}
                   >
                     <span
@@ -603,14 +598,14 @@ export default function EditGroupPage() {
                 <button
                   type="button"
                   onClick={withHaptics(() => setStep("juggu"))}
-                  className="flex-1 rounded-lg border border-slate-700 px-3 py-2 text-xs font-medium text-slate-300 hover:border-slate-500"
+                  className="flex-1 rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-2 text-xs font-medium text-[#a8a6a3] hover:border-[#3a3a3a] transition-colors"
                 >
                   Back
                 </button>
                 <button
                   type="button"
                   onClick={withHaptics(() => setStep("share"))}
-                  className="flex-1 rounded-lg bg-emerald-400 px-3 py-2 text-xs font-medium text-slate-950 transition hover:bg-emerald-300"
+                  className="flex-1 rounded-lg bg-[#e8e6e3] px-3 py-2 text-xs font-medium text-[#1a1a1a] transition hover:bg-[#d0d0d0]"
                 >
                   Next
                 </button>
@@ -660,7 +655,7 @@ export default function EditGroupPage() {
                 <button
                   type="button"
                   onClick={withHaptics(() => setStep("juggu"))}
-                  className="flex-1 rounded-lg border border-slate-700 px-3 py-2 text-xs font-medium text-slate-300 hover:border-slate-500"
+                  className="flex-1 rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-2 text-xs font-medium text-[#a8a6a3] hover:border-[#3a3a3a] transition-colors"
                 >
                   Back
                 </button>
@@ -668,7 +663,7 @@ export default function EditGroupPage() {
                   type="button"
                   disabled={saving}
                   onClick={withHaptics(() => void handleSave())}
-                  className="flex-1 rounded-lg bg-emerald-400 px-3 py-2 text-xs font-medium text-slate-950 transition hover:bg-emerald-300 disabled:opacity-60"
+                  className="flex-1 rounded-lg bg-[#e8e6e3] px-3 py-2 text-xs font-medium text-[#1a1a1a] transition hover:bg-[#d0d0d0] disabled:opacity-30"
                 >
                   {saving ? "Saving..." : "Save changes"}
                 </button>

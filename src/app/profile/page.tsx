@@ -212,20 +212,13 @@ function ProfileContent() {
 
   if (loading) {
     return (
-      <div className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-violet-950 via-slate-900 to-emerald-900 text-slate-50 overflow-hidden">
-        <div className="absolute top-20 left-10 text-5xl opacity-20 animate-bounce">✨</div>
-        <div className="absolute bottom-32 right-10 text-5xl opacity-20 animate-pulse">🎉</div>
-        <div className="animate-spin text-6xl mb-4">🦦</div>
-        <p className="text-lg text-slate-300">one sec, getting your stuff...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
+        <p className="text-xl text-[#a8a6a3]">Loading...</p>
       </div>
     );
   }
 
-  const bgClass = isDark 
-    ? "relative min-h-screen bg-black text-slate-50 overflow-hidden"
-    : theme === "warm"
-    ? "relative min-h-screen bg-[#FCEADE] text-stone-800 overflow-hidden"
-    : "relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 overflow-hidden";
+  const bgClass = "relative min-h-screen bg-[#0a0a0a] text-[#e8e6e3] overflow-hidden";
 
   return (
     <div className={bgClass}>
@@ -237,9 +230,7 @@ function ProfileContent() {
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           whileTap={{ scale: 0.95 }}
-          className={isDark 
-            ? "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-white/10 text-white/80 flex items-center justify-center hover:bg-white/20"
-            : "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-stone-200 text-stone-600 flex items-center justify-center hover:bg-stone-300"}
+          className="fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-[#1a1a1a] text-[#a8a6a3] flex items-center justify-center hover:bg-[#2a2a2a] transition-colors"
         >
           ←
         </motion.button>
@@ -281,7 +272,7 @@ function ProfileContent() {
               const input = document.getElementById("avatar-file-input") as HTMLInputElement | null;
               input?.click();
             })}
-            className={isDark ? "group relative h-40 w-40 overflow-hidden rounded-full border-4 border-slate-700 bg-slate-900 hover:border-emerald-400 ring-4 ring-emerald-500/30" : "group relative h-40 w-40 overflow-hidden rounded-full border-4 border-slate-300 bg-white hover:border-emerald-500 shadow-xl ring-4 ring-emerald-500/20"}
+            className="group relative h-40 w-40 overflow-hidden rounded-full border-2 border-[#2a2a2a] bg-[#1a1a1a] hover:border-[#3a3a3a]"
           >
             {avatarPreview || avatarUrl ? (
               <>
@@ -301,33 +292,33 @@ function ProfileContent() {
               </div>
             )}
           </button>
-          <p className={isDark ? "mt-3 text-lg text-slate-400" : "mt-3 text-lg text-slate-500"}>Tap to change photo</p>
+          <p className="mt-3 text-lg text-[#666]">Tap to change photo</p>
         </div>
 
         {/* Name */}
-        <div className={isDark ? "mb-6 rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6" : "mb-6 rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm"}>
+        <div className="mb-6 rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-6">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <p className={isDark ? "text-lg text-slate-400 mb-1" : "text-lg text-slate-500 mb-1"}>Name</p>
+              <p className="text-lg text-[#666] mb-1">Name</p>
               {editingName ? (
                 <form onSubmit={handleSave} className="mt-2 flex gap-3">
                   <input
                     type="text"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className={isDark ? "flex-1 rounded-xl border-2 border-slate-700 bg-slate-800 px-4 py-3 text-2xl text-slate-50 outline-none focus:border-emerald-400" : "flex-1 rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-2xl text-slate-800 outline-none focus:border-emerald-500"}
+                    className="flex-1 rounded-xl border-2 border-[#2a2a2a] bg-[#0a0a0a] px-4 py-3 text-2xl text-[#e8e6e3] outline-none focus:border-[#888]"
                     autoFocus
                   />
                   <button
                     type="submit"
                     disabled={saving}
-                    className="rounded-xl bg-emerald-500 px-6 py-3 text-xl font-bold text-white"
+                    className="rounded-xl bg-[#e8e6e3] px-6 py-3 text-xl font-bold text-[#1a1a1a]"
                   >
                     {saving ? "..." : "Save"}
                   </button>
                 </form>
               ) : (
-                <p className={isDark ? "text-2xl font-semibold text-slate-100" : "text-2xl font-semibold text-slate-800"}>
+                <p className="text-2xl font-semibold text-[#e8e6e3]">
                   {displayName || "Add your name"}
                 </p>
               )}
@@ -336,7 +327,7 @@ function ProfileContent() {
               <button
                 type="button"
                 onClick={withHaptics(() => setEditingName(true))}
-                className="text-xl text-emerald-400 hover:text-emerald-300 px-4 py-2"
+                className="text-xl text-[#a8a6a3] hover:text-[#e8e6e3] px-4 py-2"
               >
                 Edit
               </button>
@@ -345,21 +336,21 @@ function ProfileContent() {
         </div>
 
         {/* Phone */}
-        <div className={isDark ? "mb-8 rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6" : "mb-8 rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm"}>
-          <p className={isDark ? "text-lg text-slate-400 mb-1" : "text-lg text-slate-500 mb-1"}>Phone</p>
-          <p className={isDark ? "text-2xl text-slate-300" : "text-2xl text-slate-700"}>{phone || "Not set"}</p>
+        <div className="mb-8 rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-6">
+          <p className="text-lg text-[#666] mb-1">Phone</p>
+          <p className="text-2xl text-[#a8a6a3]">{phone || "Not set"}</p>
         </div>
 
         {/* Settings */}
         <div className="mb-8 space-y-4">
           {/* Master Notifications Toggle */}
-          <div className={isDark ? "flex w-full items-center justify-between rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6" : "flex w-full items-center justify-between rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm"}>
+          <div className="flex w-full items-center justify-between rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-6">
             <div className="flex items-center gap-4">
               <div>
-                <span className={isDark ? "text-xl text-slate-200" : "text-xl text-slate-700"}>
+                <span className="text-xl text-[#e8e6e3]">
                   {notificationsMuted ? "Notifications muted" : "Notifications on"}
                 </span>
-                <p className="text-lg text-slate-500">
+                <p className="text-lg text-[#666]">
                   {notificationsMuted ? "You won't receive any SMS" : "For all groups"}
                 </p>
               </div>
@@ -369,7 +360,7 @@ function ProfileContent() {
               onClick={withHaptics(handleToggleMuteNotifications)}
               disabled={savingNotifications}
               className={`relative h-10 w-18 rounded-full transition ${
-                !notificationsMuted ? "bg-emerald-500" : "bg-slate-700"
+                !notificationsMuted ? "bg-[#e8e6e3]" : "bg-[#2a2a2a]"
               }`}
               style={{width: '72px'}}
             >
@@ -385,18 +376,18 @@ function ProfileContent() {
           <button
             type="button"
             onClick={withHaptics(() => setShowFeedbackModal(true))}
-            className={isDark ? "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700" : "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 bg-white p-6 hover:border-slate-300 shadow-sm"}
+            className="flex w-full items-center gap-4 rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-6 hover:border-[#3a3a3a]"
           >
-            <span className={isDark ? "text-xl text-slate-200" : "text-xl text-slate-700"}>Send feedback</span>
+            <span className="text-xl text-[#e8e6e3]">Send feedback</span>
           </button>
 
           {/* Logout */}
           <button
             type="button"
             onClick={withHaptics(handleLogout)}
-            className={isDark ? "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700" : "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 bg-white p-6 hover:border-slate-300 shadow-sm"}
+            className="flex w-full items-center gap-4 rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-6 hover:border-[#3a3a3a]"
           >
-            <span className={isDark ? "text-xl text-slate-200" : "text-xl text-slate-700"}>Log out</span>
+            <span className="text-xl text-[#e8e6e3]">Log out</span>
           </button>
 
           {/* Delete Profile */}
@@ -404,7 +395,7 @@ function ProfileContent() {
             type="button"
             disabled={deleting}
             onClick={withHaptics(handleDeleteProfile)}
-            className="flex w-full items-center gap-4 rounded-2xl border-2 border-rose-900/50 bg-slate-900/60 p-6 hover:border-rose-700 disabled:opacity-50"
+            className="flex w-full items-center gap-4 rounded-2xl border border-[#3a2a2a] bg-[#1a1a1a] p-6 hover:border-[#4a3a3a] disabled:opacity-50"
           >
             <span className="text-xl text-rose-400">
               {deleting ? "Deleting..." : "Delete profile"}
@@ -418,13 +409,7 @@ function ProfileContent() {
             <button
               type="button"
               onClick={() => setShowPastCheckins(!showPastCheckins)}
-              className={`w-full py-4 rounded-2xl text-xl font-bold flex items-center justify-center gap-2 transition ${
-                isDark 
-                  ? "bg-slate-800 text-slate-300 hover:bg-slate-700" 
-                  : isWarm 
-                  ? "bg-orange-100 text-stone-700 hover:bg-orange-200" 
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }`}
+              className="w-full py-4 rounded-2xl text-xl font-bold flex items-center justify-center gap-2 transition bg-[#1a1a1a] text-[#a8a6a3] hover:bg-[#2a2a2a] border border-[#2a2a2a]"
             >
               {showPastCheckins ? "Hide" : "View"} Past Check-ins ({myCheckins.length})
             </button>
@@ -434,15 +419,15 @@ function ProfileContent() {
                 {myCheckins.map((c) => (
                   <div
                     key={c.id}
-                    className={isDark ? "rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-5" : isWarm ? "rounded-2xl border-2 border-orange-200 bg-white p-5 shadow-sm" : "rounded-2xl border-2 border-slate-200 bg-white p-5 shadow-sm"}
+                    className="rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-5"
                   >
                     <div className="flex items-center gap-3 mb-2">
                       {c.is_private && <span className="text-base px-3 py-1 rounded-full bg-violet-500/20 text-violet-400">Private</span>}
-                      <span className={`text-lg ${isDark ? "text-slate-500" : "text-stone-400"}`}>
+                      <span className="text-lg text-[#666]">
                         {new Date(c.created_at).toLocaleDateString()}
                       </span>
                     </div>
-                    <p className={`text-2xl ${isDark ? "text-slate-100" : "text-stone-800"}`}>
+                    <p className="text-2xl text-[#e8e6e3]">
                       I&apos;m at a {c.number}.{c.message ? ` ${c.message}` : ""}
                     </p>
                   </div>
@@ -463,8 +448,8 @@ function ProfileContent() {
             exit={{ opacity: 0, y: -8 }}
             className="fixed inset-x-0 bottom-4 flex justify-center"
           >
-            <div className="rounded-full bg-emerald-500/90 px-4 py-2 text-xs font-medium text-slate-950 shadow-lg shadow-emerald-900/60">
-              Saved ✨
+            <div className="rounded-full bg-[#e8e6e3] px-4 py-2 text-xs font-medium text-[#1a1a1a] shadow-lg">
+              Saved
             </div>
           </motion.div>
         )}
@@ -485,42 +470,42 @@ function ProfileContent() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className={isDark ? "w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-6 shadow-2xl" : "w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl"}
+              className="w-full max-w-md rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] p-6 shadow-2xl"
             >
               {feedbackSent ? (
                 <div className="text-center py-8">
-                  <p className={isDark ? "text-xl font-bold text-white" : "text-xl font-bold text-slate-800"}>Thanks for your feedback!</p>
-                  <p className={isDark ? "text-sm text-slate-400 mt-2" : "text-sm text-slate-500 mt-2"}>We really appreciate it.</p>
+                  <p className="text-xl font-bold text-[#e8e6e3]">Thanks for your feedback!</p>
+                  <p className="text-sm text-[#666] mt-2">We really appreciate it.</p>
                 </div>
               ) : (
                 <>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className={isDark ? "text-lg font-bold text-white" : "text-lg font-bold text-slate-800"}>Send Feedback</h3>
+                    <h3 className="text-lg font-bold text-[#e8e6e3]">Send Feedback</h3>
                     <button
                       type="button"
                       onClick={() => setShowFeedbackModal(false)}
-                      className={isDark ? "text-slate-400 hover:text-white text-xl" : "text-slate-400 hover:text-slate-800 text-xl"}
+                      className="text-[#666] hover:text-[#e8e6e3] text-xl"
                     >
                       ✕
                     </button>
                   </div>
-                  <p className={isDark ? "text-sm text-slate-400 mb-4" : "text-sm text-slate-500 mb-4"}>
+                  <p className="text-sm text-[#666] mb-4">
                     Got ideas, bugs, or just want to say hi? We&apos;d love to hear from you!
                   </p>
                   <textarea
                     value={feedbackText}
                     onChange={(e) => setFeedbackText(e.target.value)}
-                    placeholder="What's on your mind? 🦦"
-                    className={isDark ? "w-full min-h-[150px] rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-white placeholder:text-slate-500 outline-none focus:border-emerald-400" : "w-full min-h-[150px] rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 outline-none focus:border-emerald-500"}
+                    placeholder="What's on your mind?"
+                    className="w-full min-h-[150px] rounded-xl bg-[#0a0a0a] border border-[#2a2a2a] px-4 py-3 text-[#e8e6e3] placeholder:text-[#666] outline-none focus:border-[#888]"
                     autoFocus
                   />
                   <button
                     type="button"
                     onClick={withHaptics(handleSendFeedback)}
                     disabled={!feedbackText.trim() || sendingFeedback}
-                    className="w-full mt-4 rounded-xl bg-emerald-500 px-4 py-3 text-sm font-bold text-black hover:bg-emerald-400 transition disabled:opacity-50"
+                    className="w-full mt-4 rounded-xl bg-[#e8e6e3] px-4 py-3 text-sm font-bold text-[#1a1a1a] hover:bg-[#d0d0d0] transition disabled:opacity-50"
                   >
-                    {sendingFeedback ? "Sending... 🚀" : "Send Feedback 💜"}
+                    {sendingFeedback ? "Sending..." : "Send Feedback"}
                   </button>
                 </>
               )}
@@ -536,11 +521,8 @@ export default function ProfilePage() {
   return (
     <Suspense
       fallback={
-        <div className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-violet-950 via-slate-900 to-emerald-900 text-slate-50 overflow-hidden">
-          <div className="absolute top-20 left-10 text-5xl opacity-20 animate-bounce">✨</div>
-          <div className="absolute bottom-32 right-10 text-5xl opacity-20 animate-pulse">🎉</div>
-          <div className="animate-spin text-6xl mb-4">🦦</div>
-          <p className="text-lg text-slate-300">one sec, getting your stuff...</p>
+        <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
+          <p className="text-xl text-[#a8a6a3]">Loading...</p>
         </div>
       }
     >

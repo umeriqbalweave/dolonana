@@ -84,14 +84,14 @@ function OnboardingContent() {
 
   if (!userId) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-        <p className="text-xl text-slate-400">Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
+        <p className="text-xl text-[#a8a6a3]">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 overflow-hidden">
+    <div className="relative flex min-h-screen items-center justify-center bg-[#0a0a0a] text-[#e8e6e3] overflow-hidden">
       
       <motion.main
         key={step}
@@ -105,11 +105,10 @@ function OnboardingContent() {
         {step === 1 && (
           <form onSubmit={handleNameSubmit} className="space-y-6">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-slate-50 mb-2">
+              <h1 className="text-3xl font-bold text-[#e8e6e3] mb-2">
                 What should we call you?
               </h1>
-              <p className="text-xl text-slate-400 mt-3">This is how your friends will see you</p>
-              <p className="text-base text-rose-400 mt-2">* Required</p>
+              <p className="text-lg text-[#a8a6a3] mt-3">This is how your friends will see you</p>
             </div>
 
             <input
@@ -118,14 +117,14 @@ function OnboardingContent() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Your name"
               autoFocus
-              className="w-full rounded-2xl bg-white/10 border-2 border-white/20 px-6 py-5 text-2xl text-white placeholder:text-white/40 focus:border-amber-400 focus:outline-none text-center"
+              className="w-full rounded-2xl bg-[#1a1a1a] border-2 border-[#2a2a2a] px-6 py-5 text-2xl text-[#e8e6e3] placeholder:text-[#666] focus:border-[#888] focus:outline-none text-center"
             />
 
             <button
               type="submit"
               disabled={!name.trim() || saving}
               onClick={withHaptics(() => {})}
-              className="w-full rounded-2xl bg-amber-500 px-6 py-5 text-2xl font-bold text-white hover:bg-amber-400 transition shadow-lg disabled:opacity-50"
+              className="w-full rounded-2xl bg-[#e8e6e3] px-6 py-5 text-2xl font-semibold text-[#1a1a1a] hover:bg-[#d0d0d0] transition disabled:opacity-30"
             >
               {saving ? "Saving..." : "Continue →"}
             </button>
@@ -136,10 +135,10 @@ function OnboardingContent() {
         {step === 2 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-slate-50 mb-2">
+              <h1 className="text-3xl font-bold text-[#e8e6e3] mb-2">
                 Add a photo
               </h1>
-              <p className="text-xl text-slate-400 mt-3">Optional, but it helps friends recognize you!</p>
+              <p className="text-lg text-[#a8a6a3] mt-3">Optional, but it helps friends recognize you!</p>
             </div>
 
             <input
@@ -161,14 +160,14 @@ function OnboardingContent() {
               onClick={withHaptics(() => fileInputRef.current?.click())}
               className="mx-auto flex flex-col items-center"
             >
-              <div className="h-32 w-32 overflow-hidden rounded-full bg-white/10 border-4 border-dashed border-white/30 hover:border-amber-400 transition flex items-center justify-center">
+              <div className="h-32 w-32 overflow-hidden rounded-full bg-[#1a1a1a] border-2 border-dashed border-[#3a3a3a] hover:border-[#666] transition flex items-center justify-center">
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="" className="h-full w-full object-cover" />
                 ) : (
                   <span className="text-4xl">+</span>
                 )}
               </div>
-              <p className="text-sm text-white/60 mt-3">Tap to upload</p>
+              <p className="text-sm text-[#666] mt-3">Tap to upload</p>
             </button>
 
             <div className="space-y-3 pt-4">
@@ -176,7 +175,7 @@ function OnboardingContent() {
                 type="button"
                 onClick={withHaptics(handlePhotoSubmit)}
                 disabled={saving}
-                className="w-full rounded-2xl bg-amber-500 px-6 py-5 text-2xl font-bold text-white hover:bg-amber-400 transition shadow-lg disabled:opacity-50"
+                className="w-full rounded-2xl bg-[#e8e6e3] px-6 py-5 text-2xl font-semibold text-[#1a1a1a] hover:bg-[#d0d0d0] transition disabled:opacity-30"
               >
                 {saving ? "Saving..." : avatarFile ? "Save & Continue →" : "Continue →"}
               </button>
@@ -185,7 +184,7 @@ function OnboardingContent() {
                 <button
                   type="button"
                   onClick={withHaptics(handleSkipPhoto)}
-                  className="w-full rounded-2xl bg-white/10 px-5 py-3 text-base font-medium text-white/70 hover:bg-white/20 transition"
+                  className="w-full rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] px-5 py-3 text-base font-medium text-[#a8a6a3] hover:bg-[#2a2a2a] transition"
                 >
                   Skip for now
                 </button>
@@ -196,8 +195,8 @@ function OnboardingContent() {
 
         {/* Progress indicator */}
         <div className="flex justify-center gap-2 mt-8">
-          <div className={`h-2 w-8 rounded-full ${step >= 1 ? "bg-amber-400" : "bg-white/20"}`} />
-          <div className={`h-2 w-8 rounded-full ${step >= 2 ? "bg-amber-400" : "bg-white/20"}`} />
+          <div className={`h-2 w-8 rounded-full ${step >= 1 ? "bg-[#e8e6e3]" : "bg-[#2a2a2a]"}`} />
+          <div className={`h-2 w-8 rounded-full ${step >= 2 ? "bg-[#e8e6e3]" : "bg-[#2a2a2a]"}`} />
         </div>
       </motion.main>
     </div>

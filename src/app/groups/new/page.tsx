@@ -22,11 +22,7 @@ export default function NewGroupPage() {
   const [origin, setOrigin] = useState("");
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const isDark = theme === "dark";
-  const isWarm = theme === "warm";
 
   const namePlaceholders = [
     "close friends",
@@ -42,14 +38,6 @@ export default function NewGroupPage() {
     return namePlaceholders[Math.floor(Math.random() * namePlaceholders.length)];
   });
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedTheme = window.localStorage.getItem("theme");
-      if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "warm") {
-        setTheme(savedTheme);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     async function loadUser() {
@@ -185,36 +173,13 @@ export default function NewGroupPage() {
   }
 
   // Theme classes
-  const bgClass = isDark
-    ? "min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50"
-    : isWarm
-    ? "min-h-screen bg-[#FCEADE] text-stone-800"
-    : "min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900";
-
-  const cardClass = isDark
-    ? "rounded-2xl bg-slate-900/50 border border-slate-800 p-6"
-    : isWarm
-    ? "rounded-2xl bg-white border border-orange-200 p-6 shadow-sm"
-    : "rounded-2xl bg-white border border-slate-200 p-6 shadow-sm";
-
-  const inputClass = isDark
-    ? "w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-white placeholder:text-slate-500 outline-none focus:border-amber-400"
-    : isWarm
-    ? "w-full rounded-xl bg-white border-2 border-orange-200 px-4 py-3 text-stone-800 placeholder:text-stone-400 outline-none focus:border-orange-400"
-    : "w-full rounded-xl bg-white border border-slate-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 outline-none focus:border-amber-500";
+  const bgClass = "min-h-screen bg-[#0a0a0a] text-[#e8e6e3]";
+  const cardClass = "rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] p-6";
 
   return (
     <div className={bgClass}>
       {/* Header */}
-      <header
-        className={
-          isDark
-            ? "flex items-center justify-between border-b border-slate-800 bg-slate-950/70 px-4 py-4"
-            : isWarm
-            ? "flex items-center justify-between border-b border-orange-200 bg-[#FEF3E2] px-4 py-4"
-            : "flex items-center justify-between border-b border-slate-200 bg-white/80 px-4 py-4 shadow-sm"
-        }
-      >
+      <header className="flex items-center justify-between border-b border-[#1a1a1a] bg-[#0f0f0f]/90 px-4 py-4">
         <div className="w-24" />
         <h1 className="text-2xl font-bold">New Group</h1>
         <div className="w-24" />
@@ -227,9 +192,7 @@ export default function NewGroupPage() {
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         whileTap={{ scale: 0.95 }}
-        className={isDark 
-          ? "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-white/10 text-white/80 flex items-center justify-center hover:bg-white/20"
-          : "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-stone-200 text-stone-600 flex items-center justify-center hover:bg-stone-300"}
+        className="fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-[#1a1a1a] text-[#a8a6a3] flex items-center justify-center hover:bg-[#2a2a2a] transition-colors"
       >
         ←
       </motion.button>
@@ -243,9 +206,8 @@ export default function NewGroupPage() {
             className={cardClass}
           >
             <div className="text-center mb-8">
-              <div className="text-8xl mb-4">🪷</div>
-              <h2 className="text-3xl font-bold">Name your group</h2>
-              <p className={isDark ? "text-xl text-slate-400 mt-2" : "text-xl text-stone-500 mt-2"}>
+              <h2 className="text-3xl font-bold text-[#e8e6e3]">Name your group</h2>
+              <p className="text-lg text-[#a8a6a3] mt-2">
                 Who will you be checking in with?
               </p>
             </div>
@@ -261,7 +223,7 @@ export default function NewGroupPage() {
                 }
               }}
               placeholder={namePlaceholder}
-              className="w-full rounded-2xl bg-white border-3 border-orange-200 px-6 py-5 text-2xl text-stone-800 placeholder:text-stone-400 outline-none focus:border-orange-400"
+              className="w-full rounded-2xl bg-[#0a0a0a] border-2 border-[#2a2a2a] px-6 py-5 text-2xl text-[#e8e6e3] placeholder:text-[#666] outline-none focus:border-[#888]"
               autoFocus
             />
 
@@ -271,7 +233,7 @@ export default function NewGroupPage() {
               type="button"
               onClick={withHaptics(() => setStep("picture"))}
               disabled={!groupName.trim()}
-              className="w-full mt-6 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-5 text-2xl font-bold text-white disabled:opacity-50 shadow-lg"
+              className="w-full mt-6 rounded-2xl bg-[#e8e6e3] px-6 py-5 text-2xl font-semibold text-[#1a1a1a] disabled:opacity-30"
             >
               Continue →
             </button>
@@ -286,9 +248,8 @@ export default function NewGroupPage() {
             className={cardClass}
           >
             <div className="text-center mb-8">
-              <div className="text-8xl mb-4">✨</div>
-              <h2 className="text-3xl font-bold">Add a group photo</h2>
-              <p className={isDark ? "text-xl text-slate-400 mt-2" : "text-xl text-stone-500 mt-2"}>
+              <h2 className="text-3xl font-bold text-[#e8e6e3]">Add a group photo</h2>
+              <p className="text-lg text-[#a8a6a3] mt-2">
                 Optional - helps identify the group
               </p>
             </div>
@@ -312,20 +273,14 @@ export default function NewGroupPage() {
               onClick={withHaptics(() => fileInputRef.current?.click())}
               className="mx-auto flex flex-col items-center"
             >
-              <div
-                className={
-                  isDark
-                    ? "h-40 w-40 rounded-full bg-slate-800 border-4 border-dashed border-slate-600 overflow-hidden flex items-center justify-center hover:border-amber-400"
-                    : "h-40 w-40 rounded-full bg-stone-100 border-4 border-dashed border-stone-300 overflow-hidden flex items-center justify-center hover:border-amber-500"
-                }
-              >
+              <div className="h-40 w-40 rounded-full bg-[#1a1a1a] border-2 border-dashed border-[#3a3a3a] overflow-hidden flex items-center justify-center hover:border-[#666] transition-colors">
                 {groupImagePreview ? (
                   <img src={groupImagePreview} alt="" className="h-full w-full object-cover" />
                 ) : (
-                  <span className="text-6xl">📷</span>
+                  <span className="text-4xl text-[#666]">+</span>
                 )}
               </div>
-              <p className={isDark ? "text-lg text-slate-500 mt-3" : "text-lg text-stone-500 mt-3"}>
+              <p className="text-sm text-[#666] mt-3">
                 Tap to upload
               </p>
             </button>
@@ -334,7 +289,7 @@ export default function NewGroupPage() {
               <button
                 type="button"
                 onClick={withHaptics(() => setStep("name"))}
-                className={isDark ? "flex-1 rounded-2xl bg-slate-800 px-6 py-5 text-xl font-medium" : "flex-1 rounded-2xl bg-stone-200 px-6 py-5 text-xl font-medium text-stone-700"}
+                className="flex-1 rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] px-6 py-5 text-xl font-medium text-[#a8a6a3] hover:bg-[#2a2a2a] transition-colors"
               >
                 ← Back
               </button>
@@ -342,7 +297,7 @@ export default function NewGroupPage() {
                 type="button"
                 onClick={withHaptics(handleCreateGroup)}
                 disabled={creating}
-                className="flex-1 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-5 text-xl font-bold text-white disabled:opacity-50 shadow-lg"
+                className="flex-1 rounded-2xl bg-[#e8e6e3] px-6 py-5 text-xl font-semibold text-[#1a1a1a] disabled:opacity-30"
               >
                 {creating ? "Creating..." : "Create Group"}
               </button>
@@ -359,18 +314,18 @@ export default function NewGroupPage() {
           >
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold">Invite friends</h2>
-              <p className={isDark ? "text-xl text-slate-400 mt-2" : "text-xl text-stone-500 mt-2"}>
+              <p className="text-lg text-[#a8a6a3] mt-2">
                 Share the group with people you care about
               </p>
             </div>
 
             {/* Invite link with copy button */}
             <div className="mb-6">
-              <p className={isDark ? "text-sm text-slate-500 mb-2" : "text-sm text-stone-500 mb-2"}>
+              <p className="text-sm text-[#666] mb-2">
                 Invite Link
               </p>
               <div className="flex items-center gap-2">
-                <div className={`flex-1 rounded-xl px-4 py-4 text-sm truncate ${isDark ? "bg-slate-800 text-slate-300" : "bg-stone-100 text-stone-600"}`}>
+                <div className="flex-1 rounded-xl px-4 py-4 text-sm truncate bg-[#0a0a0a] border border-[#2a2a2a] text-[#a8a6a3]">
                   {origin}/invite/{createdGroupId}
                 </div>
                 <button
@@ -378,13 +333,11 @@ export default function NewGroupPage() {
                   onClick={withHaptics(handleCopyLink)}
                   className={`px-5 py-4 rounded-xl font-medium whitespace-nowrap transition-all ${
                     copyMessage 
-                      ? "bg-emerald-500 text-white" 
-                      : isDark 
-                        ? "bg-slate-700 text-slate-200 hover:bg-slate-600" 
-                        : "bg-orange-500 text-white hover:bg-orange-600"
+                      ? "bg-[#e8e6e3] text-[#1a1a1a]" 
+                      : "bg-[#2a2a2a] text-[#e8e6e3] hover:bg-[#3a3a3a]"
                   }`}
                 >
-                  {copyMessage ? "✓ Copied" : "Copy"}
+                  {copyMessage ? "Copied" : "Copy"}
                 </button>
               </div>
             </div>
@@ -392,7 +345,7 @@ export default function NewGroupPage() {
             <button
               type="button"
               onClick={withHaptics(handleDone)}
-              className="w-full rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-5 text-2xl font-bold text-white shadow-lg"
+              className="w-full rounded-2xl bg-[#e8e6e3] px-6 py-5 text-2xl font-semibold text-[#1a1a1a]"
             >
               Done →
             </button>
