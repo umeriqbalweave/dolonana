@@ -384,18 +384,18 @@ export default function GroupInvitePage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-black px-8 py-12">
-      {/* Group Image */}
+      {/* Group Image - LARGE and prominent */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", bounce: 0.4 }}
-        className="mb-4"
+        className="mb-6"
       >
-        <div className="h-40 w-40 rounded-full border-4 border-zinc-700 bg-zinc-800 overflow-hidden shadow-2xl">
+        <div className="h-48 w-48 rounded-full border-4 border-zinc-600 bg-zinc-800 overflow-hidden shadow-2xl ring-4 ring-zinc-700/50">
           {group.image_url ? (
             <img src={group.image_url} alt={group.name} className="h-full w-full object-cover" />
           ) : (
-            <div className="h-full w-full flex items-center justify-center text-5xl font-bold text-zinc-500 bg-gradient-to-br from-zinc-700 to-zinc-800">
+            <div className="h-full w-full flex items-center justify-center text-6xl font-bold text-zinc-400 bg-gradient-to-br from-zinc-700 to-zinc-800">
               {group.name[0]}
             </div>
           )}
@@ -406,29 +406,29 @@ export default function GroupInvitePage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="text-4xl font-bold text-white text-center mb-2"
+        className="text-4xl font-bold text-white text-center mb-6"
       >
         {group.name}
       </motion.h1>
 
-      {/* Inviter info */}
+      {/* Inviter info - LARGER and more prominent */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="flex items-center gap-3 mb-8"
+        className="flex flex-col items-center gap-3 mb-10"
       >
-        <div className="h-12 w-12 rounded-full border-2 border-zinc-700 bg-zinc-800 overflow-hidden shadow">
+        <div className="h-20 w-20 rounded-full border-3 border-zinc-600 bg-zinc-800 overflow-hidden shadow-xl ring-2 ring-zinc-700/50">
           {ownerProfile?.avatar_url ? (
             <img src={ownerProfile.avatar_url} alt={adminName} className="h-full w-full object-cover" />
           ) : (
-            <div className="h-full w-full flex items-center justify-center text-lg font-bold text-zinc-500">
+            <div className="h-full w-full flex items-center justify-center text-2xl font-bold text-zinc-400">
               {adminName[0]}
             </div>
           )}
         </div>
-        <p className="text-xl text-zinc-400">
-          {adminName} invited you
+        <p className="text-xl text-zinc-300">
+          <span className="font-semibold text-white">{adminName}</span> invited you
         </p>
       </motion.div>
 
