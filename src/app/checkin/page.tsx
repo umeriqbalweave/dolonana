@@ -435,10 +435,25 @@ export default function CheckInPage() {
     return num >= 101 && num <= 103;
   }
 
-  // Always use warm theme for check-in (better accessibility)
-  const bgClass = "relative flex min-h-screen flex-col bg-[#FCEADE] text-stone-800";
+  // Theme-aware classes
+  const bgClass = isDark
+    ? "relative flex min-h-screen flex-col bg-black text-slate-50"
+    : isWarm
+    ? "relative flex min-h-screen flex-col bg-[#FCEADE] text-stone-800"
+    : "relative flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900";
 
-  const headerClass = "flex items-center justify-between gap-4 border-b border-orange-200 bg-[#FEF3E2] px-4 py-4";
+  const headerClass = isDark
+    ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4"
+    : isWarm
+    ? "flex items-center justify-between gap-4 border-b border-orange-200 bg-[#FEF3E2] px-4 py-4"
+    : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4";
+  
+  const cardBg = isDark ? "bg-slate-900/50" : isWarm ? "bg-white" : "bg-white";
+  const textPrimary = isDark ? "text-white" : "text-stone-800";
+  const textSecondary = isDark ? "text-slate-400" : "text-stone-600";
+  const inputClass = isDark 
+    ? "rounded-3xl bg-slate-800 border-3 border-slate-700 px-5 py-4 text-xl text-white placeholder:text-slate-500 outline-none focus:border-amber-400"
+    : "rounded-3xl bg-white border-3 border-orange-200 px-5 py-4 text-xl text-stone-800 placeholder:text-stone-400 outline-none focus:border-orange-400";
 
   return (
     <div className={bgClass}>
@@ -457,7 +472,7 @@ export default function CheckInPage() {
       {/* Header */}
       <header className={headerClass}>
         <div className="w-24" />
-        <h1 className="text-2xl font-bold text-stone-800">Check In</h1>
+        <h1 className={`text-2xl font-bold ${textPrimary}`}>Check In</h1>
         <div className="w-24" />
       </header>
 
@@ -475,7 +490,7 @@ export default function CheckInPage() {
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-4xl font-bold text-stone-800 mb-6"
+                className={`text-4xl font-bold ${textPrimary} mb-6`}
               >
                 How are you feeling?
               </motion.p>
@@ -620,10 +635,10 @@ export default function CheckInPage() {
                 </span>
               </div>
 
-              <p className="text-3xl font-bold text-stone-800 mb-2">
+              <p className={`text-3xl font-bold ${textPrimary} mb-2`}>
                 What&apos;s going on?
               </p>
-              <p className="text-xl text-stone-600 mb-8">
+              <p className={`text-xl ${textSecondary} mb-8`}>
                 Optional - share as much or as little as you want
               </p>
 
@@ -689,7 +704,7 @@ export default function CheckInPage() {
                         }
                       }}
                       placeholder="Or type here..."
-                      className="flex-1 min-h-[128px] md:min-h-[160px] rounded-3xl bg-white border-3 border-orange-200 px-5 py-4 text-xl text-stone-800 placeholder:text-stone-400 outline-none focus:border-orange-400 resize-none shadow-lg"
+                      className={`flex-1 min-h-[128px] md:min-h-[160px] resize-none shadow-lg ${inputClass}`}
                     />
                   </div>
 
@@ -744,7 +759,7 @@ export default function CheckInPage() {
                 </span>
               </div>
 
-              <p className="text-3xl font-bold text-stone-800 mb-6 text-center">
+              <p className={`text-3xl font-bold ${textPrimary} mb-6 text-center`}>
                 Share with...
               </p>
 
@@ -891,10 +906,10 @@ export default function CheckInPage() {
               >
                 💜
               </motion.div>
-              <p className="text-4xl font-bold text-stone-800 mb-4">
+              <p className={`text-4xl font-bold ${textPrimary} mb-4`}>
                 Shared!
               </p>
-              <p className="text-xl text-stone-600">
+              <p className={`text-xl ${textSecondary}`}>
                 Your family can see how you&apos;re doing
               </p>
             </motion.div>
