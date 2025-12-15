@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { withHaptics } from "@/lib/haptics";
-import FloatingEmojis from "@/components/FloatingEmojis";
 
 type Group = {
   id: string;
@@ -487,7 +486,6 @@ function CheckInContent() {
 
   return (
     <div className={bgClass}>
-      <FloatingEmojis count={5} />
       
       {/* Floating Back Button */}
       <motion.button
@@ -519,160 +517,68 @@ function CheckInContent() {
               exit={{ opacity: 0, y: -20 }}
               className="w-full max-w-lg text-center"
             >
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className={`text-4xl font-bold ${textPrimary} mb-6`}
-              >
-                How are you doing today?
-              </motion.p>
+              <p className={`text-xl ${textSecondary} mb-10`}>
+                Rate yourself on a scale of 1–10, with 1 being your lowest and 10 being your highest
+              </p>
 
-              {!useDetailedScale ? (
-                <>
-                  {/* Simple 3-emoji mode */}
-                  <div className="flex justify-center gap-4 md:gap-12 w-full max-w-lg mx-auto mb-8">
-                    <motion.button
-                      type="button"
-                      onClick={withHaptics(() => {
-                        window.localStorage.setItem("checkin-scale", "emoji");
-                        setSelectedNumber(101);
-                        setStep("message");
-                      })}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex flex-col items-center gap-3"
-                    >
-                      <div className="h-20 w-20 md:h-28 md:w-28 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center text-4xl md:text-6xl">
-                        😔
-                      </div>
-                      <span className="text-base md:text-lg text-[#a8a6a3]">Not great</span>
-                    </motion.button>
-
-                    <motion.button
-                      type="button"
-                      onClick={withHaptics(() => {
-                        window.localStorage.setItem("checkin-scale", "emoji");
-                        setSelectedNumber(102);
-                        setStep("message");
-                      })}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex flex-col items-center gap-3"
-                    >
-                      <div className="h-20 w-20 md:h-28 md:w-28 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center text-4xl md:text-6xl">
-                        😐
-                      </div>
-                      <span className="text-base md:text-lg text-[#a8a6a3]">Okay</span>
-                    </motion.button>
-
-                    <motion.button
-                      type="button"
-                      onClick={withHaptics(() => {
-                        window.localStorage.setItem("checkin-scale", "emoji");
-                        setSelectedNumber(103);
-                        setStep("message");
-                      })}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex flex-col items-center gap-3"
-                    >
-                      <div className="h-20 w-20 md:h-28 md:w-28 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center text-4xl md:text-6xl">
-                        😊
-                      </div>
-                      <span className="text-base md:text-lg text-[#a8a6a3]">Good!</span>
-                    </motion.button>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={withHaptics(() => {
-                      setUseDetailedScale(true);
-                      window.localStorage.setItem("checkin-scale", "detailed");
-                    })}
-                    className="text-lg text-[#666] underline hover:text-[#a8a6a3] transition-colors duration-200"
+              {/* Simple 1-10 scale */}
+              <div className="w-full max-w-sm mx-auto">
+                {/* Big editable number display */}
+                <div className="flex flex-col items-center mb-12">
+                  <div 
+                    className="w-36 h-36 rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center cursor-pointer"
+                    onClick={() => {
+                      const input = document.getElementById('number-input') as HTMLInputElement;
+                      input?.focus();
+                    }}
                   >
-                    Use 1-10 scale instead
-                  </button>
-                </>
-              ) : (
-                <>
-                  {/* Detailed 1-10 scale - Big number + slider */}
-                  <div className="w-full max-w-sm mx-auto mb-8">
-                    {/* Big editable number display */}
-                    <div className="flex flex-col items-center mb-8">
-                      <input
-                        type="number"
-                        min="1"
-                        max="10"
-                        value={selectedNumber || ""}
-                        onChange={(e) => {
-                          const val = parseInt(e.target.value);
-                          if (val >= 1 && val <= 10) {
-                            window.localStorage.setItem("checkin-scale", "detailed");
-                            setSelectedNumber(val);
-                          } else if (e.target.value === "") {
-                            setSelectedNumber(null);
-                          }
-                        }}
-                        placeholder="?"
-                        className="w-32 h-32 text-7xl font-bold text-center rounded-2xl outline-none bg-[#1a1a1a] border-2 border-[#2a2a2a] text-[#e8e6e3] focus:border-[#ffaa00] transition-colors duration-200"
-                      />
-                      <p className="mt-2 text-sm text-[#666]">
-                        Tap to edit
-                      </p>
-                    </div>
-                    
-                    {/* Scale labels */}
-                    <div className="flex justify-between text-sm mb-2 px-1 text-[#666]">
-                      <span>1 - Struggling</span>
-                      <span>10 - Thriving</span>
-                    </div>
-                    
-                    {/* Draggable slider */}
                     <input
-                      type="range"
+                      id="number-input"
+                      type="number"
                       min="1"
                       max="10"
-                      value={selectedNumber || 5}
+                      value={selectedNumber || ""}
                       onChange={(e) => {
-                        window.localStorage.setItem("checkin-scale", "detailed");
-                        setSelectedNumber(parseInt(e.target.value));
+                        const val = parseInt(e.target.value);
+                        if (val >= 1 && val <= 10) {
+                          setSelectedNumber(val);
+                        } else if (e.target.value === "") {
+                          setSelectedNumber(null);
+                        }
                       }}
-                      className="w-full h-3 rounded-full appearance-none cursor-pointer accent-amber-500"
-                      style={{
-                        background: `linear-gradient(to right, #f43f5e 0%, #f59e0b 30%, #10b981 60%, #14b8a6 100%)`
-                      }}
+                      placeholder="5"
+                      className="w-full h-full text-7xl font-light text-center bg-transparent outline-none text-[#e8e6e3] placeholder:text-[#666]"
                     />
-                    
-                    {/* Continue button */}
-                    {selectedNumber && (
-                      <motion.button
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        type="button"
-                        onClick={withHaptics(() => {
-                          window.localStorage.setItem("checkin-scale", "detailed");
-                          setStep("message");
-                        })}
-                        className="w-full mt-6 rounded-2xl bg-gradient-to-b from-[#f0f0f0] to-[#c0c0c0] px-6 py-4 text-xl font-bold text-[#1a1a1a] shadow-lg"
-                      >
-                        Continue →
-                      </motion.button>
-                    )}
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={withHaptics(() => {
-                      setUseDetailedScale(false);
-                      window.localStorage.setItem("checkin-scale", "emoji");
-                    })}
-                    className="text-base text-[#666] underline hover:text-[#a8a6a3] transition-colors duration-200"
-                  >
-                    Use simple emojis instead
-                  </button>
-                </>
-              )}
+                </div>
+                
+                {/* Draggable slider */}
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={selectedNumber || 5}
+                  onChange={(e) => {
+                    setSelectedNumber(parseInt(e.target.value));
+                  }}
+                  className="w-full h-2 rounded-full appearance-none cursor-pointer bg-[#2a2a2a] mb-12"
+                  style={{
+                    accentColor: '#888'
+                  }}
+                />
+                
+                {/* Continue button */}
+                <button
+                  type="button"
+                  disabled={!selectedNumber}
+                  onClick={withHaptics(() => {
+                    setStep("message");
+                  })}
+                  className="w-full rounded-2xl bg-[#e8e6e3] px-6 py-5 text-xl font-semibold text-[#1a1a1a] uppercase tracking-wider disabled:opacity-30"
+                >
+                  Continue
+                </button>
+              </div>
             </motion.div>
           )}
 
@@ -943,56 +849,17 @@ function CheckInContent() {
             </motion.div>
           )}
 
-          {/* Success State with Streak Count */}
+          {/* Success State */}
           {sent && (
             <motion.div
               key="sent"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               className="text-center"
             >
-              {/* Plant emoji based on check-in count */}
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", bounce: 0.5 }}
-                className="text-7xl mb-4"
-              >
-                {totalCheckins <= 3 ? "🌱" : totalCheckins <= 10 ? "🌿" : totalCheckins <= 30 ? "🌳" : "🌲"}
-              </motion.div>
-              
-              {/* Prominent check-in count */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="mb-4"
-              >
-                <p className={`text-6xl font-bold ${textPrimary}`}>
-                  {totalCheckins}
-                </p>
-                <p className={`text-xl ${textSecondary}`}>
-                  {totalCheckins === 1 ? "check-in" : "check-ins"}
-                </p>
-              </motion.div>
-              
-              {/* Encouraging message based on count */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className={`text-lg ${textSecondary} max-w-xs mx-auto`}
-              >
-                {totalCheckins === 1 
-                  ? "Great start! Come back tomorrow 🌟" 
-                  : totalCheckins < 5 
-                  ? "You're building a habit! Keep it up 💪"
-                  : totalCheckins < 15
-                  ? "Amazing consistency! You're growing 🌱"
-                  : totalCheckins < 30
-                  ? "Incredible dedication! 🔥"
-                  : "You're a check-in champion! 🏆"}
-              </motion.p>
+              <p className={`text-2xl font-semibold ${textPrimary}`}>
+                Check-in saved
+              </p>
             </motion.div>
           )}
         </AnimatePresence>

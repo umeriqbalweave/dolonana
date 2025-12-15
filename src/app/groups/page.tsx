@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { withHaptics } from "@/lib/haptics";
-import FloatingEmojis from "@/components/FloatingEmojis";
 
 type Group = {
   id: string;
@@ -39,7 +38,7 @@ export default function GroupsPage() {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [groups, setGroups] = useState<Group[]>([]);
-  const [groupsLoading, setGroupsLoading] = useState(false);
+  const [groupsLoading, setGroupsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingGroupId, setDeletingGroupId] = useState<string | null>(null);
   const swipeStartX = useRef<number | null>(null);
@@ -399,7 +398,6 @@ export default function GroupsPage() {
 
   return (
     <div className="relative min-h-screen bg-[#0a0a0a] text-[#e8e6e3] overflow-hidden">
-      <FloatingEmojis count={6} />
       <header className="flex items-center justify-between gap-4 border-b border-[#1a1a1a] bg-[#0f0f0f]/90 px-4 py-4 md:px-8">
         <div>
           <h1

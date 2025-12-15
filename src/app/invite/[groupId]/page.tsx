@@ -5,8 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { withHaptics } from "@/lib/haptics";
-import confetti from "canvas-confetti";
-import FloatingEmojis from "@/components/FloatingEmojis";
 
 type GroupInviteMeta = {
   id: string;
@@ -103,11 +101,6 @@ export default function GroupInvitePage() {
     if (groupId) void loadInvite();
   }, [groupId]);
 
-  useEffect(() => {
-    if (!loading && group && !error && step === "welcome") {
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-    }
-  }, [loading, group, error, step]);
 
   // Rotating check-in examples for tutorial animation
   const checkinExamples = [
@@ -157,7 +150,6 @@ export default function GroupInvitePage() {
         }
       }
 
-      confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
 
       const { data: profile } = await supabase
         .from("profiles")
@@ -192,14 +184,7 @@ export default function GroupInvitePage() {
   if (loading) {
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] overflow-hidden">
-        <FloatingEmojis count={5} />
-        <motion.div
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-8xl"
-        >
-          🪷
-        </motion.div>
+        <p className="text-xl text-[#a8a6a3]">Loading...</p>
       </div>
     );
   }
@@ -207,8 +192,6 @@ export default function GroupInvitePage() {
   if (error || !group) {
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] px-8 overflow-hidden">
-        <FloatingEmojis count={5} />
-        <div className="text-8xl mb-6">😔</div>
         <p className="text-2xl text-[#a8a6a3] text-center">This invite has expired</p>
       </div>
     );
@@ -217,23 +200,9 @@ export default function GroupInvitePage() {
   if (step === "joining") {
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] px-8 overflow-hidden">
-        <FloatingEmojis count={5} />
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", bounce: 0.5 }}
-          className="text-9xl mb-8"
-        >
-          ✅
-        </motion.div>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="text-3xl font-bold text-[#e8e6e3] text-center"
-        >
+        <p className="text-2xl font-semibold text-[#e8e6e3] text-center">
           You&apos;re in!
-        </motion.p>
+        </p>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -336,7 +305,6 @@ export default function GroupInvitePage() {
 
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] px-8 overflow-hidden">
-        <FloatingEmojis count={5} />
         <AnimatePresence mode="wait">
           <motion.div
             key={tutorialStep}
@@ -389,9 +357,7 @@ export default function GroupInvitePage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-black px-8 py-12 overflow-hidden">
-      <FloatingEmojis count={5} />
-      
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] px-8 py-12 overflow-hidden">
       {/* CWF Branding */}
       <motion.h1
         initial={{ opacity: 0, y: -10 }}

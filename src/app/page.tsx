@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { withHaptics } from "@/lib/haptics";
-import FloatingEmojis from "@/components/FloatingEmojis";
 
 function HomeContent() {
   const router = useRouter();
@@ -149,7 +148,6 @@ function HomeContent() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-[#0a0a0a] text-[#e8e6e3] overflow-hidden">
-      <FloatingEmojis count={5} />
       <motion.main
         initial={{ opacity: 0, y: 16, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}

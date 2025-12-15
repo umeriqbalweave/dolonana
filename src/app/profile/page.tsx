@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { uploadImage } from "@/lib/uploadImage";
 import { withHaptics } from "@/lib/haptics";
-import FloatingEmojis from "@/components/FloatingEmojis";
 
 type MyCheckin = {
   id: string;
@@ -230,7 +229,6 @@ function ProfileContent() {
 
   return (
     <div className={bgClass}>
-      <FloatingEmojis count={5} />
       <div className="relative z-10 mx-auto max-w-md px-4 py-6">
         {/* Floating Back Button */}
         <motion.button
@@ -357,7 +355,6 @@ function ProfileContent() {
           {/* Master Notifications Toggle */}
           <div className={isDark ? "flex w-full items-center justify-between rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6" : "flex w-full items-center justify-between rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm"}>
             <div className="flex items-center gap-4">
-              <span className="text-3xl">{notificationsMuted ? "🔕" : "🔔"}</span>
               <div>
                 <span className={isDark ? "text-xl text-slate-200" : "text-xl text-slate-700"}>
                   {notificationsMuted ? "Notifications muted" : "Notifications on"}
@@ -390,8 +387,7 @@ function ProfileContent() {
             onClick={withHaptics(() => setShowFeedbackModal(true))}
             className={isDark ? "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700" : "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 bg-white p-6 hover:border-slate-300 shadow-sm"}
           >
-            <span className="text-3xl">💬</span>
-            <span className={isDark ? "text-xl text-slate-200" : "text-xl text-slate-700"}>Send feedback or report bugs</span>
+            <span className={isDark ? "text-xl text-slate-200" : "text-xl text-slate-700"}>Send feedback</span>
           </button>
 
           {/* Logout */}
@@ -400,7 +396,6 @@ function ProfileContent() {
             onClick={withHaptics(handleLogout)}
             className={isDark ? "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-6 hover:border-slate-700" : "flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 bg-white p-6 hover:border-slate-300 shadow-sm"}
           >
-            <span className="text-3xl">👋</span>
             <span className={isDark ? "text-xl text-slate-200" : "text-xl text-slate-700"}>Log out</span>
           </button>
 
@@ -411,7 +406,6 @@ function ProfileContent() {
             onClick={withHaptics(handleDeleteProfile)}
             className="flex w-full items-center gap-4 rounded-2xl border-2 border-rose-900/50 bg-slate-900/60 p-6 hover:border-rose-700 disabled:opacity-50"
           >
-            <span className="text-3xl">🗑️</span>
             <span className="text-xl text-rose-400">
               {deleting ? "Deleting..." : "Delete profile"}
             </span>
@@ -432,7 +426,7 @@ function ProfileContent() {
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
-              📔 {showPastCheckins ? "Hide" : "View"} Past Check-ins ({myCheckins.length})
+              {showPastCheckins ? "Hide" : "View"} Past Check-ins ({myCheckins.length})
             </button>
             
             {showPastCheckins && (
@@ -495,14 +489,13 @@ function ProfileContent() {
             >
               {feedbackSent ? (
                 <div className="text-center py-8">
-                  <div className="text-6xl mb-4">🎉</div>
                   <p className={isDark ? "text-xl font-bold text-white" : "text-xl font-bold text-slate-800"}>Thanks for your feedback!</p>
-                  <p className={isDark ? "text-sm text-slate-400 mt-2" : "text-sm text-slate-500 mt-2"}>We really appreciate it 💜</p>
+                  <p className={isDark ? "text-sm text-slate-400 mt-2" : "text-sm text-slate-500 mt-2"}>We really appreciate it.</p>
                 </div>
               ) : (
                 <>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className={isDark ? "text-lg font-bold text-white" : "text-lg font-bold text-slate-800"}>💬 Send Feedback</h3>
+                    <h3 className={isDark ? "text-lg font-bold text-white" : "text-lg font-bold text-slate-800"}>Send Feedback</h3>
                     <button
                       type="button"
                       onClick={() => setShowFeedbackModal(false)}

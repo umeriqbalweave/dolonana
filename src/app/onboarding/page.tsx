@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { uploadImage } from "@/lib/uploadImage";
 import { withHaptics } from "@/lib/haptics";
-import FloatingEmojis from "@/components/FloatingEmojis";
 
 function OnboardingContent() {
   const router = useRouter();
@@ -86,15 +85,14 @@ function OnboardingContent() {
   if (!userId) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-        <div className="animate-pulse text-4xl">🪷</div>
+        <p className="text-xl text-slate-400">Loading...</p>
       </div>
     );
   }
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 overflow-hidden">
-      <FloatingEmojis count={5} />
-
+      
       <motion.main
         key={step}
         initial={{ opacity: 0, x: 20 }}
@@ -107,8 +105,7 @@ function OnboardingContent() {
         {step === 1 && (
           <form onSubmit={handleNameSubmit} className="space-y-6">
             <div className="text-center mb-8">
-              <div className="text-7xl mb-4">🪷</div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold text-slate-50 mb-2">
                 What should we call you?
               </h1>
               <p className="text-xl text-slate-400 mt-3">This is how your friends will see you</p>
@@ -139,8 +136,7 @@ function OnboardingContent() {
         {step === 2 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <div className="text-7xl mb-4">✨</div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-400 via-amber-400 to-rose-400 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold text-slate-50 mb-2">
                 Add a photo
               </h1>
               <p className="text-xl text-slate-400 mt-3">Optional, but it helps friends recognize you!</p>
@@ -169,7 +165,7 @@ function OnboardingContent() {
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="" className="h-full w-full object-cover" />
                 ) : (
-                  <span className="text-4xl">📷</span>
+                  <span className="text-4xl">+</span>
                 )}
               </div>
               <p className="text-sm text-white/60 mt-3">Tap to upload</p>
@@ -213,7 +209,7 @@ export default function OnboardingPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-          <div className="animate-pulse text-4xl">🪷</div>
+          <p className="text-xl text-slate-400">Loading...</p>
         </div>
       }
     >
