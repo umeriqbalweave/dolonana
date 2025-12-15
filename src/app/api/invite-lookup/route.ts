@@ -13,12 +13,24 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing shortId or groupId" }, { status: 400 });
   }
 
-  if (!supabaseUrl || !supabaseServiceKey) {
-    console.error("Missing Supabase env vars:", { hasUrl: !!supabaseUrl, hasKey: !!supabaseServiceKey });
-    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  // Check env vars at runtime
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (!url || !key) {
+    console.error("Missing Supabase env vars at runtime:", { 
+      hasUrl: !!url, 
+      hasKey: !!key,
+      urlLength: url?.length,
+      keyLength: key?.length 
+    });
+    return NextResponse.json({ 
+      error: "Server configuration error",
+      debug: { hasUrl: !!url, hasKey: !!key }
+    }, { status: 500 });
   }
 
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const supabase = createClient(url, key);
 
   try {
     let group;
@@ -76,8 +88,11 @@ export async function GET(req: NextRequest) {
       group,
       owner: owner || { display_name: null, avatar_url: null },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Invite lookup error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Internal server error",
+      message: error?.message || "Unknown error"
+    }, { status: 500 });
   }
 }
