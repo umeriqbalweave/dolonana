@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { withHaptics } from "@/lib/haptics";
+import FloatingEmojis from "@/components/FloatingEmojis";
 
 type Group = {
   id: string;
@@ -506,6 +507,8 @@ function CheckInContent() {
 
   return (
     <div className={bgClass}>
+      {isDark && <FloatingEmojis count={5} />}
+      
       {/* Floating Back Button */}
       <motion.button
         type="button"
