@@ -719,7 +719,7 @@ export default function GroupDetailPage() {
               </div>
             )}
           </div>
-          <h1 className="text-2xl font-bold">{group?.name || "Group"}</h1>
+          <h1 className="text-2xl font-bold truncate max-w-[200px]">{group?.name || "Group"}</h1>
         </button>
         <div className="w-16" /> {/* Spacer for balance */}
       </header>
