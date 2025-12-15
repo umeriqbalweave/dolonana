@@ -945,7 +945,7 @@ function CheckInContent() {
             </motion.div>
           )}
 
-          {/* Success State */}
+          {/* Success State with Streak Animation */}
           {sent && (
             <motion.div
               key="sent"
@@ -953,12 +953,48 @@ function CheckInContent() {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center"
             >
-              <p className={`text-4xl font-bold ${textPrimary} mb-4`}>
-                Submitted
+              {/* Growing plant animation based on streak */}
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
+                className="text-8xl mb-6"
+              >
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 1, 1, 0] }}
+                  transition={{ duration: 2, times: [0, 0.2, 0.8, 1] }}
+                >
+                  🌱
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0, position: "absolute" }}
+                  animate={{ opacity: [0, 0, 1, 1, 0] }}
+                  transition={{ duration: 2, times: [0, 0.2, 0.4, 0.8, 1] }}
+                  className="absolute left-1/2 -translate-x-1/2"
+                >
+                  🌿
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 0, 0, 1] }}
+                  transition={{ duration: 2, times: [0, 0.4, 0.6, 1] }}
+                  className="absolute left-1/2 -translate-x-1/2"
+                >
+                  🌳
+                </motion.span>
+              </motion.div>
+              <p className={`text-4xl font-bold ${textPrimary} mb-2`}>
+                Submitted!
               </p>
-              <p className={`text-xl ${textSecondary}`}>
-                Redirecting...
-              </p>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className={`text-xl ${textSecondary}`}
+              >
+                Keep growing your streak 🌱
+              </motion.p>
             </motion.div>
           )}
         </AnimatePresence>
