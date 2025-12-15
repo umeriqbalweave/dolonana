@@ -529,8 +529,8 @@ export default function GroupsPage() {
                           router.push(`/groups/${group.id}`);
                         }
                       })}
-                      className="relative cursor-pointer w-full overflow-hidden rounded-3xl shadow-xl bg-stone-200"
-                      style={{ minHeight: "calc(100vh - 280px)", maxHeight: "500px" }}
+                      className="relative cursor-pointer w-full overflow-hidden rounded-2xl shadow-lg bg-stone-200"
+                      style={{ minHeight: "200px", maxHeight: "280px" }}
                     >
                       {/* FULL image - fills the entire box */}
                       {group.image_url ? (
@@ -548,30 +548,30 @@ export default function GroupsPage() {
                       )}
                       
                       {/* Gradient overlay at bottom for text readability */}
-                      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                       
                       {/* Unread badge - top right */}
                       {unreadCounts[group.id] > 0 && (
-                        <div className="absolute top-4 right-4">
-                          <span className="flex h-12 min-w-12 items-center justify-center rounded-full bg-rose-500 px-4 text-2xl font-bold text-white shadow-lg">
+                        <div className="absolute top-3 right-3">
+                          <span className="flex h-8 min-w-8 items-center justify-center rounded-full bg-rose-500 px-2 text-sm font-bold text-white shadow">
                             {unreadCounts[group.id] > 99 ? "99+" : unreadCounts[group.id]}
                           </span>
                         </div>
                       )}
                       
                       {/* Bottom content - group name and member avatars */}
-                      <div className="absolute bottom-0 left-0 right-0 p-6">
-                        {/* Group name - VERY large */}
-                        <h3 className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        {/* Group name */}
+                        <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">
                           {group.name}
                         </h3>
                         
-                        {/* Member avatars - large and prominent */}
-                        <div className="flex -space-x-3">
+                        {/* Member avatars */}
+                        <div className="flex -space-x-2">
                           {group.memberAvatars?.slice(0, 5).map((avatar, i) => (
                             <div 
                               key={i} 
-                              className="h-14 w-14 rounded-full border-3 border-white bg-stone-300 overflow-hidden shadow-lg"
+                              className="h-8 w-8 rounded-full border-2 border-white bg-stone-300 overflow-hidden shadow"
                             >
                               {avatar ? (
                                 <img src={avatar} alt="" className="h-full w-full object-cover" />
@@ -581,7 +581,7 @@ export default function GroupsPage() {
                             </div>
                           ))}
                           {(group.memberCount ?? 0) > 5 && (
-                            <div className="h-14 w-14 rounded-full border-3 border-white bg-orange-500 flex items-center justify-center text-lg font-bold text-white shadow-lg">
+                            <div className="h-8 w-8 rounded-full border-2 border-white bg-orange-500 flex items-center justify-center text-xs font-bold text-white shadow">
                               +{(group.memberCount ?? 0) - 5}
                             </div>
                           )}
@@ -595,20 +595,17 @@ export default function GroupsPage() {
           )}
         </div>
 
-        {/* Prominent Check-in Button - BIGGER with label */}
-        <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-30">
+        {/* Check-in Button - minimal empty circle */}
+        <div className="absolute bottom-36 left-1/2 -translate-x-1/2 z-30">
           <motion.button
             type="button"
             onClick={withHaptics(() => router.push("/checkin"))}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className={isDark 
-              ? "flex items-center gap-4 px-10 py-6 rounded-full bg-white text-black shadow-2xl shadow-white/20"
-              : "flex items-center gap-5 px-12 py-7 rounded-full bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 shadow-2xl shadow-rose-500/40 ring-4 ring-white/30"}
-          >
-            <span className={isDark ? "text-5xl" : "text-6xl animate-pulse"}>🪷</span>
-            <span className={isDark ? "text-3xl font-semibold" : "text-4xl font-bold text-white"}>Check In</span>
-          </motion.button>
+              ? "h-14 w-14 rounded-full bg-gradient-to-br from-zinc-300 to-zinc-500 shadow-lg"
+              : "h-16 w-16 rounded-full bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 shadow-xl shadow-rose-500/30"}
+          />
         </div>
       </main>
     </div>

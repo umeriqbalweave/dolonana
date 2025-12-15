@@ -68,6 +68,7 @@ export default function GroupDetailPage() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [viewingImage, setViewingImage] = useState<string | null>(null);
 
   // Audio recording state
   const [isRecording, setIsRecording] = useState(false);
@@ -702,36 +703,25 @@ export default function GroupDetailPage() {
       {/* Header - QWF style with group image */}
       <header className={headerClass}>
         <div className="w-24" /> {/* Spacer for floating back button */}
-        <div className="flex items-center justify-center gap-4 flex-1">
-          {/* Group Image - clickable to view full */}
-          <button
-            type="button"
-            onClick={withHaptics(() => group?.image_url && setShowFullImage(true))}
-            className={`h-16 w-16 rounded-full overflow-hidden flex-shrink-0 ring-3 ${isDark ? "ring-emerald-500 bg-slate-700" : isWarm ? "ring-orange-400 bg-stone-200" : "ring-amber-500 bg-slate-200"}`}
-          >
+        {/* Title - clickable to open settings */}
+        <button
+          type="button"
+          onClick={withHaptics(() => router.push(`/groups/${groupId}/settings`))}
+          className="flex items-center justify-center gap-3 flex-1 hover:opacity-80 transition"
+        >
+          {/* Group Image */}
+          <div className={`h-12 w-12 rounded-full overflow-hidden flex-shrink-0 ${isDark ? "bg-zinc-700" : isWarm ? "bg-stone-200" : "bg-slate-200"}`}>
             {group?.image_url ? (
               <img src={group.image_url} alt={group.name} className="h-full w-full object-cover" />
             ) : (
-              <div className="h-full w-full flex items-center justify-center text-2xl font-bold">
+              <div className="h-full w-full flex items-center justify-center text-lg font-bold">
                 {group?.name?.[0]?.toUpperCase() || "G"}
               </div>
             )}
-          </button>
-          {/* Title only */}
-          <h1 className="text-3xl font-bold">{group?.name || "Group"}</h1>
-        </div>
-        {/* Settings button only - Invite moved to settings */}
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={withHaptics(() => router.push(`/groups/${groupId}/settings`))}
-            className={isDark 
-              ? "h-10 px-4 rounded-full bg-white/10 border border-white/20 text-white/90 text-base font-medium flex items-center gap-2 hover:bg-white/20 transition"
-              : "h-12 px-4 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white text-lg font-bold flex items-center gap-2 shadow-lg hover:scale-105 transition"}
-          >
-            ⚙️ Settings
-          </button>
-        </div>
+          </div>
+          <h1 className="text-2xl font-bold">{group?.name || "Group"}</h1>
+        </button>
+        <div className="w-16" /> {/* Spacer for balance */}
       </header>
 
       {/* Main Content - Scrollable - UNIFIED TIMELINE */}
@@ -1022,7 +1012,7 @@ export default function GroupDetailPage() {
                           src={msg.image_url} 
                           alt="Shared image" 
                           className="mt-2 rounded-2xl max-w-full max-h-80 object-contain cursor-pointer hover:opacity-90 transition"
-                          onClick={() => window.open(msg.image_url!, '_blank')}
+                          onClick={() => setViewingImage(msg.image_url!)}
                         />
                       )}
                       <p className={`text-2xl mt-1 ${isDark ? "text-slate-200" : "text-stone-700"}`}>
@@ -1186,7 +1176,7 @@ export default function GroupDetailPage() {
         </motion.button>
       )}
 
-      {/* Full Image Modal */}
+      {/* Full Image Modal - for group image */}
       <AnimatePresence>
         {showFullImage && group?.image_url && (
           <motion.div
@@ -1208,6 +1198,35 @@ export default function GroupDetailPage() {
               type="button"
               onClick={() => setShowFullImage(false)}
               className="absolute top-6 right-6 text-white text-3xl"
+            >
+              ✕
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Message Image Modal - for viewing shared images */}
+      <AnimatePresence>
+        {viewingImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4"
+            onClick={() => setViewingImage(null)}
+          >
+            <motion.img
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              src={viewingImage}
+              alt="Shared image"
+              className="max-w-full max-h-full object-contain"
+            />
+            <button
+              type="button"
+              onClick={() => setViewingImage(null)}
+              className="absolute top-6 right-6 h-12 w-12 rounded-full bg-white/10 text-white text-2xl flex items-center justify-center hover:bg-white/20"
             >
               ✕
             </button>

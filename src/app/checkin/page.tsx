@@ -499,7 +499,7 @@ export default function CheckInPage() {
 
               {!useDetailedScale ? (
                 <>
-                  {/* Simple 3-emoji mode - SPREAD OUT with gaps */}
+                  {/* Simple 3-emoji mode */}
                   <div className="flex justify-center gap-4 md:gap-12 w-full max-w-lg mx-auto mb-8">
                     <motion.button
                       type="button"
@@ -510,12 +510,14 @@ export default function CheckInPage() {
                       })}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex flex-col items-center gap-4"
+                      className="flex flex-col items-center gap-3"
                     >
-                      <div className="h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl">
+                      <div className={isDark 
+                        ? "h-20 w-20 md:h-28 md:w-28 rounded-full bg-zinc-800 border border-zinc-600 flex items-center justify-center text-4xl md:text-6xl"
+                        : "h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl"}>
                         😔
                       </div>
-                      <span className="text-lg md:text-2xl font-bold text-rose-600">Not great</span>
+                      <span className={isDark ? "text-base md:text-lg text-zinc-400" : "text-lg md:text-2xl font-bold text-rose-600"}>Not great</span>
                     </motion.button>
 
                     <motion.button
@@ -527,12 +529,14 @@ export default function CheckInPage() {
                       })}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex flex-col items-center gap-4"
+                      className="flex flex-col items-center gap-3"
                     >
-                      <div className="h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl">
+                      <div className={isDark 
+                        ? "h-20 w-20 md:h-28 md:w-28 rounded-full bg-zinc-800 border border-zinc-600 flex items-center justify-center text-4xl md:text-6xl"
+                        : "h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl"}>
                         😐
                       </div>
-                      <span className="text-lg md:text-2xl font-bold text-amber-600">Okay</span>
+                      <span className={isDark ? "text-base md:text-lg text-zinc-400" : "text-lg md:text-2xl font-bold text-amber-600"}>Okay</span>
                     </motion.button>
 
                     <motion.button
@@ -544,12 +548,14 @@ export default function CheckInPage() {
                       })}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex flex-col items-center gap-4"
+                      className="flex flex-col items-center gap-3"
                     >
-                      <div className="h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl">
+                      <div className={isDark 
+                        ? "h-20 w-20 md:h-28 md:w-28 rounded-full bg-zinc-800 border border-zinc-600 flex items-center justify-center text-4xl md:text-6xl"
+                        : "h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl"}>
                         😊
                       </div>
-                      <span className="text-lg md:text-2xl font-bold text-emerald-600">Good!</span>
+                      <span className={isDark ? "text-base md:text-lg text-zinc-400" : "text-lg md:text-2xl font-bold text-emerald-600"}>Good!</span>
                     </motion.button>
                   </div>
 
@@ -559,19 +565,19 @@ export default function CheckInPage() {
                       setUseDetailedScale(true);
                       window.localStorage.setItem("checkin-scale", "detailed");
                     })}
-                    className="text-lg text-stone-500 underline hover:text-stone-700"
+                    className={isDark ? "text-xl text-zinc-400 underline hover:text-zinc-300" : "text-lg text-stone-500 underline hover:text-stone-700"}
                   >
                     Use 1-10 scale instead
                   </button>
                 </>
               ) : (
                 <>
-                  {/* Detailed 1-10 scale - MUCH BIGGER & SPREAD OUT */}
-                  <p className="text-3xl text-stone-600 mb-12">
+                  {/* Detailed 1-10 scale */}
+                  <p className={isDark ? "text-2xl text-zinc-500 mb-8" : "text-3xl text-stone-600 mb-12"}>
                     1 = struggling &nbsp;•&nbsp; 10 = thriving
                   </p>
 
-                  <div className="grid grid-cols-5 gap-6 w-full max-w-5xl mx-auto mb-12">
+                  <div className="grid grid-cols-5 gap-3 md:gap-4 w-full max-w-md mx-auto mb-8">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
                       const color = num <= 3 ? "from-rose-500 to-rose-600" 
                         : num <= 5 ? "from-amber-500 to-amber-600"
@@ -587,9 +593,15 @@ export default function CheckInPage() {
                           })}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className={`h-28 md:h-32 w-full rounded-3xl text-5xl md:text-6xl font-bold text-white shadow-2xl transition-all bg-gradient-to-br ${color} ${
-                            selectedNumber === num ? "ring-4 ring-stone-800 scale-110" : ""
-                          }`}
+                          className={isDark 
+                            ? `h-14 w-14 md:h-16 md:w-16 rounded-xl text-2xl md:text-3xl font-medium transition-all ${
+                                selectedNumber === num 
+                                  ? "bg-white text-black" 
+                                  : "bg-zinc-800 border border-zinc-600 text-zinc-300 hover:bg-zinc-700"
+                              }`
+                            : `h-20 md:h-24 w-full rounded-2xl text-3xl md:text-4xl font-bold text-white shadow-xl transition-all bg-gradient-to-br ${color} ${
+                                selectedNumber === num ? "ring-4 ring-stone-800 scale-105" : ""
+                              }`}
                         >
                           {num}
                         </motion.button>
@@ -631,12 +643,6 @@ export default function CheckInPage() {
               exit={{ opacity: 0, y: -20 }}
               className="w-full max-w-lg text-center"
             >
-              <div className="mb-8">
-                <span className={`inline-block px-6 py-3 rounded-full text-4xl font-bold text-white bg-gradient-to-br ${getNumberColor(selectedNumber || 5)}`}>
-                  {getCheckinDisplay(selectedNumber || 5)}
-                </span>
-              </div>
-
               <p className={`text-3xl font-bold ${textPrimary} mb-2`}>
                 What&apos;s going on?
               </p>
@@ -750,7 +756,7 @@ export default function CheckInPage() {
             </motion.div>
           )}
 
-          {/* Step 3: Group Selection - IMAGE HEAVY */}
+          {/* Step 3: Group Selection */}
           {step === "groups" && !sent && (
             <motion.div
               key="groups"
@@ -759,12 +765,6 @@ export default function CheckInPage() {
               exit={{ opacity: 0, y: -20 }}
               className="w-full max-w-lg"
             >
-              <div className="text-center mb-8">
-                <span className={`inline-block px-6 py-3 rounded-full text-4xl font-bold text-white bg-gradient-to-br ${getNumberColor(selectedNumber || 5)}`}>
-                  {getCheckinDisplay(selectedNumber || 5)}
-                </span>
-              </div>
-
               <p className={`text-3xl font-bold ${textPrimary} mb-6 text-center`}>
                 Share with...
               </p>
@@ -909,18 +909,11 @@ export default function CheckInPage() {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center"
             >
-              <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 0.5, repeat: 2 }}
-                className="text-9xl mb-8"
-              >
-                💜
-              </motion.div>
               <p className={`text-4xl font-bold ${textPrimary} mb-4`}>
-                Shared!
+                Submitted
               </p>
               <p className={`text-xl ${textSecondary}`}>
-                Your family can see how you&apos;re doing
+                Redirecting...
               </p>
             </motion.div>
           )}
