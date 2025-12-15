@@ -498,7 +498,7 @@ export default function CheckInPage() {
               {!useDetailedScale ? (
                 <>
                   {/* Simple 3-emoji mode - SPREAD OUT with gaps */}
-                  <div className="flex justify-center gap-8 md:gap-16 w-full max-w-4xl mx-auto mb-12">
+                  <div className="flex justify-center gap-4 md:gap-12 w-full max-w-lg mx-auto mb-8">
                     <motion.button
                       type="button"
                       onClick={withHaptics(() => {
@@ -510,10 +510,10 @@ export default function CheckInPage() {
                       whileTap={{ scale: 0.95 }}
                       className="flex flex-col items-center gap-4"
                     >
-                      <div className="h-44 w-44 md:h-52 md:w-52 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-8xl md:text-9xl shadow-2xl">
+                      <div className="h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl">
                         😔
                       </div>
-                      <span className="text-3xl md:text-4xl font-bold text-rose-600">Not great</span>
+                      <span className="text-lg md:text-2xl font-bold text-rose-600">Not great</span>
                     </motion.button>
 
                     <motion.button
@@ -527,10 +527,10 @@ export default function CheckInPage() {
                       whileTap={{ scale: 0.95 }}
                       className="flex flex-col items-center gap-4"
                     >
-                      <div className="h-44 w-44 md:h-52 md:w-52 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-8xl md:text-9xl shadow-2xl">
+                      <div className="h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl">
                         😐
                       </div>
-                      <span className="text-3xl md:text-4xl font-bold text-amber-600">Okay</span>
+                      <span className="text-lg md:text-2xl font-bold text-amber-600">Okay</span>
                     </motion.button>
 
                     <motion.button
@@ -544,10 +544,10 @@ export default function CheckInPage() {
                       whileTap={{ scale: 0.95 }}
                       className="flex flex-col items-center gap-4"
                     >
-                      <div className="h-44 w-44 md:h-52 md:w-52 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-8xl md:text-9xl shadow-2xl">
+                      <div className="h-24 w-24 md:h-36 md:w-36 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-5xl md:text-7xl shadow-2xl">
                         😊
                       </div>
-                      <span className="text-3xl md:text-4xl font-bold text-emerald-600">Good!</span>
+                      <span className="text-lg md:text-2xl font-bold text-emerald-600">Good!</span>
                     </motion.button>
                   </div>
 

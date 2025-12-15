@@ -40,6 +40,7 @@ function ProfileContent() {
   const [feedbackText, setFeedbackText] = useState("");
   const [sendingFeedback, setSendingFeedback] = useState(false);
   const [feedbackSent, setFeedbackSent] = useState(false);
+  const [showPastCheckins, setShowPastCheckins] = useState(false);
 
   useEffect(() => {
     async function loadProfile() {
@@ -438,30 +439,43 @@ function ProfileContent() {
           </button>
         </div>
 
-        {/* My Check-ins History */}
+        {/* My Check-ins History - Toggle Button */}
         {myCheckins.length > 0 && (
           <div className="mb-8">
-            <h2 className={`mb-4 text-2xl font-bold ${isDark ? "text-slate-300" : isWarm ? "text-stone-600" : "text-slate-700"}`}>
-              📔 My Check-ins
-            </h2>
-            <div className="space-y-4">
-              {myCheckins.map((c) => (
-                <div
-                  key={c.id}
-                  className={isDark ? "rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-5" : isWarm ? "rounded-2xl border-2 border-orange-200 bg-white p-5 shadow-sm" : "rounded-2xl border-2 border-slate-200 bg-white p-5 shadow-sm"}
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    {c.is_private && <span className="text-base px-3 py-1 rounded-full bg-violet-500/20 text-violet-400">Private</span>}
-                    <span className={`text-lg ${isDark ? "text-slate-500" : "text-stone-400"}`}>
-                      {new Date(c.created_at).toLocaleDateString()}
-                    </span>
+            <button
+              type="button"
+              onClick={() => setShowPastCheckins(!showPastCheckins)}
+              className={`w-full py-4 rounded-2xl text-xl font-bold flex items-center justify-center gap-2 transition ${
+                isDark 
+                  ? "bg-slate-800 text-slate-300 hover:bg-slate-700" 
+                  : isWarm 
+                  ? "bg-orange-100 text-stone-700 hover:bg-orange-200" 
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              }`}
+            >
+              📔 {showPastCheckins ? "Hide" : "View"} Past Check-ins ({myCheckins.length})
+            </button>
+            
+            {showPastCheckins && (
+              <div className="space-y-4 mt-4">
+                {myCheckins.map((c) => (
+                  <div
+                    key={c.id}
+                    className={isDark ? "rounded-2xl border-2 border-slate-800 bg-slate-900/60 p-5" : isWarm ? "rounded-2xl border-2 border-orange-200 bg-white p-5 shadow-sm" : "rounded-2xl border-2 border-slate-200 bg-white p-5 shadow-sm"}
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      {c.is_private && <span className="text-base px-3 py-1 rounded-full bg-violet-500/20 text-violet-400">Private</span>}
+                      <span className={`text-lg ${isDark ? "text-slate-500" : "text-stone-400"}`}>
+                        {new Date(c.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className={`text-2xl ${isDark ? "text-slate-100" : "text-stone-800"}`}>
+                      I&apos;m at a {c.number}.{c.message ? ` ${c.message}` : ""}
+                    </p>
                   </div>
-                  <p className={`text-2xl ${isDark ? "text-slate-100" : "text-stone-800"}`}>
-                    I&apos;m at a {c.number}.{c.message ? ` ${c.message}` : ""}
-                  </p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

@@ -202,6 +202,37 @@ export default function GroupSettingsPage() {
       </header>
 
       <main className="max-w-md mx-auto px-4 py-6 space-y-6">
+        {/* Invite Button - Prominent */}
+        <button
+          type="button"
+          onClick={withHaptics(async () => {
+            const inviteUrl = `${origin}/invite/${groupId}`;
+            if (navigator.share) {
+              try {
+                await navigator.share({
+                  title: `Join ${group?.name || "our group"} on Dolo`,
+                  text: "Check in with me on Dolo!",
+                  url: inviteUrl,
+                });
+              } catch {
+                await navigator.clipboard.writeText(inviteUrl);
+                setCopyMessage("Invite link copied!");
+                setTimeout(() => setCopyMessage(null), 2000);
+              }
+            } else {
+              await navigator.clipboard.writeText(inviteUrl);
+              setCopyMessage("Invite link copied!");
+              setTimeout(() => setCopyMessage(null), 2000);
+            }
+          })}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] transition"
+        >
+          📤 Invite People to Group
+        </button>
+        {copyMessage && (
+          <p className="text-center text-emerald-600 font-bold">{copyMessage}</p>
+        )}
+
         {/* Group Image */}
         <div className="flex flex-col items-center">
           <input

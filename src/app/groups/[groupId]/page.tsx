@@ -718,33 +718,8 @@ export default function GroupDetailPage() {
           {/* Title only */}
           <h1 className="text-3xl font-bold">{group?.name || "Group"}</h1>
         </div>
-        {/* Share + Settings buttons - COLORFUL and PROMINENT */}
+        {/* Settings button only - Invite moved to settings */}
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={withHaptics(async () => {
-              const inviteUrl = `${window.location.origin}/invite/${groupId}`;
-              if (navigator.share) {
-                try {
-                  await navigator.share({
-                    title: `Join ${group?.name || "our group"} on Dolo`,
-                    text: "Check in with me on Dolo!",
-                    url: inviteUrl,
-                  });
-                } catch (e) {
-                  // User cancelled or error
-                  await navigator.clipboard.writeText(inviteUrl);
-                  alert("Invite link copied!");
-                }
-              } else {
-                await navigator.clipboard.writeText(inviteUrl);
-                alert("Invite link copied!");
-              }
-            })}
-            className="h-12 px-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-lg font-bold flex items-center gap-2 shadow-lg hover:scale-105 transition"
-          >
-            📤 Invite
-          </button>
           <button
             type="button"
             onClick={withHaptics(() => router.push(`/groups/${groupId}/settings`))}
@@ -1111,7 +1086,7 @@ export default function GroupDetailPage() {
           <button
             type="button"
             onClick={() => imageInputRef.current?.click()}
-            className="h-14 w-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-2xl flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-105 transition"
+            className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-lg flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-105 transition"
           >
             📷
           </button>
@@ -1120,12 +1095,12 @@ export default function GroupDetailPage() {
             value={newMessageText}
             onChange={(e) => setNewMessageText(e.target.value)}
             placeholder="Type a message..."
-            className={`flex-1 rounded-full border-2 px-6 py-4 text-xl outline-none ${isDark ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-amber-400" : "bg-white border-orange-200 text-stone-800 placeholder:text-stone-400 focus:border-orange-400"}`}
+            className={`flex-1 rounded-full border-2 px-4 py-3 text-lg outline-none ${isDark ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-amber-400" : "bg-white border-orange-200 text-stone-800 placeholder:text-stone-400 focus:border-orange-400"}`}
           />
           <button
             type="submit"
             disabled={!newMessageText.trim() || sendingMessage}
-            className="h-14 w-14 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white text-2xl flex items-center justify-center disabled:opacity-50 flex-shrink-0 shadow-lg"
+            className="h-10 w-10 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white text-lg flex items-center justify-center disabled:opacity-50 flex-shrink-0 shadow-lg"
           >
             {sendingMessage ? "..." : "→"}
           </button>

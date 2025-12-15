@@ -416,9 +416,9 @@ export default function GroupsPage() {
           <button
             type="button"
             onClick={withHaptics(() => router.push("/groups/new"))}
-            className="rounded-full bg-gradient-to-r from-orange-400 to-amber-400 px-8 py-4 text-xl font-bold text-white shadow-lg transition hover:from-orange-500 hover:to-amber-500"
+            className="rounded-full bg-gradient-to-r from-orange-400 to-amber-400 px-5 py-3 text-lg font-bold text-white shadow-lg transition hover:from-orange-500 hover:to-amber-500"
           >
-            + New Group
+            + New
           </button>
           <button
             type="button"
