@@ -35,43 +35,59 @@ export async function POST(req: NextRequest) {
   const results: Record<string, string> = {};
 
   try {
-    // First get all checkin IDs for this user
-    const { data: checkins, error: checkinsError } = await supabase
-      .from("checkins")
+    // 1. Get all groups owned by this user
+    const { data: ownedGroups } = await supabase
+      .from("groups")
       .select("id")
-      .eq("user_id", userId);
-    
-    results.checkinsFetch = checkinsError ? `error: ${checkinsError.message}` : `found ${checkins?.length || 0}`;
-    
-    const checkinIds = checkins?.map(c => c.id) || [];
+      .eq("owner_id", userId);
+    const ownedGroupIds = ownedGroups?.map(g => g.id) || [];
+    results.ownedGroupsFound = `${ownedGroupIds.length}`;
 
-    // Delete checkin_groups for user's checkins
-    if (checkinIds.length > 0) {
-      const { error: cgError } = await supabase.from("checkin_groups").delete().in("checkin_id", checkinIds);
-      results.checkinGroups = cgError ? `error: ${cgError.message}` : "deleted";
+    // 2. Delete all messages in owned groups (FK: messages -> groups)
+    if (ownedGroupIds.length > 0) {
+      const { error } = await supabase.from("messages").delete().in("group_id", ownedGroupIds);
+      results.messagesInOwnedGroups = error ? `error: ${error.message}` : "deleted";
     }
 
-    // Delete all user's checkins
-    const { error: delCheckinsErr } = await supabase.from("checkins").delete().eq("user_id", userId);
-    results.checkins = delCheckinsErr ? `error: ${delCheckinsErr.message}` : "deleted";
+    // 3. Delete all checkin_groups for owned groups
+    if (ownedGroupIds.length > 0) {
+      const { error } = await supabase.from("checkin_groups").delete().in("group_id", ownedGroupIds);
+      results.checkinGroupsInOwned = error ? `error: ${error.message}` : "deleted";
+    }
 
-    // Delete all user's answers
-    const { error: answersErr } = await supabase.from("answers").delete().eq("user_id", userId);
-    results.answers = answersErr ? `error: ${answersErr.message}` : "deleted";
+    // 4. Delete all memberships for owned groups
+    if (ownedGroupIds.length > 0) {
+      const { error } = await supabase.from("group_memberships").delete().in("group_id", ownedGroupIds);
+      results.membershipsInOwned = error ? `error: ${error.message}` : "deleted";
+    }
 
-    // Delete all user's messages
+    // 5. Delete owned groups
+    if (ownedGroupIds.length > 0) {
+      const { error } = await supabase.from("groups").delete().in("id", ownedGroupIds);
+      results.ownedGroups = error ? `error: ${error.message}` : "deleted";
+    }
+
+    // 6. Get user's checkins and delete related data
+    const { data: checkins } = await supabase.from("checkins").select("id").eq("user_id", userId);
+    const checkinIds = checkins?.map(c => c.id) || [];
+    
+    if (checkinIds.length > 0) {
+      await supabase.from("checkin_groups").delete().in("checkin_id", checkinIds);
+    }
+    
+    // 7. Delete user's checkins
+    const { error: checkinsErr } = await supabase.from("checkins").delete().eq("user_id", userId);
+    results.checkins = checkinsErr ? `error: ${checkinsErr.message}` : "deleted";
+
+    // 8. Delete user's messages (in other groups)
     const { error: msgsErr } = await supabase.from("messages").delete().eq("user_id", userId);
-    results.messages = msgsErr ? `error: ${msgsErr.message}` : "deleted";
+    results.userMessages = msgsErr ? `error: ${msgsErr.message}` : "deleted";
 
-    // Delete memberships
+    // 9. Delete user's memberships (in other groups)
     const { error: membErr } = await supabase.from("group_memberships").delete().eq("user_id", userId);
-    results.memberships = membErr ? `error: ${membErr.message}` : "deleted";
+    results.userMemberships = membErr ? `error: ${membErr.message}` : "deleted";
 
-    // Delete groups owned by user (this may cascade to related data)
-    const { error: groupsErr } = await supabase.from("groups").delete().eq("owner_id", userId);
-    results.ownedGroups = groupsErr ? `error: ${groupsErr.message}` : "deleted";
-
-    // Delete profile
+    // 10. Delete profile
     const { error: profErr } = await supabase.from("profiles").delete().eq("id", userId);
     results.profile = profErr ? `error: ${profErr.message}` : "deleted";
 
