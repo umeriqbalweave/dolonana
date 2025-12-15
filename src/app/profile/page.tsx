@@ -201,14 +201,23 @@ function ProfileContent() {
         body: JSON.stringify({ userId }),
       });
 
+      const data = await response.json();
+      console.log("Delete response:", data);
+      
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to delete account");
+        throw new Error(data.message || "Failed to delete account");
+      }
+
+      // Clear all localStorage
+      if (typeof window !== "undefined") {
+        window.localStorage.clear();
       }
 
       // Sign out locally
       await supabase.auth.signOut();
-      router.replace("/");
+      
+      // Force hard redirect to clear any cached state
+      window.location.href = "/";
     } catch (error) {
       console.error("Error deleting profile:", error);
       alert("Failed to delete profile. Please try again.");
