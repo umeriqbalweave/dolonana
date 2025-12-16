@@ -183,7 +183,13 @@ function CheckInContent() {
   async function startRecording() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+
+      const preferredTypes = ["audio/mp4", "audio/aac", "audio/ogg;codecs=opus", "audio/webm;codecs=opus", "audio/webm"];
+      const mimeType = preferredTypes.find((t) => MediaRecorder.isTypeSupported(t));
+
+      const mediaRecorder = mimeType
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -194,7 +200,8 @@ function CheckInContent() {
       };
 
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const recordedType = mediaRecorder.mimeType || mimeType || "audio/webm";
+        const audioBlob = new Blob(audioChunksRef.current, { type: recordedType });
         setAudioBlob(audioBlob);
         const url = URL.createObjectURL(audioBlob);
         setAudioUrl(url);
@@ -225,7 +232,9 @@ function CheckInContent() {
     setIsTranscribing(true);
     try {
       const formData = new FormData();
-      formData.append("audio", blob, "recording.webm");
+
+      const ext = blob.type.includes("mp4") ? "m4a" : blob.type.includes("ogg") ? "ogg" : "webm";
+      formData.append("audio", blob, `recording.${ext}`);
 
       const response = await fetch("/api/transcribe", {
         method: "POST",
@@ -385,11 +394,12 @@ function CheckInContent() {
       // Upload audio to Supabase Storage if exists
       let audioFileUrl: string | null = null;
       if (audioBlob) {
-        const fileName = `checkin-audio/${userId}/${Date.now()}.webm`;
+        const ext = audioBlob.type.includes("mp4") ? "m4a" : audioBlob.type.includes("ogg") ? "ogg" : "webm";
+        const fileName = `checkin-audio/${userId}/${Date.now()}.${ext}`;
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from("audio")
           .upload(fileName, audioBlob, {
-            contentType: "audio/webm",
+            contentType: audioBlob.type || "audio/webm",
             upsert: false,
           });
 

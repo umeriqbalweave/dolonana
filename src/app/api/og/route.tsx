@@ -3,12 +3,22 @@ import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "edge";
 
+function arrayBufferToBase64(buffer: ArrayBuffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 1) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const groupId = searchParams.get("groupId");
 
   let groupName = "CWF";
   let groupImage: string | null = null;
+  let groupImageDataUrl: string | null = null;
   let inviterName: string | null = null;
 
   // If groupId provided, fetch group data
@@ -36,6 +46,20 @@ export async function GET(request: Request) {
         .maybeSingle();
 
       inviterName = owner?.display_name ?? null;
+    }
+  }
+
+  if (groupImage) {
+    try {
+      const res = await fetch(groupImage);
+      if (res.ok) {
+        const contentType = res.headers.get("content-type") || "image/jpeg";
+        const buf = await res.arrayBuffer();
+        const base64 = arrayBufferToBase64(buf);
+        groupImageDataUrl = `data:${contentType};base64,${base64}`;
+      }
+    } catch {
+      groupImageDataUrl = null;
     }
   }
 
@@ -68,9 +92,9 @@ export async function GET(request: Request) {
           }}
         >
           {/* Group Image or initial fallback */}
-          {groupImage ? (
+          {groupImageDataUrl ? (
             <img
-              src={groupImage}
+              src={groupImageDataUrl}
               alt=""
               width={140}
               height={140}

@@ -434,7 +434,13 @@ export default function GroupDetailPage() {
     
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+
+      const preferredTypes = ["audio/mp4", "audio/aac", "audio/ogg;codecs=opus", "audio/webm;codecs=opus", "audio/webm"];
+      const mimeType = preferredTypes.find((t) => MediaRecorder.isTypeSupported(t));
+
+      const mediaRecorder = mimeType
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -445,7 +451,8 @@ export default function GroupDetailPage() {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const recordedType = mediaRecorder.mimeType || mimeType || "audio/webm";
+        const audioBlob = new Blob(audioChunksRef.current, { type: recordedType });
         stream.getTracks().forEach(track => track.stop());
         // Save blob and show ready to send state
         setRecordedAudioBlob(audioBlob);
@@ -487,10 +494,11 @@ export default function GroupDetailPage() {
 
     try {
       // Upload audio to Supabase Storage
-      const fileName = `chat-audio/${groupId}/${userId}/${Date.now()}.webm`;
+      const ext = audioBlob.type.includes("mp4") ? "m4a" : audioBlob.type.includes("ogg") ? "ogg" : "webm";
+      const fileName = `chat-audio/${groupId}/${userId}/${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from("audio")
-        .upload(fileName, audioBlob, { contentType: "audio/webm" });
+        .upload(fileName, audioBlob, { contentType: audioBlob.type || "audio/webm" });
 
       if (uploadError) {
         console.error("Audio upload error:", uploadError);
@@ -502,7 +510,7 @@ export default function GroupDetailPage() {
 
       // Transcribe the audio
       const formData = new FormData();
-      formData.append("audio", audioBlob, "recording.webm");
+      formData.append("audio", audioBlob, `recording.${ext}`);
       const transcribeResponse = await fetch("/api/transcribe", { method: "POST", body: formData });
       let transcribedText = "";
       if (transcribeResponse.ok) {
