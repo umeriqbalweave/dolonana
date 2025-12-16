@@ -105,10 +105,10 @@ function OnboardingContent() {
         {step === 1 && (
           <form onSubmit={handleNameSubmit} className="space-y-6">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-[#e8e6e3] mb-2">
+              <h1 className="text-4xl md:text-5xl font-bold text-[#e8e6e3] mb-2">
                 What should we call you?
               </h1>
-              <p className="text-lg text-[#a8a6a3] mt-3">This is how your friends will see you</p>
+              <p className="text-xl text-[#a8a6a3] mt-3">This is how your friends will see you</p>
             </div>
 
             <input
@@ -135,10 +135,10 @@ function OnboardingContent() {
         {step === 2 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-[#e8e6e3] mb-2">
+              <h1 className="text-4xl md:text-5xl font-bold text-[#e8e6e3] mb-2">
                 Add a photo
               </h1>
-              <p className="text-lg text-[#a8a6a3] mt-3">Optional, but it helps friends recognize you!</p>
+              <p className="text-xl text-[#a8a6a3] mt-3">Optional, but it helps friends recognize you!</p>
             </div>
 
             <input
@@ -207,8 +207,8 @@ export default function OnboardingPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-          <p className="text-xl text-slate-400">Loading...</p>
+        <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
+          <p className="text-xl text-[#a8a6a3]">Loading...</p>
         </div>
       }
     >

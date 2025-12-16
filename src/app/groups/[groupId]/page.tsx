@@ -721,85 +721,87 @@ export default function GroupDetailPage() {
                       </>
                     )}
                     
-                    {/* Avatar - clickable to play audio if available */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (checkin.audio_url) {
-                          const audio = document.getElementById(`checkin-audio-${checkin.id}`) as HTMLAudioElement;
-                          const playBtn = document.getElementById(`checkin-play-${checkin.id}`);
-                          if (audio) {
-                            if (audio.paused) {
-                              audio.play();
-                              if (playBtn) playBtn.textContent = "⏸";
-                            } else {
-                              audio.pause();
-                              if (playBtn) playBtn.textContent = "▶";
-                            }
-                          }
-                        }
-                      }}
-                      className={`flex-shrink-0 h-12 w-12 rounded-full overflow-hidden shadow ${checkin.audio_url ? "cursor-pointer hover:scale-105 transition" : ""}`}
-                    >
-                      {avatarUrl ? (
-                        <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center text-lg font-bold bg-[#1a1a1a] border border-[#2a2a2a] text-[#a8a6a3]">
-                          {displayName[0]}
-                        </div>
-                      )}
-                    </button>
-                    
-                    {/* Audio Play Button */}
-                    {checkin.audio_url && (
-                      <div className="flex flex-col items-center flex-shrink-0">
-                        <button
-                          id={`checkin-play-${checkin.id}`}
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
+                    {/* Avatar with audio player below */}
+                    <div className="flex flex-col items-center flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (checkin.audio_url) {
                             const audio = document.getElementById(`checkin-audio-${checkin.id}`) as HTMLAudioElement;
-                            const btn = e.currentTarget;
+                            const playBtn = document.getElementById(`checkin-play-${checkin.id}`);
                             if (audio) {
                               if (audio.paused) {
                                 audio.play();
-                                btn.textContent = "⏸";
+                                if (playBtn) playBtn.textContent = "⏸";
                               } else {
                                 audio.pause();
-                                btn.textContent = "▶";
+                                if (playBtn) playBtn.textContent = "▶";
                               }
                             }
-                          }}
-                          className="h-10 w-10 rounded-full bg-[#2a2a2a] border border-[#3a3a3a] text-[#e8e6e3] text-xl font-bold flex items-center justify-center hover:bg-[#3a3a3a] transition-colors"
-                        >
-                          ▶
-                        </button>
-                        <span id={`checkin-time-${checkin.id}`} className="text-xs text-[#666] mt-1 font-medium">0:00</span>
-                        <audio 
-                          id={`checkin-audio-${checkin.id}`} 
-                          src={checkin.audio_url} 
-                          preload="metadata"
-                          className="hidden"
-                          onError={(e) => console.error("Audio error:", e)}
-                          onTimeUpdate={(e) => {
-                            const audio = e.currentTarget;
-                            const timeEl = document.getElementById(`checkin-time-${checkin.id}`);
-                            if (timeEl && audio.duration) {
-                              const mins = Math.floor(audio.currentTime / 60);
-                              const secs = Math.floor(audio.currentTime % 60);
-                              const totalMins = Math.floor(audio.duration / 60);
-                              const totalSecs = Math.floor(audio.duration % 60);
-                              timeEl.textContent = `${mins}:${secs.toString().padStart(2, "0")} / ${totalMins}:${totalSecs.toString().padStart(2, "0")}`;
-                            }
-                          }}
-                          onEnded={(e) => {
-                            const playBtn = document.getElementById(`checkin-play-${checkin.id}`);
-                            if (playBtn) playBtn.textContent = "▶";
-                          }}
-                        />
-                      </div>
-                    )}
+                          }
+                        }}
+                        className={`h-12 w-12 rounded-full overflow-hidden shadow ${checkin.audio_url ? "cursor-pointer hover:scale-105 transition" : ""}`}
+                      >
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center text-lg font-bold bg-[#1a1a1a] border border-[#2a2a2a] text-[#a8a6a3]">
+                            {displayName[0]}
+                          </div>
+                        )}
+                      </button>
+                      
+                      {/* Audio Play Button - below avatar */}
+                      {checkin.audio_url && (
+                        <>
+                          <button
+                            id={`checkin-play-${checkin.id}`}
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const audio = document.getElementById(`checkin-audio-${checkin.id}`) as HTMLAudioElement;
+                              const btn = e.currentTarget;
+                              if (audio) {
+                                if (audio.paused) {
+                                  audio.play();
+                                  btn.textContent = "⏸";
+                                } else {
+                                  audio.pause();
+                                  btn.textContent = "▶";
+                                }
+                              }
+                            }}
+                            className="mt-2 h-8 w-8 rounded-full bg-[#2a2a2a] border border-[#3a3a3a] text-[#e8e6e3] text-sm font-bold flex items-center justify-center hover:bg-[#3a3a3a] transition-colors"
+                          >
+                            ▶
+                          </button>
+                          <span id={`checkin-time-${checkin.id}`} className="text-xs text-[#666] mt-1 font-medium">0:00</span>
+                          <audio 
+                            id={`checkin-audio-${checkin.id}`} 
+                            src={checkin.audio_url} 
+                            preload="metadata"
+                            className="hidden"
+                            onError={(e) => console.error("Audio error:", e)}
+                            onTimeUpdate={(e) => {
+                              const audio = e.currentTarget;
+                              const timeEl = document.getElementById(`checkin-time-${checkin.id}`);
+                              if (timeEl && audio.duration) {
+                                const mins = Math.floor(audio.currentTime / 60);
+                                const secs = Math.floor(audio.currentTime % 60);
+                                const totalMins = Math.floor(audio.duration / 60);
+                                const totalSecs = Math.floor(audio.duration % 60);
+                                timeEl.textContent = `${mins}:${secs.toString().padStart(2, "0")} / ${totalMins}:${totalSecs.toString().padStart(2, "0")}`;
+                              }
+                            }}
+                            onEnded={(e) => {
+                              const playBtn = document.getElementById(`checkin-play-${checkin.id}`);
+                              if (playBtn) playBtn.textContent = "▶";
+                            }}
+                          />
+                        </>
+                      )}
+                    </div>
                     
                     {/* Content - text to the right */}
                     <div className="flex-1 min-w-0 overflow-hidden">
@@ -868,83 +870,85 @@ export default function GroupDetailPage() {
                     transition={{ duration: 0.2, delay: index * 0.03 }}
                     className="flex items-start gap-5"
                   >
-                    {/* Avatar - clickable to play audio if available */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (msg.audio_url) {
-                          const audio = document.getElementById(`audio-${msg.id}`) as HTMLAudioElement;
-                          const playBtn = document.getElementById(`msg-play-${msg.id}`);
-                          if (audio) {
-                            if (audio.paused) {
-                              audio.play();
-                              if (playBtn) playBtn.textContent = "⏸";
-                            } else {
-                              audio.pause();
-                              if (playBtn) playBtn.textContent = "▶";
-                            }
-                          }
-                        }
-                      }}
-                      className={`flex-shrink-0 h-12 w-12 rounded-full overflow-hidden shadow ${msg.audio_url ? "cursor-pointer hover:scale-105 transition" : ""}`}
-                    >
-                      {avatarUrl ? (
-                        <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center text-lg font-bold bg-[#1a1a1a] border border-[#2a2a2a] text-[#a8a6a3]">
-                          {displayName[0]}
-                        </div>
-                      )}
-                    </button>
-                    
-                    {/* Audio Play Button */}
-                    {msg.audio_url && (
-                      <div className="flex flex-col items-center flex-shrink-0">
-                        <button
-                          id={`msg-play-${msg.id}`}
-                          type="button"
-                          onClick={(e) => {
+                    {/* Avatar with audio player below */}
+                    <div className="flex flex-col items-center flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (msg.audio_url) {
                             const audio = document.getElementById(`audio-${msg.id}`) as HTMLAudioElement;
-                            const btn = e.currentTarget;
+                            const playBtn = document.getElementById(`msg-play-${msg.id}`);
                             if (audio) {
                               if (audio.paused) {
                                 audio.play();
-                                btn.textContent = "⏸";
+                                if (playBtn) playBtn.textContent = "⏸";
                               } else {
                                 audio.pause();
-                                btn.textContent = "▶";
+                                if (playBtn) playBtn.textContent = "▶";
                               }
                             }
-                          }}
-                          className="h-10 w-10 rounded-full bg-[#2a2a2a] border border-[#3a3a3a] text-[#e8e6e3] text-xl font-bold flex items-center justify-center hover:bg-[#3a3a3a] transition-colors"
-                        >
-                          ▶
-                        </button>
-                        <span id={`msg-time-${msg.id}`} className="text-xs text-[#666] mt-1 font-medium">0:00</span>
-                        <audio 
-                          id={`audio-${msg.id}`} 
-                          src={msg.audio_url} 
-                          preload="metadata"
-                          className="hidden"
-                          onError={(e) => console.error("Audio error:", e)}
-                          onTimeUpdate={(e) => {
-                            const audio = e.currentTarget;
-                            const timeEl = document.getElementById(`msg-time-${msg.id}`);
-                            if (timeEl && audio.duration) {
-                              const mins = Math.floor(audio.currentTime / 60);
-                              const secs = Math.floor(audio.currentTime % 60);
-                              const totalMins = Math.floor(audio.duration / 60);
-                              const totalSecs = Math.floor(audio.duration % 60);
-                              timeEl.textContent = `${mins}:${secs.toString().padStart(2, "0")} / ${totalMins}:${totalSecs.toString().padStart(2, "0")}`;
-                            }
-                          }}
-                          onEnded={() => {
-                            const playBtn = document.getElementById(`msg-play-${msg.id}`);
-                            if (playBtn) playBtn.textContent = "▶";
-                          }}
-                        />
-                      </div>
-                    )}
+                          }
+                        }}
+                        className={`h-12 w-12 rounded-full overflow-hidden shadow ${msg.audio_url ? "cursor-pointer hover:scale-105 transition" : ""}`}
+                      >
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center text-lg font-bold bg-[#1a1a1a] border border-[#2a2a2a] text-[#a8a6a3]">
+                            {displayName[0]}
+                          </div>
+                        )}
+                      </button>
+                      
+                      {/* Audio Play Button - below avatar */}
+                      {msg.audio_url && (
+                        <>
+                          <button
+                            id={`msg-play-${msg.id}`}
+                            type="button"
+                            onClick={(e) => {
+                              const audio = document.getElementById(`audio-${msg.id}`) as HTMLAudioElement;
+                              const btn = e.currentTarget;
+                              if (audio) {
+                                if (audio.paused) {
+                                  audio.play();
+                                  btn.textContent = "⏸";
+                                } else {
+                                  audio.pause();
+                                  btn.textContent = "▶";
+                                }
+                              }
+                            }}
+                            className="mt-2 h-8 w-8 rounded-full bg-[#2a2a2a] border border-[#3a3a3a] text-[#e8e6e3] text-sm font-bold flex items-center justify-center hover:bg-[#3a3a3a] transition-colors"
+                          >
+                            ▶
+                          </button>
+                          <span id={`msg-time-${msg.id}`} className="text-xs text-[#666] mt-1 font-medium">0:00</span>
+                          <audio 
+                            id={`audio-${msg.id}`} 
+                            src={msg.audio_url} 
+                            preload="metadata"
+                            className="hidden"
+                            onError={(e) => console.error("Audio error:", e)}
+                            onTimeUpdate={(e) => {
+                              const audio = e.currentTarget;
+                              const timeEl = document.getElementById(`msg-time-${msg.id}`);
+                              if (timeEl && audio.duration) {
+                                const mins = Math.floor(audio.currentTime / 60);
+                                const secs = Math.floor(audio.currentTime % 60);
+                                const totalMins = Math.floor(audio.duration / 60);
+                                const totalSecs = Math.floor(audio.duration % 60);
+                                timeEl.textContent = `${mins}:${secs.toString().padStart(2, "0")} / ${totalMins}:${totalSecs.toString().padStart(2, "0")}`;
+                              }
+                            }}
+                            onEnded={() => {
+                              const playBtn = document.getElementById(`msg-play-${msg.id}`);
+                              if (playBtn) playBtn.textContent = "▶";
+                            }}
+                          />
+                        </>
+                      )}
+                    </div>
                     
                     {/* Content - text to the right */}
                     <div className="flex-1 min-w-0 overflow-hidden">

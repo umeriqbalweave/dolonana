@@ -47,6 +47,7 @@ export default function GroupsPage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [showWelcome, setShowWelcome] = useState(false);
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+  const [lastUserCheckin, setLastUserCheckin] = useState<{ time: string; number: number } | null>(null);
 
 
   useEffect(() => {
@@ -89,6 +90,19 @@ export default function GroupsPage() {
       }
 
       void fetchGroups(currentUserId, phone);
+      
+      // Fetch user's most recent check-in for confirmation display
+      const { data: recentCheckin } = await supabase
+        .from("checkins")
+        .select("created_at, number")
+        .eq("user_id", currentUserId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
+      if (recentCheckin) {
+        setLastUserCheckin({ time: recentCheckin.created_at, number: recentCheckin.number });
+      }
     }
 
     void loadUser();
@@ -480,6 +494,18 @@ export default function GroupsPage() {
             <div className="py-8 text-center">
               <p className="text-xl text-[#a8a6a3] mb-2">No circles yet</p>
               <p className="text-base text-[#666]">Create a group to start checking in with friends</p>
+            </div>
+          )}
+
+          {/* Last check-in confirmation */}
+          {!groupsLoading && lastUserCheckin && (
+            <div className="mb-4 p-4 rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a]">
+              <p className="text-sm text-[#666]">Your last check-in</p>
+              <p className="text-lg text-[#e8e6e3]">
+                <span className="font-bold">{lastUserCheckin.number}/10</span>
+                <span className="text-[#666]"> · </span>
+                <span className="text-[#a8a6a3]">{formatLastCheckin(lastUserCheckin.time)}</span>
+              </p>
             </div>
           )}
 

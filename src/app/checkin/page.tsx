@@ -559,7 +559,7 @@ function CheckInContent() {
                       selectedNumber <= 3 ? 'bg-[#8b0000]/20 border-2 border-[#8b0000]' :
                       selectedNumber <= 5 ? 'bg-[#b8860b]/20 border-2 border-[#b8860b]' :
                       selectedNumber <= 7 ? 'bg-[#2e8b57]/20 border-2 border-[#2e8b57]' :
-                      'bg-[#4169e1]/20 border-2 border-[#4169e1]'
+                      'bg-[#16a34a]/20 border-2 border-[#16a34a]'
                     }`}
                     onClick={() => {
                       const input = document.getElementById('number-input') as HTMLInputElement;
@@ -586,7 +586,7 @@ function CheckInContent() {
                         selectedNumber <= 3 ? 'text-[#dc2626]' :
                         selectedNumber <= 5 ? 'text-[#eab308]' :
                         selectedNumber <= 7 ? 'text-[#22c55e]' :
-                        'text-[#3b82f6]'
+                        'text-[#16a34a]'
                       } placeholder:text-[#444]`}
                     />
                   </div>
@@ -609,9 +609,9 @@ function CheckInContent() {
                     onChange={(e) => {
                       setSelectedNumber(parseInt(e.target.value));
                     }}
-                    className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                    className="w-full h-4 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#3a3a3a] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-8 [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#3a3a3a] [&::-moz-range-thumb]:cursor-pointer"
                     style={{
-                      background: `linear-gradient(to right, #dc2626 0%, #eab308 40%, #22c55e 70%, #3b82f6 100%)`,
+                      background: `linear-gradient(to right, #dc2626 0%, #eab308 50%, #22c55e 100%)`,
                     }}
                   />
                   {/* Scale labels */}
@@ -756,10 +756,18 @@ function CheckInContent() {
                     </button>
                   </div>
 
-                  {/* Single Share button */}
+                  {/* Single Share button - auto-share if only one group */}
                   <button
                     type="button"
-                    onClick={withHaptics(() => setShowGroupModal(true))}
+                    onClick={withHaptics(() => {
+                      if (groups.length === 1 && people.length === 0) {
+                        // Auto-select the single group and share
+                        setSelectedGroups(new Set([groups[0].id]));
+                        setTimeout(() => handleShare(), 100);
+                      } else {
+                        setShowGroupModal(true);
+                      }
+                    })}
                     className="w-full rounded-2xl bg-gradient-to-b from-[#f0f0f0] to-[#c0c0c0] px-6 py-5 text-2xl font-bold text-[#1a1a1a] shadow-lg"
                   >
                     Share
@@ -904,17 +912,37 @@ function CheckInContent() {
             </motion.div>
           )}
 
-          {/* Success State */}
+          {/* Success State with Checkmark Animation */}
           {sent && (
             <motion.div
               key="sent"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center"
+              className="text-center flex flex-col items-center"
             >
-              <p className={`text-2xl font-semibold ${textPrimary}`}>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 200, damping: 10, delay: 0.1 }}
+                className="w-24 h-24 rounded-full bg-[#22c55e] flex items-center justify-center mb-6"
+              >
+                <motion.span
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-5xl text-white"
+                >
+                  ✓
+                </motion.span>
+              </motion.div>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className={`text-2xl font-semibold ${textPrimary}`}
+              >
                 Check-in saved
-              </p>
+              </motion.p>
             </motion.div>
           )}
         </AnimatePresence>
