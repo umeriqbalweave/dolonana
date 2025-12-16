@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  const ogImageUrl = `https://questionswithfriends.app/api/og?groupId=${groupId}`;
+  const ogImageUrl = `https://checkinwithfriends.app/api/og?groupId=${groupId}`;
 
   return {
     title,

@@ -1009,7 +1009,7 @@ function CheckInContent() {
 
 export default function CheckInPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-black"><span className="text-4xl">🪷</span></div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]"><span className="text-xl text-[#a8a6a3]">Loading...</span></div>}>
       <CheckInContent />
     </Suspense>
   );

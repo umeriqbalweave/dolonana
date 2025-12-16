@@ -114,7 +114,7 @@ export default function GroupInvitePage() {
     if (step === "tutorial" && tutorialStep === 1) {
       const interval = setInterval(() => {
         setWordIndex((prev) => (prev + 1) % checkinExamples.length);
-      }, 2000);
+      }, 1200);
       return () => clearInterval(interval);
     }
   }, [step, tutorialStep]);
@@ -422,7 +422,7 @@ export default function GroupInvitePage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="text-xl text-[#666] mb-2 text-center"
+        className="text-xl text-[#a8a6a3] mb-2 text-center"
       >
         <span className="text-[#e8e6e3] font-semibold">{adminName}</span> invited you to join
       </motion.p>
@@ -444,7 +444,7 @@ export default function GroupInvitePage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7 }}
-        className="w-full max-w-xs rounded-full bg-gradient-to-r from-orange-500 to-amber-500 px-8 py-5 text-xl font-semibold text-white shadow-lg"
+        className="w-full max-w-xs rounded-full bg-[#e8e6e3] px-8 py-5 text-2xl font-semibold text-[#1a1a1a]"
       >
         How does this work?
       </motion.button>

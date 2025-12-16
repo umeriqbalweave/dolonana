@@ -457,24 +457,13 @@ export default function GroupsPage() {
             }
           }}
         >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{
-              scale: { duration: 0.8, ease: "easeOut" },
-              opacity: { duration: 0.8 },
-            }}
-            className="mb-6 text-8xl md:text-9xl"
-          >
-            🪷
-          </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.4 }}
-            className="text-center text-xl font-medium text-slate-100 md:text-2xl"
+            className="text-center text-xl font-medium text-[#e8e6e3] md:text-2xl"
           >
-            Take a breath. You&apos;re okay 💜
+            Take a breath. You&apos;re okay.
           </motion.p>
         </div>
       )}
@@ -483,18 +472,14 @@ export default function GroupsPage() {
       <main className="flex h-[calc(100vh-64px)] flex-col px-0 py-0">
         <div className="flex-1 overflow-y-auto bg-[#0f0f0f] px-4 pb-6 pt-4 md:px-8">
           {groupsLoading && (
-            <div className="relative flex flex-col items-center justify-center min-h-[60vh]">
-              <div className="absolute top-10 left-10 text-4xl opacity-20 animate-pulse">🪷</div>
-              <div className="absolute bottom-10 right-10 text-4xl opacity-20 animate-pulse">✨</div>
-              <div className="animate-pulse text-6xl mb-4">🪷</div>
-              <p className="text-lg text-[#a8a6a3]">Loading your circles...</p>
+            <div className="flex flex-col items-center justify-center min-h-[60vh]">
+              <p className="text-xl text-[#a8a6a3]">Loading your circles...</p>
             </div>
           )}
           {!groupsLoading && groups.length === 0 && (
             <div className="py-8 text-center">
-              <div className="text-6xl mb-4">🪷</div>
-              <p className="text-lg text-[#a8a6a3] mb-2">No circles yet</p>
-              <p className="text-sm text-[#666]">Create a group to start checking in with friends</p>
+              <p className="text-xl text-[#a8a6a3] mb-2">No circles yet</p>
+              <p className="text-base text-[#666]">Create a group to start checking in with friends</p>
             </div>
           )}
 
