@@ -39,6 +39,8 @@ export default function GroupSettingsPage() {
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [origin, setOrigin] = useState("");
+  const [messageSmsEnabled, setMessageSmsEnabled] = useState(true);
+  const [savingSms, setSavingSms] = useState(false);
 
   const isOwner = group && userId ? group.owner_id === userId : false;
 
@@ -72,6 +74,18 @@ export default function GroupSettingsPage() {
       setGroup(groupData);
       setEditName(groupData.name);
       setEditImageUrl(groupData.image_url ?? null);
+
+      // Load current user's membership settings
+      const { data: myMembership } = await supabase
+        .from("group_memberships")
+        .select("message_sms")
+        .eq("group_id", groupId)
+        .eq("user_id", currentUserId)
+        .single();
+
+      if (myMembership) {
+        setMessageSmsEnabled(myMembership.message_sms !== false);
+      }
 
       // Load members
       const { data: memberships } = await supabase
@@ -143,6 +157,21 @@ export default function GroupSettingsPage() {
     navigator.clipboard.writeText(link);
     setCopyMessage("Link copied!");
     setTimeout(() => setCopyMessage(null), 2000);
+  }
+
+  async function handleToggleMessageSms() {
+    if (!userId) return;
+    setSavingSms(true);
+    const newValue = !messageSmsEnabled;
+    setMessageSmsEnabled(newValue);
+
+    await supabase
+      .from("group_memberships")
+      .update({ message_sms: newValue })
+      .eq("group_id", groupId)
+      .eq("user_id", userId);
+
+    setSavingSms(false);
   }
 
   // Theme classes
@@ -253,6 +282,31 @@ export default function GroupSettingsPage() {
               }`}
             >
               {copyMessage ? "Copied" : "Copy"}
+            </button>
+          </div>
+        </div>
+
+        {/* SMS Notifications Toggle */}
+        <div className={cardClass}>
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-lg text-[#e8e6e3]">SMS notifications</span>
+              <p className="text-sm text-[#666]">Get texts when members check in</p>
+            </div>
+            <button
+              type="button"
+              onClick={withHaptics(handleToggleMessageSms)}
+              disabled={savingSms}
+              className={`relative h-10 rounded-full transition ${
+                messageSmsEnabled ? "bg-[#e8e6e3]" : "bg-[#2a2a2a]"
+              }`}
+              style={{width: '72px'}}
+            >
+              <span
+                className={`absolute top-1.5 h-7 w-7 rounded-full bg-white shadow transition ${
+                  messageSmsEnabled ? "left-9" : "left-1.5"
+                }`}
+              />
             </button>
           </div>
         </div>
