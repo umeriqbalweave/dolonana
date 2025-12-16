@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
     // Get profiles with phone numbers
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, phone_number, notifications_muted")
+      .select("id, phone_number, notifications_muted, checkin_sms_enabled")
       .in("id", memberIdArray);
 
     // Get phone numbers from auth.users as fallback
@@ -115,9 +115,10 @@ export async function POST(req: NextRequest) {
         const profile = profiles?.find((p) => p.id === id);
         const phone = profile?.phone_number || authPhoneMap.get(id);
         const muted = profile?.notifications_muted;
-        return { id, phone, muted };
+        const checkinSmsEnabled = profile?.checkin_sms_enabled;
+        return { id, phone, muted, checkinSmsEnabled };
       })
-      .filter((u) => u.phone && !u.muted && !disabledUsers.has(u.id));
+      .filter((u) => u.phone && !u.muted && u.checkinSmsEnabled !== false && !disabledUsers.has(u.id));
 
     // Send SMS to each eligible user
     let sentCount = 0;

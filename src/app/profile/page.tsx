@@ -35,6 +35,10 @@ function ProfileContent() {
   const [editingName, setEditingName] = useState(false);
   const [notificationsMuted, setNotificationsMuted] = useState(false);
   const [savingNotifications, setSavingNotifications] = useState(false);
+  const [dailySmsEnabled, setDailySmsEnabled] = useState(true);
+  const [checkinSmsEnabled, setCheckinSmsEnabled] = useState(true);
+  const [savingDailySms, setSavingDailySms] = useState(false);
+  const [savingCheckinSms, setSavingCheckinSms] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackText, setFeedbackText] = useState("");
   const [sendingFeedback, setSendingFeedback] = useState(false);
@@ -55,7 +59,7 @@ function ProfileContent() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("display_name, avatar_url, notifications_muted")
+        .select("display_name, avatar_url, notifications_muted, daily_sms_enabled, checkin_sms_enabled")
         .eq("id", currentUserId)
         .maybeSingle();
 
@@ -63,6 +67,8 @@ function ProfileContent() {
         setDisplayName(profile.display_name ?? "");
         setAvatarUrl(profile.avatar_url ?? "");
         setNotificationsMuted(profile.notifications_muted ?? false);
+        setDailySmsEnabled(profile.daily_sms_enabled ?? true);
+        setCheckinSmsEnabled(profile.checkin_sms_enabled ?? true);
       }
 
 
@@ -90,12 +96,51 @@ function ProfileContent() {
     const newValue = !notificationsMuted;
     setNotificationsMuted(newValue);
 
-    await supabase
-      .from("profiles")
-      .update({ notifications_muted: newValue })
-      .eq("id", userId);
+    if (newValue) {
+      setDailySmsEnabled(false);
+      setCheckinSmsEnabled(false);
+      await supabase
+        .from("profiles")
+        .update({ notifications_muted: true, daily_sms_enabled: false, checkin_sms_enabled: false })
+        .eq("id", userId);
+    } else {
+      await supabase
+        .from("profiles")
+        .update({ notifications_muted: false })
+        .eq("id", userId);
+    }
 
     setSavingNotifications(false);
+  }
+
+  async function handleToggleDailySms() {
+    if (!userId) return;
+    setSavingDailySms(true);
+    const next = !dailySmsEnabled;
+    setDailySmsEnabled(next);
+    if (next) setNotificationsMuted(false);
+
+    await supabase
+      .from("profiles")
+      .update({ daily_sms_enabled: next, ...(next ? { notifications_muted: false } : {}) })
+      .eq("id", userId);
+
+    setSavingDailySms(false);
+  }
+
+  async function handleToggleCheckinSms() {
+    if (!userId) return;
+    setSavingCheckinSms(true);
+    const next = !checkinSmsEnabled;
+    setCheckinSmsEnabled(next);
+    if (next) setNotificationsMuted(false);
+
+    await supabase
+      .from("profiles")
+      .update({ checkin_sms_enabled: next, ...(next ? { notifications_muted: false } : {}) })
+      .eq("id", userId);
+
+    setSavingCheckinSms(false);
   }
 
   async function handleSave(event: React.FormEvent) {
@@ -367,6 +412,50 @@ function ProfileContent() {
               <span
                 className={`absolute top-1.5 h-7 w-7 rounded-full bg-white shadow transition ${
                   !notificationsMuted ? "left-9" : "left-1.5"
+                }`}
+              />
+            </button>
+          </div>
+
+          <div className="flex w-full items-center justify-between rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-6">
+            <div>
+              <span className="text-xl text-[#e8e6e3]">Daily SMS reminder</span>
+              <p className="text-lg text-[#666]">A daily nudge to check in</p>
+            </div>
+            <button
+              type="button"
+              onClick={withHaptics(handleToggleDailySms)}
+              disabled={savingDailySms || notificationsMuted}
+              className={`relative h-10 w-18 rounded-full transition ${
+                dailySmsEnabled && !notificationsMuted ? "bg-[#e8e6e3]" : "bg-[#2a2a2a]"
+              }`}
+              style={{width: '72px'}}
+            >
+              <span
+                className={`absolute top-1.5 h-7 w-7 rounded-full bg-white shadow transition ${
+                  dailySmsEnabled && !notificationsMuted ? "left-9" : "left-1.5"
+                }`}
+              />
+            </button>
+          </div>
+
+          <div className="flex w-full items-center justify-between rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-6">
+            <div>
+              <span className="text-xl text-[#e8e6e3]">SMS when friends check in</span>
+              <p className="text-lg text-[#666]">Get a text when there’s new activity</p>
+            </div>
+            <button
+              type="button"
+              onClick={withHaptics(handleToggleCheckinSms)}
+              disabled={savingCheckinSms || notificationsMuted}
+              className={`relative h-10 w-18 rounded-full transition ${
+                checkinSmsEnabled && !notificationsMuted ? "bg-[#e8e6e3]" : "bg-[#2a2a2a]"
+              }`}
+              style={{width: '72px'}}
+            >
+              <span
+                className={`absolute top-1.5 h-7 w-7 rounded-full bg-white shadow transition ${
+                  checkinSmsEnabled && !notificationsMuted ? "left-9" : "left-1.5"
                 }`}
               />
             </button>

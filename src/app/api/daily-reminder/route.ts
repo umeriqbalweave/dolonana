@@ -29,7 +29,7 @@ export async function GET() {
     // Get all users with phone numbers who haven't muted notifications
     const { data: profiles, error: profilesError } = await supabase
       .from("profiles")
-      .select("id, phone_number, display_name, notifications_muted");
+      .select("id, phone_number, display_name, notifications_muted, daily_sms_enabled");
 
     if (profilesError) {
       console.error("Failed to fetch profiles:", profilesError);
@@ -53,6 +53,9 @@ export async function GET() {
     for (const profile of profiles || []) {
       // Skip if notifications muted
       if (profile.notifications_muted) continue;
+
+      // Skip if user has disabled daily reminder SMS
+      if (profile.daily_sms_enabled === false) continue;
 
       // Get phone from profile or auth
       const phone = profile.phone_number || authPhoneMap.get(profile.id);
