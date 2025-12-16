@@ -30,7 +30,6 @@ export default function GroupSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [leaving, setLeaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [members, setMembers] = useState<Member[]>([]);
   const [editName, setEditName] = useState("");
   const [editImageUrl, setEditImageUrl] = useState<string | null>(null);
@@ -41,16 +40,10 @@ export default function GroupSettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [origin, setOrigin] = useState("");
 
-  const isDark = theme === "dark";
-  const isWarm = theme === "warm";
   const isOwner = group && userId ? group.owner_id === userId : false;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem("theme");
-      if (stored === "light" || stored === "dark" || stored === "warm") {
-        setTheme(stored);
-      }
       setOrigin(window.location.origin);
     }
   }, []);
@@ -153,31 +146,14 @@ export default function GroupSettingsPage() {
   }
 
   // Theme classes
-  const bgClass = isDark
-    ? "min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50"
-    : isWarm
-    ? "min-h-screen bg-[#FCEADE] text-stone-800"
-    : "min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900";
-
-  const cardClass = isDark
-    ? "rounded-2xl bg-slate-900/50 border border-slate-800 p-4"
-    : isWarm
-    ? "rounded-2xl bg-white border border-orange-200 p-4 shadow-sm"
-    : "rounded-2xl bg-white border border-slate-200 p-4 shadow-sm";
-
-  const inputClass = isDark
-    ? "w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-white placeholder:text-slate-500 outline-none focus:border-amber-400"
-    : isWarm
-    ? "w-full rounded-xl bg-white border-2 border-orange-200 px-4 py-3 text-stone-800 placeholder:text-stone-400 outline-none focus:border-orange-400"
-    : "w-full rounded-xl bg-white border border-slate-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 outline-none focus:border-amber-500";
+  const bgClass = "min-h-screen bg-[#0a0a0a] text-[#e8e6e3]";
+  const cardClass = "rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] p-4";
+  const inputClass = "w-full rounded-xl bg-[#0a0a0a] border border-[#2a2a2a] px-4 py-3 text-[#e8e6e3] placeholder:text-[#666] outline-none focus:border-[#888]";
 
   if (loading) {
     return (
-      <div className={bgClass + " flex items-center justify-center"}>
-        <div className="text-center">
-          <div className="animate-pulse text-6xl mb-4">⚙️</div>
-          <p className={isDark ? "text-slate-400" : "text-stone-500"}>Loading settings...</p>
-        </div>
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <p className="text-xl text-[#a8a6a3]">Loading...</p>
       </div>
     );
   }
@@ -191,15 +167,13 @@ export default function GroupSettingsPage() {
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         whileTap={{ scale: 0.95 }}
-        className={isDark 
-          ? "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-white/10 text-white/80 flex items-center justify-center hover:bg-white/20"
-          : "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-stone-200 text-stone-600 flex items-center justify-center hover:bg-stone-300"}
+        className="fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-[#1a1a1a] text-[#a8a6a3] flex items-center justify-center hover:bg-[#2a2a2a] transition-colors"
       >
         ←
       </motion.button>
 
       {/* Header */}
-      <header className={`flex items-center justify-center gap-4 border-b px-4 py-4 ${isDark ? "border-slate-800 bg-slate-950/70" : isWarm ? "border-orange-200 bg-[#FEF3E2]" : "border-slate-200 bg-white/80"}`}>
+      <header className="flex items-center justify-center gap-4 border-b border-[#1a1a1a] bg-[#0f0f0f]/90 px-4 py-4">
         <h1 className="text-xl font-bold">Settings</h1>
       </header>
 
@@ -223,7 +197,7 @@ export default function GroupSettingsPage() {
             type="button"
             onClick={withHaptics(() => isOwner && fileInputRef.current?.click())}
             disabled={!isOwner}
-            className={`h-24 w-24 rounded-full overflow-hidden ${isDark ? "bg-slate-700" : "bg-stone-200"} ${isOwner ? "cursor-pointer hover:opacity-80" : "cursor-default"}`}
+            className={`h-24 w-24 rounded-full overflow-hidden bg-[#1a1a1a] border-2 border-[#2a2a2a] ${isOwner ? "cursor-pointer hover:border-[#3a3a3a]" : "cursor-default"}`}
           >
             {(editImagePreview || editImageUrl) ? (
               <img src={editImagePreview || editImageUrl || ""} alt="" className="h-full w-full object-cover" />
@@ -233,12 +207,12 @@ export default function GroupSettingsPage() {
               </div>
             )}
           </button>
-          {isOwner && <p className={`text-sm mt-2 ${isDark ? "text-slate-500" : "text-stone-400"}`}>Tap to change</p>}
+          {isOwner && <p className="text-sm mt-2 text-[#666]">Tap to change</p>}
         </div>
 
         {/* Group Name */}
         <div className={cardClass}>
-          <label className={`block text-sm font-medium mb-2 ${isDark ? "text-slate-400" : "text-stone-500"}`}>
+          <label className="block text-sm font-medium mb-2 text-[#666]">
             Group Name
           </label>
           <input
@@ -253,7 +227,7 @@ export default function GroupSettingsPage() {
               type="button"
               onClick={withHaptics(handleSave)}
               disabled={saving || !editName.trim()}
-              className="mt-3 w-full rounded-xl bg-amber-500 px-4 py-3 text-lg font-bold text-white disabled:opacity-50"
+              className="mt-3 w-full rounded-xl bg-[#e8e6e3] px-4 py-3 text-lg font-bold text-[#1a1a1a] disabled:opacity-30"
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>
@@ -262,38 +236,36 @@ export default function GroupSettingsPage() {
 
         {/* Invite Link */}
         <div className={cardClass}>
-          <label className={`block text-sm font-medium mb-2 ${isDark ? "text-slate-400" : "text-stone-500"}`}>
+          <label className="block text-sm font-medium mb-2 text-[#666]">
             Invite Friends
           </label>
           <div className="flex items-center gap-2">
-            <div className={`flex-1 rounded-xl px-3 py-3 text-sm truncate ${isDark ? "bg-slate-800 text-slate-300" : "bg-stone-100 text-stone-600"}`}>
+            <div className="flex-1 rounded-xl px-3 py-3 text-sm truncate bg-[#0a0a0a] border border-[#2a2a2a] text-[#a8a6a3]">
               {origin}/invite/{groupId}
             </div>
             <button
               type="button"
               onClick={withHaptics(handleCopyInviteLink)}
-              className={`px-4 py-3 rounded-xl font-medium whitespace-nowrap ${
+              className={`px-4 py-3 rounded-xl font-medium whitespace-nowrap transition-colors ${
                 copyMessage 
-                  ? "bg-emerald-500 text-white" 
-                  : isDark 
-                    ? "bg-slate-700 text-slate-200 hover:bg-slate-600" 
-                    : "bg-stone-200 text-stone-700 hover:bg-stone-300"
+                  ? "bg-[#e8e6e3] text-[#1a1a1a]" 
+                  : "bg-[#2a2a2a] text-[#e8e6e3] hover:bg-[#3a3a3a]"
               }`}
             >
-              {copyMessage ? "✓ Copied" : "Copy"}
+              {copyMessage ? "Copied" : "Copy"}
             </button>
           </div>
         </div>
 
         {/* Members */}
         <div className={cardClass}>
-          <label className={`block text-sm font-medium mb-3 ${isDark ? "text-slate-400" : "text-stone-500"}`}>
+          <label className="block text-sm font-medium mb-3 text-[#666]">
             Members ({members.length})
           </label>
           <div className="space-y-2">
             {members.map((member) => (
               <div key={member.id} className="flex items-center gap-3">
-                <div className={`h-10 w-10 rounded-full overflow-hidden ${isDark ? "bg-slate-700" : "bg-stone-200"}`}>
+                <div className="h-10 w-10 rounded-full overflow-hidden bg-[#1a1a1a] border border-[#2a2a2a]">
                   {member.avatar_url ? (
                     <img src={member.avatar_url} alt="" className="h-full w-full object-cover" />
                   ) : (
@@ -304,8 +276,8 @@ export default function GroupSettingsPage() {
                 </div>
                 <span className="font-medium">
                   {member.display_name || "Friend"}
-                  {member.id === group?.owner_id && <span className={`ml-2 text-xs ${isDark ? "text-amber-400" : "text-amber-600"}`}>Owner</span>}
-                  {member.id === userId && <span className={`ml-2 text-xs ${isDark ? "text-slate-500" : "text-stone-400"}`}>(You)</span>}
+                  {member.id === group?.owner_id && <span className="ml-2 text-xs text-[#a8a6a3]">Owner</span>}
+                  {member.id === userId && <span className="ml-2 text-xs text-[#666]">(You)</span>}
                 </span>
               </div>
             ))}
