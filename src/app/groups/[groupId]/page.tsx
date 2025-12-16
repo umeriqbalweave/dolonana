@@ -510,13 +510,14 @@ export default function GroupDetailPage() {
         transcribedText = text || "";
       }
 
-      // Send message with audio URL and transcription
+      // Send message with transcription only (no audio player for transcribed messages)
       const messageText = transcribedText || "🎤 Voice message";
       const { data, error } = await supabase.from("messages").insert({
         group_id: groupId,
         user_id: userId,
         text: messageText,
-        audio_url: audioUrl,
+        // Only include audio_url if transcription failed (fallback voice message)
+        ...(transcribedText ? {} : { audio_url: audioUrl }),
       }).select();
 
       if (error) throw error;
@@ -807,7 +808,7 @@ export default function GroupDetailPage() {
                       </p>
                       
                       {/* Check-in text - emoji scale (101-103) vs number scale (1-10) */}
-                      <p className="text-2xl text-[#e8e6e3]">
+                      <p className="text-2xl text-[#e8e6e3] whitespace-pre-wrap break-words">
                         {checkin.number === 101 
                           ? `I'm feeling sad today.${checkin.message ? ` ${checkin.message}` : ""}`
                           : checkin.number === 102 
@@ -959,7 +960,7 @@ export default function GroupDetailPage() {
                           onClick={() => setViewingImage(msg.image_url!)}
                         />
                       )}
-                      <p className="text-2xl mt-1 text-[#a8a6a3]">
+                      <p className="text-2xl mt-1 text-[#a8a6a3] whitespace-pre-wrap break-words">
                         {msg.text}
                       </p>
                       <p className="mt-2 text-lg text-[#666]">

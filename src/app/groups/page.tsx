@@ -526,7 +526,7 @@ export default function GroupsPage() {
                           router.push(`/groups/${group.id}`);
                         }
                       })}
-                      className="relative cursor-pointer w-full overflow-hidden rounded-2xl shadow-lg bg-stone-200"
+                      className="relative cursor-pointer w-full overflow-hidden rounded-2xl shadow-lg bg-[#2a2a2a]"
                       style={{ minHeight: "200px", maxHeight: "280px" }}
                     >
                       {/* FULL image - fills the entire box */}
@@ -575,17 +575,17 @@ export default function GroupsPage() {
                           {group.memberAvatars?.slice(0, 5).map((avatar, i) => (
                             <div 
                               key={i} 
-                              className="h-8 w-8 rounded-full border-2 border-white bg-stone-300 overflow-hidden shadow"
+                              className="h-8 w-8 rounded-full border-2 border-white bg-[#3a3a3a] overflow-hidden shadow"
                             >
                               {avatar ? (
                                 <img src={avatar} alt="" className="h-full w-full object-cover" />
                               ) : (
-                                <div className="h-full w-full bg-gradient-to-br from-emerald-400 to-violet-400" />
+                                <div className="h-full w-full bg-[#666]" />
                               )}
                             </div>
                           ))}
                           {(group.memberCount ?? 0) > 5 && (
-                            <div className="h-8 w-8 rounded-full border-2 border-white bg-orange-500 flex items-center justify-center text-xs font-bold text-white shadow">
+                            <div className="h-8 w-8 rounded-full border-2 border-white bg-[#3a3a3a] flex items-center justify-center text-xs font-bold text-white shadow">
                               +{(group.memberCount ?? 0) - 5}
                             </div>
                           )}
@@ -600,7 +600,7 @@ export default function GroupsPage() {
         </div>
 
         {/* Prominent Check-in Button - Round circular button */}
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-30">
+        <div className="absolute bottom-36 left-1/2 -translate-x-1/2 z-30">
           <motion.button
             type="button"
             onClick={withHaptics(() => router.push("/checkin"))}
