@@ -58,7 +58,6 @@ export default function GroupDetailPage() {
   const [loading, setLoading] = useState(true);
   const [newMessageText, setNewMessageText] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light" | "warm">("warm");
   const [profilesById, setProfilesById] = useState<Record<string, { avatar_url: string | null; display_name: string | null }>>({});
   const [showFullImage, setShowFullImage] = useState(false);
   const [reactionPickerCheckinId, setReactionPickerCheckinId] = useState<string | null>(null);
@@ -78,17 +77,12 @@ export default function GroupDetailPage() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  const isDark = theme === "dark";
-  const isWarm = theme === "warm";
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedTheme = window.localStorage.getItem("theme");
-      if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "warm") {
-        setTheme(savedTheme);
-      }
-    }
-  }, []);
+  const bgClass = "flex flex-col min-h-screen bg-[#0a0a0a] text-[#e8e6e3]";
+  const headerClass =
+    "flex items-center justify-between gap-4 border-b border-[#1a1a1a] bg-[#0f0f0f]/90 px-4 py-4";
+  const cardClass = "rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] p-4";
+  const inputClass =
+    "flex-1 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] px-4 py-3 text-[#e8e6e3] placeholder:text-[#666] outline-none focus:border-[#888]";
 
   useEffect(() => {
     async function loadData() {
@@ -609,20 +603,6 @@ export default function GroupDetailPage() {
     }
   }
 
-  function getNumberColor(num: number): string {
-    if (num <= 3) return "from-rose-500 to-rose-600";
-    if (num <= 5) return "from-amber-500 to-amber-600";
-    if (num <= 7) return "from-emerald-500 to-emerald-600";
-    return "from-violet-500 to-violet-600";
-  }
-
-  function getNumberEmoji(num: number): string {
-    if (num <= 3) return "😔";
-    if (num <= 5) return "😐";
-    if (num <= 7) return "😊";
-    return "🤩";
-  }
-
   function formatTime(dateStr: string): string {
     const date = new Date(dateStr);
     const now = new Date();
@@ -648,38 +628,10 @@ export default function GroupDetailPage() {
     ...messages.map(m => ({ type: "message" as const, data: m, created_at: m.created_at })),
   ].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
-  // Theme classes
-  const bgClass = isDark
-    ? "flex flex-col min-h-screen bg-black text-slate-50"
-    : isWarm
-    ? "flex flex-col min-h-screen bg-[#FCEADE] text-stone-800"
-    : "flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900";
-
-  const headerClass = isDark
-    ? "flex items-center justify-between gap-4 border-b border-slate-800 bg-slate-950/70 px-4 py-4"
-    : isWarm
-    ? "flex items-center justify-between gap-4 border-b border-orange-200 bg-[#FEF3E2] px-4 py-4"
-    : "flex items-center justify-between gap-4 border-b border-slate-200 bg-white/80 px-4 py-4 shadow-sm";
-
-  const cardClass = isDark
-    ? "rounded-2xl bg-slate-900/50 border border-slate-800 p-4"
-    : isWarm
-    ? "rounded-2xl bg-white border border-orange-200 p-4 shadow-sm"
-    : "rounded-2xl bg-white border border-slate-200 p-4 shadow-sm";
-
-  const inputClass = isDark
-    ? "flex-1 rounded-full bg-slate-800 border border-slate-700 px-4 py-3 text-white placeholder:text-slate-500 outline-none focus:border-amber-400"
-    : isWarm
-    ? "flex-1 rounded-full bg-white border-2 border-orange-200 px-4 py-3 text-stone-800 placeholder:text-stone-400 outline-none focus:border-orange-400"
-    : "flex-1 rounded-full bg-white border border-slate-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 outline-none focus:border-amber-500";
-
   if (loading) {
     return (
-      <div className={bgClass.replace("flex flex-col", "flex items-center justify-center")}>
-        <div className="text-center">
-          <div className="animate-pulse text-6xl mb-4">🪷</div>
-          <p className={isDark ? "text-slate-400" : "text-stone-500"}>Loading...</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
+        <p className="text-xl text-[#a8a6a3]">Loading...</p>
       </div>
     );
   }
@@ -690,9 +642,7 @@ export default function GroupDetailPage() {
       <button
         type="button"
         onClick={withHaptics(() => router.push("/groups"))}
-        className={isDark 
-          ? "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-white/10 text-white/80 flex items-center justify-center hover:bg-white/20"
-          : "fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-stone-200 text-stone-600 flex items-center justify-center hover:bg-stone-300"}
+        className="fixed top-4 left-4 z-30 h-10 w-10 rounded-full bg-[#1a1a1a] text-[#a8a6a3] flex items-center justify-center hover:bg-[#2a2a2a] transition-colors"
       >
         ←
       </button>
@@ -707,11 +657,11 @@ export default function GroupDetailPage() {
           className="flex items-center justify-center gap-3 flex-1 hover:opacity-80 transition"
         >
           {/* Group Image */}
-          <div className={`h-12 w-12 rounded-full overflow-hidden flex-shrink-0 ${isDark ? "bg-zinc-700" : isWarm ? "bg-stone-200" : "bg-slate-200"}`}>
+          <div className="h-12 w-12 rounded-full overflow-hidden flex-shrink-0 bg-[#1a1a1a] border border-[#2a2a2a]">
             {group?.image_url ? (
               <img src={group.image_url} alt={group.name} className="h-full w-full object-cover" />
             ) : (
-              <div className="h-full w-full flex items-center justify-center text-lg font-bold">
+              <div className="h-full w-full flex items-center justify-center text-lg font-bold text-[#a8a6a3]">
                 {group?.name?.[0]?.toUpperCase() || "G"}
               </div>
             )}
@@ -725,11 +675,8 @@ export default function GroupDetailPage() {
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-32">
         {timeline.length === 0 && (
           <div className="text-center py-20">
-            <div className="text-9xl mb-6">🪷</div>
-            <p className={`text-2xl font-bold ${isDark ? "text-slate-300" : "text-stone-600"}`}>No messages yet</p>
-            <p className={`text-lg mt-2 ${isDark ? "text-slate-500" : "text-stone-400"}`}>
-              Start the conversation!
-            </p>
+            <p className="text-2xl font-bold text-[#e8e6e3]">No messages yet</p>
+            <p className="text-lg mt-2 text-[#666]">Start the conversation.</p>
           </div>
         )}
 
@@ -741,10 +688,6 @@ export default function GroupDetailPage() {
                 const isMe = checkin.user_id === userId;
                 const displayName = isMe ? "You" : (checkin.profile?.display_name || "Friend");
                 const avatarUrl = checkin.profile?.avatar_url;
-                const numberColor = checkin.number <= 3 ? "from-rose-500 to-rose-600" 
-                  : checkin.number <= 5 ? "from-amber-500 to-amber-600"
-                  : checkin.number <= 7 ? "from-emerald-500 to-emerald-600"
-                  : "from-violet-500 to-violet-600";
 
                 return (
                   <motion.div
@@ -762,7 +705,7 @@ export default function GroupDetailPage() {
                           className="fixed inset-0 z-10" 
                           onClick={(e) => { e.stopPropagation(); handleCloseReactionPicker(); }}
                         />
-                        <div className="absolute -top-12 left-20 z-20 flex gap-2 rounded-full border border-slate-700 bg-slate-900 px-4 py-2 shadow-lg">
+                        <div className="absolute -top-12 left-20 z-20 flex gap-2 rounded-full border border-[#2a2a2a] bg-[#1a1a1a] px-4 py-2 shadow-lg">
                           {REACTION_EMOJIS.map((emoji) => (
                             <button
                               key={emoji}
@@ -801,7 +744,7 @@ export default function GroupDetailPage() {
                       {avatarUrl ? (
                         <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                       ) : (
-                        <div className={`h-full w-full flex items-center justify-center text-lg font-bold ${isDark ? "bg-slate-700 text-slate-300" : "bg-stone-200 text-stone-500"}`}>
+                        <div className="h-full w-full flex items-center justify-center text-lg font-bold bg-[#1a1a1a] border border-[#2a2a2a] text-[#a8a6a3]">
                           {displayName[0]}
                         </div>
                       )}
@@ -827,11 +770,11 @@ export default function GroupDetailPage() {
                               }
                             }
                           }}
-                          className="h-10 w-10 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-white text-xl font-bold flex items-center justify-center shadow hover:scale-105 transition"
+                          className="h-10 w-10 rounded-full bg-[#2a2a2a] border border-[#3a3a3a] text-[#e8e6e3] text-xl font-bold flex items-center justify-center hover:bg-[#3a3a3a] transition-colors"
                         >
                           ▶
                         </button>
-                        <span id={`checkin-time-${checkin.id}`} className="text-xs text-teal-600 mt-1 font-medium">0:00</span>
+                        <span id={`checkin-time-${checkin.id}`} className="text-xs text-[#666] mt-1 font-medium">0:00</span>
                         <audio 
                           id={`checkin-audio-${checkin.id}`} 
                           src={checkin.audio_url} 
@@ -859,12 +802,12 @@ export default function GroupDetailPage() {
                     
                     {/* Content - text to the right */}
                     <div className="flex-1 min-w-0">
-                      <p className={`text-xl font-bold mb-1 ${isDark ? "text-white" : "text-stone-800"}`}>
+                      <p className="text-xl font-bold mb-1 text-[#e8e6e3]">
                         {displayName}
                       </p>
                       
                       {/* Check-in text - emoji scale (101-103) vs number scale (1-10) */}
-                      <p className={`text-2xl ${isDark ? "text-slate-100" : "text-stone-700"}`}>
+                      <p className="text-2xl text-[#e8e6e3]">
                         {checkin.number === 101 
                           ? `I'm feeling sad today.${checkin.message ? ` ${checkin.message}` : ""}`
                           : checkin.number === 102 
@@ -892,8 +835,8 @@ export default function GroupDetailPage() {
                                 onClick={(e) => { e.stopPropagation(); withHaptics(() => handleReaction(checkin.id, emoji))(); }}
                                 className={`px-3 py-1 rounded-full text-lg transition ${
                                   hasReacted
-                                    ? "bg-orange-100 border-2 border-orange-400"
-                                    : "bg-stone-100 hover:bg-stone-200 border-2 border-transparent"
+                                    ? "bg-[#e8e6e3] text-[#1a1a1a] border border-[#e8e6e3]"
+                                    : "bg-[#1a1a1a] text-[#e8e6e3] border border-[#2a2a2a] hover:border-[#3a3a3a]"
                                 }`}
                               >
                                 {emoji} {count}
@@ -903,7 +846,7 @@ export default function GroupDetailPage() {
                         </div>
                       )}
                       
-                      <p className={`mt-2 text-base ${isDark ? "text-slate-500" : "text-stone-400"}`}>
+                      <p className="mt-2 text-base text-[#666]">
                         {formatTime(checkin.created_at)}
                       </p>
                     </div>
@@ -947,7 +890,7 @@ export default function GroupDetailPage() {
                       {avatarUrl ? (
                         <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                       ) : (
-                        <div className={`h-full w-full flex items-center justify-center text-lg font-bold ${isDark ? "bg-slate-700 text-slate-300" : "bg-stone-200 text-stone-500"}`}>
+                        <div className="h-full w-full flex items-center justify-center text-lg font-bold bg-[#1a1a1a] border border-[#2a2a2a] text-[#a8a6a3]">
                           {displayName[0]}
                         </div>
                       )}
@@ -972,11 +915,11 @@ export default function GroupDetailPage() {
                               }
                             }
                           }}
-                          className="h-10 w-10 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-white text-xl font-bold flex items-center justify-center shadow hover:scale-105 transition"
+                          className="h-10 w-10 rounded-full bg-[#2a2a2a] border border-[#3a3a3a] text-[#e8e6e3] text-xl font-bold flex items-center justify-center hover:bg-[#3a3a3a] transition-colors"
                         >
                           ▶
                         </button>
-                        <span id={`msg-time-${msg.id}`} className="text-xs text-teal-600 mt-1 font-medium">0:00</span>
+                        <span id={`msg-time-${msg.id}`} className="text-xs text-[#666] mt-1 font-medium">0:00</span>
                         <audio 
                           id={`audio-${msg.id}`} 
                           src={msg.audio_url} 
@@ -1004,7 +947,7 @@ export default function GroupDetailPage() {
                     
                     {/* Content - text to the right */}
                     <div className="flex-1 min-w-0">
-                      <p className={`text-2xl font-bold ${isDark ? "text-white" : "text-stone-800"}`}>
+                      <p className="text-2xl font-bold text-[#e8e6e3]">
                         {displayName}
                       </p>
                       {/* Image if present */}
@@ -1016,10 +959,10 @@ export default function GroupDetailPage() {
                           onClick={() => setViewingImage(msg.image_url!)}
                         />
                       )}
-                      <p className={`text-2xl mt-1 ${isDark ? "text-slate-200" : "text-stone-700"}`}>
+                      <p className="text-2xl mt-1 text-[#a8a6a3]">
                         {msg.text}
                       </p>
-                      <p className={`mt-2 text-lg ${isDark ? "text-slate-500" : "text-stone-400"}`}>
+                      <p className="mt-2 text-lg text-[#666]">
                         {formatTime(msg.created_at)}
                       </p>
                     </div>
@@ -1044,20 +987,20 @@ export default function GroupDetailPage() {
       {/* Image Preview Modal */}
       {imagePreview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-lg w-full">
+          <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-3xl p-6 max-w-lg w-full">
             <img src={imagePreview} alt="Preview" className="w-full rounded-2xl mb-4 max-h-80 object-contain" />
             <input
               type="text"
               value={newMessageText}
               onChange={(e) => setNewMessageText(e.target.value)}
               placeholder="Add a caption..."
-              className="w-full rounded-full border-2 border-stone-200 px-4 py-3 text-lg mb-4 outline-none focus:border-blue-400"
+              className="w-full rounded-full border border-[#2a2a2a] bg-[#1a1a1a] px-4 py-3 text-lg mb-4 outline-none text-[#e8e6e3] placeholder:text-[#666] focus:border-[#888]"
             />
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => { setSelectedImage(null); setImagePreview(null); }}
-                className="flex-1 py-4 rounded-full bg-rose-500 text-white text-xl font-bold"
+                className="flex-1 py-4 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#e8e6e3] text-xl font-bold hover:bg-[#2a2a2a] transition-colors"
               >
                 Cancel
               </button>
@@ -1065,7 +1008,7 @@ export default function GroupDetailPage() {
                 type="button"
                 onClick={sendImageMessage}
                 disabled={uploadingImage}
-                className="flex-1 py-4 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white text-xl font-bold disabled:opacity-50"
+                className="flex-1 py-4 rounded-full bg-[#e8e6e3] text-[#1a1a1a] text-xl font-bold disabled:opacity-30 hover:bg-[#d0d0d0] transition-colors"
               >
                 {uploadingImage ? "Sending..." : "Send →"}
               </button>
@@ -1075,31 +1018,27 @@ export default function GroupDetailPage() {
       )}
 
       {/* Message Input - Fixed at bottom */}
-      <div className={`fixed bottom-0 left-0 right-0 p-4 ${isDark ? "bg-slate-950/90 border-t border-slate-800" : isWarm ? "bg-[#FEF3E2] border-t border-orange-200" : "bg-white/90 border-t border-slate-200"}`}>
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#0f0f0f]/90 border-t border-[#1a1a1a]">
         <form onSubmit={handleSendMessage} className="flex items-center gap-3 max-w-2xl mx-auto">
           {/* Image/Video Upload Button */}
           <button
             type="button"
             onClick={() => imageInputRef.current?.click()}
-            className={isDark 
-              ? "h-10 w-10 rounded-full bg-white/10 border border-white/20 text-white/80 text-lg flex items-center justify-center flex-shrink-0 hover:bg-white/20 transition"
-              : "h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-lg flex items-center justify-center flex-shrink-0 shadow-lg hover:scale-105 transition"}
+            className="h-10 w-10 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#a8a6a3] text-lg flex items-center justify-center flex-shrink-0 hover:bg-[#2a2a2a] transition-colors"
           >
-            📷
+            +
           </button>
           <input
             type="text"
             value={newMessageText}
             onChange={(e) => setNewMessageText(e.target.value)}
             placeholder="Type a message..."
-            className={`flex-1 rounded-full border px-4 py-3 text-lg outline-none ${isDark ? "bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-white/40" : "bg-white border-2 border-orange-200 text-stone-800 placeholder:text-stone-400 focus:border-orange-400"}`}
+            className={inputClass}
           />
           <button
             type="submit"
             disabled={!newMessageText.trim() || sendingMessage}
-            className={isDark 
-              ? "h-10 w-10 rounded-full bg-white text-black text-lg flex items-center justify-center disabled:opacity-30 flex-shrink-0"
-              : "h-10 w-10 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white text-lg flex items-center justify-center disabled:opacity-50 flex-shrink-0 shadow-lg"}
+            className="h-10 w-10 rounded-full bg-[#e8e6e3] text-[#1a1a1a] text-lg flex items-center justify-center disabled:opacity-30 flex-shrink-0 hover:bg-[#d0d0d0] transition-colors"
           >
             {sendingMessage ? "..." : "→"}
           </button>

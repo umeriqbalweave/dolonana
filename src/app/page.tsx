@@ -149,11 +149,11 @@ function HomeContent() {
         });
       }
 
-      // Send to onboarding if no name, otherwise straight to the group
+      // Send to onboarding if no name, otherwise to first check-in with invite group pre-selected
       if (!hasName) {
-        router.replace(`/onboarding?then=/groups/${inviteGroupId}`);
+        router.replace(`/onboarding?then=/checkin?inviteGroupId=${inviteGroupId}`);
       } else {
-        router.replace(`/groups/${inviteGroupId}`);
+        router.replace(`/checkin?inviteGroupId=${inviteGroupId}`);
       }
       return;
     }
