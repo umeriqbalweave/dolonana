@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
         const body = new URLSearchParams({
           To: user.phone!,
           From: twilioPhone,
-          Body: `${displayName} checked in at ${checkinNumber}/10. ${appUrl}`,
+          Body: `${displayName} checked in at ${checkinNumber}/10. ${appUrl}/groups/${groupIds[0]}`,
         });
 
         const smsResponse = await fetch(twilioUrl, {

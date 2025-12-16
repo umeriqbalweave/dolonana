@@ -49,72 +49,94 @@ export async function GET(request: Request) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#1e1b4b",
-          backgroundImage: "linear-gradient(to bottom right, #1e1b4b, #0f172a, #064e3b)",
+          backgroundColor: "#0a0a0a",
+          padding: 60,
         }}
       >
-        {/* Group Image or Emojis */}
-        {groupImage ? (
-          <img
-            src={groupImage}
-            alt=""
-            width={180}
-            height={180}
-            style={{
-              borderRadius: 24,
-              marginBottom: 24,
-              border: "4px solid rgba(255,255,255,0.2)",
-              objectFit: "cover",
-            }}
-          />
-        ) : (
-          <div style={{ fontSize: 80, marginBottom: 20 }}>
-            ✨❓💬
-          </div>
-        )}
-
-        {/* Group Name */}
+        {/* Card container mimicking invite screen */}
         <div
           style={{
-            fontSize: groupId ? 56 : 80,
-            fontWeight: 800,
-            color: "#f8fafc",
-            marginBottom: 10,
-            textAlign: "center",
-            maxWidth: 900,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#1a1a1a",
+            border: "2px solid #2a2a2a",
+            borderRadius: 32,
+            padding: 48,
+            maxWidth: 800,
           }}
         >
-          {groupName}
-        </div>
+          {/* Group Image or placeholder */}
+          {groupImage ? (
+            <img
+              src={groupImage}
+              alt=""
+              width={140}
+              height={140}
+              style={{
+                borderRadius: 70,
+                marginBottom: 24,
+                border: "3px solid #2a2a2a",
+                objectFit: "cover",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: 140,
+                height: 140,
+                borderRadius: 70,
+                backgroundColor: "#2a2a2a",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 24,
+                fontSize: 48,
+                color: "#666",
+              }}
+            >
+              {groupName.charAt(0).toUpperCase()}
+            </div>
+          )}
 
-        {/* Subtitle */}
-        <div
-          style={{
-            fontSize: 28,
-            color: "#a78bfa",
-            textAlign: "center",
-            maxWidth: 700,
-          }}
-        >
-          {inviterName ? `${inviterName} invited you to join` : "Answer first. Then see theirs."}
-        </div>
+          {/* Inviter text */}
+          {inviterName && (
+            <div
+              style={{
+                fontSize: 24,
+                color: "#666",
+                marginBottom: 8,
+              }}
+            >
+              {inviterName} invited you to
+            </div>
+          )}
 
-        {/* CWF badge */}
-        {groupId && (
+          {/* Group Name */}
           <div
             style={{
-              marginTop: 30,
-              fontSize: 20,
-              color: "#64748b",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
+              fontSize: 48,
+              fontWeight: 700,
+              color: "#e8e6e3",
+              marginBottom: 16,
+              textAlign: "center",
             }}
           >
-            <span>✨</span>
-            <span>Questions With Friends</span>
+            {groupName}
           </div>
-        )}
+
+          {/* CTA hint */}
+          <div
+            style={{
+              fontSize: 20,
+              color: "#a8a6a3",
+              marginTop: 16,
+            }}
+          >
+            Tap to join and check in with friends
+          </div>
+        </div>
       </div>
     ),
     {

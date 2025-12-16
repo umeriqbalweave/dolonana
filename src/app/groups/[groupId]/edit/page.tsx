@@ -261,13 +261,13 @@ export default function EditGroupPage() {
                 if (!name.trim()) return;
                 setStep("picture");
               }}
-              className="space-y-4 text-sm text-slate-200"
+              className="space-y-4 text-sm text-[#a8a6a3]"
             >
               <div className="space-y-2">
-                <p className="text-xs uppercase tracking-wide text-slate-400">
+                <p className="text-xs uppercase tracking-wide text-[#666]">
                   step 1 of 5
                 </p>
-                <h2 className="text-2xl font-semibold leading-snug text-slate-50 md:text-3xl">
+                <h2 className="text-2xl font-semibold leading-snug text-[#e8e6e3] md:text-3xl">
                   rename this crew?
                 </h2>
               </div>
@@ -298,13 +298,13 @@ export default function EditGroupPage() {
                 event.preventDefault();
                 setStep("prompt");
               }}
-              className="space-y-4 text-sm text-slate-200"
+              className="space-y-4 text-sm text-[#a8a6a3]"
             >
               <div className="space-y-2">
-                <p className="text-xs uppercase tracking-wide text-slate-400">
+                <p className="text-xs uppercase tracking-wide text-[#666]">
                   step 2 of 5
                 </p>
-                <h2 className="text-2xl font-semibold leading-snug text-slate-50 md:text-3xl">
+                <h2 className="text-2xl font-semibold leading-snug text-[#e8e6e3] md:text-3xl">
                   update the chat picture ✨
                 </h2>
               </div>
@@ -323,7 +323,7 @@ export default function EditGroupPage() {
                       setImagePreview(null);
                     }
                   }}
-                  className="w-full text-xs text-slate-300 file:mr-3 file:rounded-md file:border-0 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-slate-100 hover:file:bg-slate-700"
+                  className="w-full text-xs text-[#a8a6a3] file:mr-3 file:rounded-md file:border-0 file:bg-[#2a2a2a] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-[#e8e6e3] hover:file:bg-[#3a3a3a]"
                 />
                 {(imagePreview || imageUrl) && (
                   <div className="pt-2 flex justify-center">
@@ -331,7 +331,7 @@ export default function EditGroupPage() {
                     <img
                       src={imagePreview ?? imageUrl ?? ""}
                       alt="Group preview"
-                      className="h-16 w-16 rounded-full object-cover ring-2 ring-slate-700"
+                      className="h-16 w-16 rounded-full object-cover ring-2 ring-[#2a2a2a]"
                     />
                   </div>
                 )}
@@ -363,13 +363,13 @@ export default function EditGroupPage() {
                 event.preventDefault();
                 setStep("juggu");
               }}
-              className="space-y-4 text-sm text-slate-200"
+              className="space-y-4 text-sm text-[#a8a6a3]"
             >
               <div className="space-y-2">
-                <p className="text-xs uppercase tracking-wide text-slate-400">
+                <p className="text-xs uppercase tracking-wide text-[#666]">
                   step 3 of 5
                 </p>
-                <h2 className="text-2xl font-semibold leading-snug text-slate-50 md:text-3xl">
+                <h2 className="text-2xl font-semibold leading-snug text-[#e8e6e3] md:text-3xl">
                   update the question vibe
                 </h2>
               </div>
@@ -392,7 +392,7 @@ export default function EditGroupPage() {
                   className={`absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full transition ${
                     isRecording 
                       ? "bg-rose-500 text-white animate-pulse" 
-                      : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                      : "bg-[#2a2a2a] text-[#a8a6a3] hover:bg-[#3a3a3a]"
                   }`}
                   title={isRecording ? "Stop recording" : "Voice input"}
                 >
@@ -404,7 +404,7 @@ export default function EditGroupPage() {
                 type="button"
                 disabled={previewLoading || !prompt.trim()}
                 onClick={withHaptics(() => void handlePreviewQuestions())}
-                className="flex w-full items-center justify-center rounded-lg bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 transition hover:bg-slate-700 disabled:opacity-60"
+                className="flex w-full items-center justify-center rounded-lg bg-[#2a2a2a] px-3 py-2 text-sm font-medium text-[#e8e6e3] transition hover:bg-[#3a3a3a] disabled:opacity-60"
               >
                 {previewLoading ? "🦦 thinking..." : "View example"}
               </button>
@@ -412,8 +412,8 @@ export default function EditGroupPage() {
               {sampleWithOptions.length > 0 && (
                 <div className="space-y-4 pt-2">
                   {sampleWithOptions.slice(0, 1).map((item, index) => (
-                    <div key={index} className="rounded-xl border border-slate-700 bg-slate-900/60 p-4">
-                      <p className="mb-3 text-base font-medium text-slate-50 md:text-lg">
+                    <div key={index} className="rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] p-4">
+                      <p className="mb-3 text-base font-medium text-[#e8e6e3] md:text-lg">
                         {item.prompt}
                       </p>
                       {item.options && item.options.length > 0 && (
@@ -426,7 +426,7 @@ export default function EditGroupPage() {
                               {option}
                             </span>
                           ))}
-                          <span className="rounded-full border border-slate-600 bg-slate-800/50 px-3 py-1.5 text-sm text-slate-400">
+                          <span className="rounded-full border border-[#3a3a3a] bg-[#2a2a2a] px-3 py-1.5 text-sm text-[#666]">
                             + write your own
                           </span>
                         </div>
@@ -458,9 +458,9 @@ export default function EditGroupPage() {
 
           {/* Step 4 – Juggu */}
           {step === "juggu" && (
-            <div className="space-y-6 text-base text-slate-200">
+            <div className="space-y-6 text-base text-[#a8a6a3]">
               <div className="space-y-2">
-                <h2 className="text-2xl font-semibold leading-snug text-slate-50 md:text-3xl">
+                <h2 className="text-2xl font-semibold leading-snug text-[#e8e6e3] md:text-3xl">
                   juggu settings 🦦
                 </h2>
               </div>
@@ -472,16 +472,16 @@ export default function EditGroupPage() {
                 >
                   🦦
                 </div>
-                <p className={`mb-2 text-center text-lg font-medium md:text-xl ${jugguEnabled ? "text-slate-100" : "text-slate-400"}`}>
+                <p className={`mb-2 text-center text-lg font-medium md:text-xl ${jugguEnabled ? "text-[#e8e6e3]" : "text-[#666]"}`}>
                   {jugguEnabled ? "your group's playful sidekick" : "maybe next time..."}
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-slate-700 bg-slate-900/60 px-5 py-5">
+              <div className="rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] px-5 py-5">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-base font-medium text-slate-100">juggu is {jugguEnabled ? "on" : "off"}</p>
-                    <p className="text-sm text-slate-400">sassy AI sidekick for your chat</p>
+                    <p className="text-base font-medium text-[#e8e6e3]">juggu is {jugguEnabled ? "on" : "off"}</p>
+                    <p className="text-sm text-[#666]">sassy AI sidekick for your chat</p>
                   </div>
                   <button
                     type="button"
@@ -503,7 +503,7 @@ export default function EditGroupPage() {
                 <button
                   type="button"
                   onClick={withHaptics(() => setShowCustomize(!showCustomize))}
-                  className="mt-3 text-sm text-slate-400 hover:text-slate-200"
+                  className="mt-3 text-sm text-[#666] hover:text-[#a8a6a3]"
                 >
                   customize
                 </button>
@@ -538,22 +538,22 @@ export default function EditGroupPage() {
 
           {/* Step 5 – Notifications */}
           {step === "notifications" && (
-            <div className="space-y-6 text-base text-slate-200">
+            <div className="space-y-6 text-base text-[#a8a6a3]">
               <div className="space-y-2">
-                <p className="text-xs uppercase tracking-wide text-slate-400">
+                <p className="text-xs uppercase tracking-wide text-[#666]">
                   your notifications
                 </p>
-                <h2 className="text-2xl font-semibold leading-snug text-slate-50 md:text-3xl">
+                <h2 className="text-2xl font-semibold leading-snug text-[#e8e6e3] md:text-3xl">
                   stay in the loop 🔔
                 </h2>
               </div>
 
               <div className="space-y-4">
                 {/* Daily Question SMS */}
-                <div className="flex items-center justify-between rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                <div className="flex items-center justify-between rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-4">
                   <div>
-                    <p className="font-medium text-slate-100">Daily question SMS</p>
-                    <p className="text-xs text-slate-400">Get notified at 12pm when the daily question drops</p>
+                    <p className="font-medium text-[#e8e6e3]">Daily question SMS</p>
+                    <p className="text-xs text-[#666]">Get notified at 12pm when the daily question drops</p>
                   </div>
                   <button
                     type="button"
@@ -572,10 +572,10 @@ export default function EditGroupPage() {
                 </div>
 
                 {/* Message SMS */}
-                <div className="flex items-center justify-between rounded-2xl border border-slate-700 bg-slate-900/60 p-4">
+                <div className="flex items-center justify-between rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-4">
                   <div>
-                    <p className="font-medium text-slate-100">Message notifications</p>
-                    <p className="text-xs text-slate-400">Get notified when there&apos;s new activity</p>
+                    <p className="font-medium text-[#e8e6e3]">Message notifications</p>
+                    <p className="text-xs text-[#666]">Get notified when there&apos;s new activity</p>
                   </div>
                   <button
                     type="button"
@@ -615,24 +615,24 @@ export default function EditGroupPage() {
 
           {/* Step 6 – Share */}
           {step === "share" && (
-            <div className="space-y-6 text-base text-slate-200">
+            <div className="space-y-6 text-base text-[#a8a6a3]">
               <div className="space-y-2">
-                <p className="text-xs uppercase tracking-wide text-slate-400">
+                <p className="text-xs uppercase tracking-wide text-[#666]">
                   last step!
                 </p>
-                <h2 className="text-2xl font-semibold leading-snug text-slate-50 md:text-3xl">
+                <h2 className="text-2xl font-semibold leading-snug text-[#e8e6e3] md:text-3xl">
                   share & save
                 </h2>
               </div>
 
-              <div className="rounded-2xl border border-slate-700 bg-slate-900/60 px-5 py-5">
-                <p className="mb-3 text-sm font-medium text-slate-100">Invite link</p>
+              <div className="rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] px-5 py-5">
+                <p className="mb-3 text-sm font-medium text-[#e8e6e3]">Invite link</p>
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
                     readOnly
                     value={`${origin}/i/${groupId.slice(0, 8)}`}
-                    className="flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-slate-300"
+                    className="flex-1 rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-2 text-xs text-[#a8a6a3]"
                   />
                   <button
                     type="button"
@@ -641,12 +641,12 @@ export default function EditGroupPage() {
                       setCopyMessage("Copied!");
                       setTimeout(() => setCopyMessage(null), 2000);
                     })}
-                    className="rounded-lg bg-slate-700 px-4 py-2 text-xs font-medium text-slate-100 hover:bg-slate-600"
+                    className="rounded-lg bg-[#2a2a2a] px-4 py-2 text-xs font-medium text-[#e8e6e3] hover:bg-[#3a3a3a]"
                   >
                     {copyMessage || "Copy"}
                   </button>
                 </div>
-                <p className="mt-2 text-xs text-slate-500">Share this link to invite friends</p>
+                <p className="mt-2 text-xs text-[#666]">Share this link to invite friends</p>
               </div>
 
               {error && <p className="text-sm text-rose-400">{error}</p>}

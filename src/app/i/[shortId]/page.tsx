@@ -36,12 +36,8 @@ export default function ShortInvitePage() {
   }, [shortId, router]);
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-violet-950 via-slate-900 to-emerald-900 text-slate-50 overflow-hidden">
-      {/* Floating background elements */}
-      <div className="absolute top-20 left-10 text-5xl opacity-20 animate-bounce">✨</div>
-      <div className="absolute bottom-32 right-10 text-5xl opacity-20 animate-pulse">🎉</div>
-      <div className="animate-spin text-6xl mb-4">🦦</div>
-      <p className="text-lg text-slate-300">finding your invite...</p>
+    <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
+      <p className="text-xl text-[#a8a6a3]">Finding your invite...</p>
     </div>
   );
 }

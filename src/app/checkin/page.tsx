@@ -551,10 +551,16 @@ function CheckInContent() {
 
               {/* Simple 1-10 scale */}
               <div className="w-full max-w-sm mx-auto">
-                {/* Big editable number display */}
-                <div className="flex flex-col items-center mb-12">
+                {/* Big editable number display with dynamic color */}
+                <div className="flex flex-col items-center mb-8">
                   <div 
-                    className="w-36 h-36 rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center cursor-pointer"
+                    className={`w-44 h-44 rounded-3xl flex items-center justify-center cursor-pointer transition-all duration-300 ${
+                      !selectedNumber ? 'bg-[#1a1a1a] border-2 border-[#2a2a2a]' :
+                      selectedNumber <= 3 ? 'bg-[#8b0000]/20 border-2 border-[#8b0000]' :
+                      selectedNumber <= 5 ? 'bg-[#b8860b]/20 border-2 border-[#b8860b]' :
+                      selectedNumber <= 7 ? 'bg-[#2e8b57]/20 border-2 border-[#2e8b57]' :
+                      'bg-[#4169e1]/20 border-2 border-[#4169e1]'
+                    }`}
                     onClick={() => {
                       const input = document.getElementById('number-input') as HTMLInputElement;
                       input?.focus();
@@ -575,25 +581,46 @@ function CheckInContent() {
                         }
                       }}
                       placeholder="5"
-                      className="w-full h-full text-7xl font-light text-center bg-transparent outline-none text-[#e8e6e3] placeholder:text-[#666]"
+                      className={`w-full h-full text-8xl font-bold text-center bg-transparent outline-none transition-colors duration-300 ${
+                        !selectedNumber ? 'text-[#666]' :
+                        selectedNumber <= 3 ? 'text-[#dc2626]' :
+                        selectedNumber <= 5 ? 'text-[#eab308]' :
+                        selectedNumber <= 7 ? 'text-[#22c55e]' :
+                        'text-[#3b82f6]'
+                      } placeholder:text-[#444]`}
                     />
                   </div>
+                  <p className="text-sm text-[#666] mt-3">
+                    {!selectedNumber ? 'Select a number' :
+                     selectedNumber <= 3 ? 'Rough day' :
+                     selectedNumber <= 5 ? 'Getting by' :
+                     selectedNumber <= 7 ? 'Doing well' :
+                     'Feeling great!'}
+                  </p>
                 </div>
                 
-                {/* Draggable slider */}
-                <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={selectedNumber || 5}
-                  onChange={(e) => {
-                    setSelectedNumber(parseInt(e.target.value));
-                  }}
-                  className="w-full h-2 rounded-full appearance-none cursor-pointer bg-[#2a2a2a] mb-12"
-                  style={{
-                    accentColor: '#888'
-                  }}
-                />
+                {/* Larger, more prominent slider */}
+                <div className="relative mb-10 px-2">
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={selectedNumber || 5}
+                    onChange={(e) => {
+                      setSelectedNumber(parseInt(e.target.value));
+                    }}
+                    className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #dc2626 0%, #eab308 40%, #22c55e 70%, #3b82f6 100%)`,
+                    }}
+                  />
+                  {/* Scale labels */}
+                  <div className="flex justify-between mt-3 px-1">
+                    <span className="text-sm text-[#666]">1</span>
+                    <span className="text-sm text-[#666]">5</span>
+                    <span className="text-sm text-[#666]">10</span>
+                  </div>
+                </div>
                 
                 {/* Continue button */}
                 <button
