@@ -802,13 +802,13 @@ export default function GroupDetailPage() {
                     )}
                     
                     {/* Content - text to the right */}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 overflow-hidden">
                       <p className="text-xl font-bold mb-1 text-[#e8e6e3]">
                         {displayName}
                       </p>
                       
                       {/* Check-in text - emoji scale (101-103) vs number scale (1-10) */}
-                      <p className="text-2xl text-[#e8e6e3] whitespace-pre-wrap break-words">
+                      <p className="text-2xl text-[#e8e6e3] whitespace-pre-wrap break-words w-full">
                         {checkin.number === 101 
                           ? `I'm feeling sad today.${checkin.message ? ` ${checkin.message}` : ""}`
                           : checkin.number === 102 
@@ -947,7 +947,7 @@ export default function GroupDetailPage() {
                     )}
                     
                     {/* Content - text to the right */}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 overflow-hidden">
                       <p className="text-2xl font-bold text-[#e8e6e3]">
                         {displayName}
                       </p>
@@ -960,7 +960,7 @@ export default function GroupDetailPage() {
                           onClick={() => setViewingImage(msg.image_url!)}
                         />
                       )}
-                      <p className="text-2xl mt-1 text-[#a8a6a3] whitespace-pre-wrap break-words">
+                      <p className="text-2xl mt-1 text-[#a8a6a3] whitespace-pre-wrap break-words w-full">
                         {msg.text}
                       </p>
                       <p className="mt-2 text-lg text-[#666]">
