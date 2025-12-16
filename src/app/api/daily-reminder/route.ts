@@ -163,7 +163,7 @@ export async function GET() {
         const body = new URLSearchParams({
           To: user.phone,
           From: twilioPhone,
-          Body: `How was your day today? ${appUrl}/checkin`,
+          Body: `How are you doing today? ${appUrl}/checkin`,
         });
 
         const smsResponse = await fetch(twilioUrl, {
