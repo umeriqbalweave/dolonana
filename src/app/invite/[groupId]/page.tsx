@@ -424,7 +424,7 @@ export default function GroupInvitePage() {
         transition={{ delay: 0.5 }}
         className="text-xl text-[#a8a6a3] mb-2 text-center"
       >
-        <span className="text-[#e8e6e3] font-semibold">{adminName}</span> invited you to join
+        <span className="text-[#e8e6e3] font-semibold">{adminName}</span> <span className="text-[#e8e6e3]">invited you to join</span>
       </motion.p>
 
       {/* Prominent Group Name */}

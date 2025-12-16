@@ -34,6 +34,8 @@ function CheckInContent() {
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
   const [people, setPeople] = useState<Person[]>([]);
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
+  const [showFirstInviteCheckin, setShowFirstInviteCheckin] = useState(false);
+  const [firstInviteCheckinTime, setFirstInviteCheckinTime] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [totalCheckins, setTotalCheckins] = useState<number>(0);
@@ -86,6 +88,23 @@ function CheckInContent() {
       }
 
       setUserId(currentUserId);
+
+      const { count: existingCheckins } = await supabase
+        .from("checkins")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", currentUserId);
+
+      if (inviteGroupId && (existingCheckins ?? 0) === 0 && typeof window !== "undefined") {
+        const bannerKey = `first-invite-checkin-shown:${inviteGroupId}`;
+        const alreadyShown = window.localStorage.getItem(bannerKey);
+        if (!alreadyShown) {
+          setShowFirstInviteCheckin(true);
+          setFirstInviteCheckinTime(
+            new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
+          );
+          window.localStorage.setItem(bannerKey, "1");
+        }
+      }
 
       // Get user's display name for notifications
       const { data: userProfile } = await supabase
@@ -148,7 +167,7 @@ function CheckInContent() {
     }
 
     void loadUser();
-  }, [router]);
+  }, [router, inviteGroupId]);
 
   function handleNumberSelect(num: number) {
     setSelectedNumber(num);
@@ -545,7 +564,20 @@ function CheckInContent() {
               exit={{ opacity: 0, y: -20 }}
               className="w-full max-w-lg text-center"
             >
-              <p className={`text-xl ${textSecondary} mb-10`}>
+              {showFirstInviteCheckin && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-8 rounded-3xl border border-[#2a2a2a] bg-[#1a1a1a] px-6 py-5"
+                >
+                  <p className="text-2xl font-semibold text-[#e8e6e3]">Time for your first check-in</p>
+                  {firstInviteCheckinTime && (
+                    <p className="mt-2 text-lg text-[#a8a6a3]">{firstInviteCheckinTime}</p>
+                  )}
+                </motion.div>
+              )}
+
+              <p className="text-2xl font-semibold text-[#e8e6e3] mb-10">
                 Rate yourself on a scale of 1–10, with 1 being your lowest and 10 being your highest
               </p>
 
@@ -760,7 +792,7 @@ function CheckInContent() {
                   <button
                     type="button"
                     onClick={withHaptics(() => {
-                      if (groups.length === 1 && people.length === 0) {
+                      if (groups.length === 1 && !selectedPerson) {
                         // Auto-select the single group and share
                         setSelectedGroups(new Set([groups[0].id]));
                         setTimeout(() => handleShare(), 100);
