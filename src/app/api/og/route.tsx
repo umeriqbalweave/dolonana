@@ -67,25 +67,40 @@ export async function GET(request: Request) {
             maxWidth: 800,
           }}
         >
-          {/* Group initial as placeholder - external images often fail in edge runtime */}
-          <div
-            style={{
-              width: 140,
-              height: 140,
-              borderRadius: 70,
-              backgroundColor: "#2a2a2a",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: 24,
-              fontSize: 56,
-              fontWeight: 700,
-              color: "#e8e6e3",
-              border: "3px solid #3a3a3a",
-            }}
-          >
-            {groupName.charAt(0).toUpperCase()}
-          </div>
+          {/* Group Image or initial fallback */}
+          {groupImage ? (
+            <img
+              src={groupImage}
+              alt=""
+              width={140}
+              height={140}
+              style={{
+                borderRadius: 70,
+                marginBottom: 24,
+                border: "3px solid #3a3a3a",
+                objectFit: "cover",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: 140,
+                height: 140,
+                borderRadius: 70,
+                backgroundColor: "#2a2a2a",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 24,
+                fontSize: 56,
+                fontWeight: 700,
+                color: "#e8e6e3",
+                border: "3px solid #3a3a3a",
+              }}
+            >
+              {groupName.charAt(0).toUpperCase()}
+            </div>
+          )}
 
           {/* Inviter text */}
           {inviterName && (
