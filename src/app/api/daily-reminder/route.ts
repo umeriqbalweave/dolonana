@@ -96,9 +96,9 @@ export async function GET() {
     const nyHour = Number(nyParts.find((p) => p.type === "hour")?.value ?? "-1");
     const nyMinute = Number(nyParts.find((p) => p.type === "minute")?.value ?? "-1");
 
-    // Only run at 6:00pm EST/EDT (allow a 0-9 minute window)
-    if (!(nyHour === 18 && nyMinute >= 0 && nyMinute < 10)) {
-      return NextResponse.json({ skipped: true, reason: "not_6pm_ny", nyHour, nyMinute });
+    // Only run at 12:00pm EST/EDT (allow a 0-9 minute window)
+    if (!(nyHour === 12 && nyMinute >= 0 && nyMinute < 10)) {
+      return NextResponse.json({ skipped: true, reason: "not_12pm_ny", nyHour, nyMinute });
     }
 
     const { start: nyDayStartUtc, end: nyDayEndUtc } = getNyDayWindowUtc(now);
