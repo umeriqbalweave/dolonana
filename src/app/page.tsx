@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { withHaptics } from "@/lib/haptics";
@@ -401,6 +402,15 @@ function HomeContent() {
             )}
           </div>
         )}
+
+        <div className="mt-10 text-center">
+          <Link
+            href="/privacy-policy"
+            className="text-base text-[#666] hover:text-[#a8a6a3] underline underline-offset-4 transition-colors duration-200"
+          >
+            Privacy Policy
+          </Link>
+        </div>
       </motion.main>
     </div>
   );
