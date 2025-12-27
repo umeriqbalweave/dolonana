@@ -15,6 +15,13 @@ function HomeContent() {
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [verified, setVerified] = useState(false); // Prevents error flash after success
+  const reviewMode = process.env.NEXT_PUBLIC_REVIEW_MODE === "true";
+  const [showReviewerLogin, setShowReviewerLogin] = useState(false);
+  const [reviewEmail, setReviewEmail] = useState("");
+  const [reviewPassword, setReviewPassword] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
 
   useEffect(() => {
     async function checkSession() {
@@ -96,12 +103,14 @@ function HomeContent() {
       type: "sms",
     });
 
-    setLoading(false);
-
     if (verifyError) {
+      setLoading(false);
       setError(verifyError.message);
       return;
     }
+    
+    // Mark as verified to prevent any error flash during redirect
+    setVerified(true);
     // After successful verification, decide whether to send user to
     // onboarding (name + picture) or straight to groups.
     const { data } = await supabase.auth.getUser();
@@ -159,6 +168,69 @@ function HomeContent() {
     }
 
     // New user without name goes to onboarding, otherwise to groups
+    if (!hasName) {
+      router.replace("/onboarding");
+    } else {
+      router.replace("/groups");
+    }
+  }
+
+  async function handleReviewerSignIn(event: React.FormEvent) {
+    event.preventDefault();
+    setReviewError(null);
+    setReviewLoading(true);
+
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      email: reviewEmail.trim(),
+      password: reviewPassword,
+    });
+
+    setReviewLoading(false);
+
+    if (signInError) {
+      setReviewError(signInError.message);
+      return;
+    }
+
+    const userId = data.user?.id ?? null;
+    if (!userId) {
+      router.replace("/groups");
+      return;
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("display_name")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const hasName = profile?.display_name && profile.display_name.trim().length > 0;
+
+    if (inviteGroupId) {
+      const { data: existing } = await supabase
+        .from("group_memberships")
+        .select("id")
+        .eq("group_id", inviteGroupId)
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (!existing) {
+        await supabase.from("group_memberships").insert({
+          group_id: inviteGroupId,
+          user_id: userId,
+          role: "member",
+          status: "active",
+        });
+      }
+
+      if (!hasName) {
+        router.replace(`/onboarding?then=/checkin?inviteGroupId=${inviteGroupId}`);
+      } else {
+        router.replace(`/checkin?inviteGroupId=${inviteGroupId}`);
+      }
+      return;
+    }
+
     if (!hasName) {
       router.replace("/onboarding");
     } else {
@@ -262,7 +334,7 @@ function HomeContent() {
               required
               maxLength={6}
             />
-            {error && !loading && (
+            {error && !loading && !verified && (
               <p className="text-base text-rose-400 text-center">{error}</p>
             )}
             <button
@@ -281,6 +353,53 @@ function HomeContent() {
               ← Different number
             </button>
           </form>
+        )}
+
+        {reviewMode && step === "phone" && (
+          <div className="mt-8">
+            <button
+              type="button"
+              onClick={withHaptics(() => {
+                setReviewError(null);
+                setShowReviewerLogin((prev) => !prev);
+              })}
+              className="w-full text-center text-lg text-[#666] hover:text-[#a8a6a3] py-3 transition-colors duration-200"
+            >
+              {showReviewerLogin ? "Hide reviewer login" : "Reviewer login"}
+            </button>
+
+            {showReviewerLogin && (
+              <form onSubmit={handleReviewerSignIn} className="mt-4 space-y-4">
+                <input
+                  type="email"
+                  value={reviewEmail}
+                  onChange={(event) => setReviewEmail(event.target.value)}
+                  placeholder="Email"
+                  className="w-full rounded-2xl border-2 border-[#2a2a2a] bg-[#1a1a1a] px-6 py-4 text-lg text-[#e8e6e3] outline-none focus:border-[#888] transition-colors duration-200"
+                  required
+                />
+                <input
+                  type="password"
+                  value={reviewPassword}
+                  onChange={(event) => setReviewPassword(event.target.value)}
+                  placeholder="Password"
+                  className="w-full rounded-2xl border-2 border-[#2a2a2a] bg-[#1a1a1a] px-6 py-4 text-lg text-[#e8e6e3] outline-none focus:border-[#888] transition-colors duration-200"
+                  required
+                />
+                {reviewError && (
+                  <p className="text-base text-rose-400 text-center">{reviewError}</p>
+                )}
+                <button
+                  type="submit"
+                  disabled={reviewLoading}
+                  onClick={withHaptics(() => {})}
+                  className="flex w-full items-center justify-center rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] px-6 py-4 text-lg font-semibold text-[#e8e6e3] transition hover:bg-[#2a2a2a] disabled:opacity-60"
+                >
+                  {reviewLoading ? "Signing in..." : "Sign in"}
+                </button>
+              </form>
+            )}
+          </div>
         )}
       </motion.main>
     </div>
